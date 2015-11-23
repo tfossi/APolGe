@@ -1,0 +1,9 @@
+/* 
+
+Zeilenübergreifende Zuweisung
+
+*/
+
+a = INIT(5 + 
+25);
+b=	12;
