@@ -1,0 +1,7 @@
+/*
+Test DateTimezuordnung
+*/
+
+a = 5:15:
+b = 13.12.2012
+c = 13.12. 5:: 

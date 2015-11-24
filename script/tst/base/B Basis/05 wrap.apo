@@ -1,9 +1,9 @@
 /* 
-
-Zeilenübergreifende Zuweisung
-
+ZeilenÃ¼bergreifende Zuweisung mit Leerzeichen, Tabulator 
 */
 
-a = INIT(5 + 
-25);
-b=	12;
+a = 5 + 
+25
+b  
+=	
+	12
