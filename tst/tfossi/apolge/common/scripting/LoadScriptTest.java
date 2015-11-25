@@ -17,6 +17,8 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import tfossi.apolge.common.constants.ConstValueExtension;
+import tfossi.apolge.common.scripting.p.ParseException;
+import tfossi.apolge.common.scripting.t.TableException;
 
 /**
  * Testet die Funktionalität der Scriptverarbeitung.<br>
@@ -44,8 +46,8 @@ public class LoadScriptTest {
 	/** Dateien für testFilesystem gibt es nicht */
 	String[][] filesystemTestdaten = new String[][] {
 			{ "Test falscher Pfad",
-					"A FileSystem" + FS + "No Pfad" + FS + "Gibt nicht" },
-			{ "Test falsche Datei", "A FileSystem" + FS + "Gibt es nicht" }, };
+					"A Filesystem" + FS + "No Pfad" + FS + "Gibt nicht" },
+			{ "Test falsche Datei", "A Filesystem" + FS + "Gibt es nicht" }, };
 
 	/** Testen der Basisfunktionen des Scriptparsers */
 	String[][] basisTestdaten = new String[][] {
@@ -61,9 +63,9 @@ public class LoadScriptTest {
 			{ "Test Whiteblancs", "B Basis" + FS + "04 whiteblancs.apo", ";",
 					"[;]", "{_={}}" },
 			{ "Test WrapLines", "B Basis" + FS + "05 wrap.apo",
-					";a=INIT(5+25);b=12;",
-					"[;, a, =, INIT, (, 5, +, 25, ), ;, b, =, 12, ;]",
-					"{_={a=[INIT, (, 5, +, 25, )], b=[12]}}" }, };
+					";a=5+25;b=12;",
+					"[;, a, =, 5, +, 25, ;, b, =, 12, ;]",
+					"{_={a=[5, +, 25], b=[12]}}" }, };
 
 	/** Testen der Typzuordnung */
 	String[][] typenzuordnungTestdaten = new String[][] {
@@ -98,21 +100,20 @@ public class LoadScriptTest {
 	/** Testen von Block, Index und Liste */
 	String[][] blockIndexListeTestdaten = new String[][] {
 
-			{
-					"Test Listen",
+			{ "Test Listen",
 					"D Block, Index und Liste" + FS + "01 listen.apo",
 					";?0=1;?1=2;?2=3;k=7;?3=A;?4=B;",
 					"[;, ?0, =, 1, ;, ?1, =, 2, ;, ?2, =, 3, ;, k, =, 7, ;, ?3, =, A, ;, ?4, =, B, ;]",
 					"{_={?0=[1], ?1=[2], ?2=[3], k=[7], ?3=[A], ?4=[B]}}" },
-			{
-					"Test Block",
+			{"Test Block",
 					"D Block, Index und Liste" + FS + "02 block.apo",
-					";a={i2=2;i1={?0=asd1;?1=asd2};z=7};b={?2=k;?3=y};c=VEKTOR(A,B,C);d={?4=x};",
-					"[;, a, =, {, i2, =, 2, ;, i1, =, {, ?0, =, asd1, ;, ?1, =, asd2, }, ;, z, =, 7, }, ;, b, =, {, ?2, =, k, ;, ?3, =, y, }, ;, c, =, VEKTOR, (, A, ,, B, ,, C, ), ;, d, =, {, ?4, =, x, }, ;]",
-					"{_={a=[{i2=[2], i1=[{?0=[asd1], ?1=[asd2]}], z=[7]}], b=[{?2=[k], ?3=[y]}], c=[VEKTOR, (, A, ,, B, ,, C, )], d=[{?4=[x]}]}}", },
+					";a={i2=2;i1={?0=asd1;?1=asd2};z=7};b={?2=k;?3=y};c=VEKTOR(A,B,C);d={?4=x};e=VEKTORT(1,2,3,4);",
+					"[;, a, =, {, i2, =, 2, ;, i1, =, {, ?0, =, asd1, ;, ?1, =, asd2, }, ;, z, =, 7, }, ;, b, =, {, ?2, =, k, ;, ?3, =, y, }, ;, c, =, VEKTOR, (, A, ,, B, ,, C, ), ;, d, =, {, ?4, =, x, }, ;, e, =, VEKTORT, (, 1, ,, 2, ,, 3, ,, 4, ), ;]",
+					"{_={a=[{i2=[2], i1=[{?0=[asd1], ?1=[asd2]}], z=[7]}], b=[{?2=[k], ?3=[y]}], c=[VEKTOR, (, A, ,, B, ,, C, )], d=[{?4=[x]}], e=[VEKTORT, (, 1, ,, 2, ,, 3, ,, 4, )]}}", 
+					},
 			{ "Test Index", "D Block, Index und Liste" + FS + "03 index.apo",
-					";a={a.0=1};", "[;, a, =, {, a.0, =, 1, }, ;]",
-					"{_={a=[{a.0=[1]}]}}" },
+					";a={0=1};", "[;, a, =, {, 0, =, 1, }, ;]",
+					"{_={a=[{0=[1]}]}}" },
 
 	};
 
@@ -165,31 +166,31 @@ public class LoadScriptTest {
 
 	/** Testen der Marker: Init, Flow, Alternative, 2Pass, 3Pass */
 	String[][] datenstrukturenTestdaten = new String[][] {
-			{
-					"Test InitialFlow",
+			{	"Test InitialFlow",
 					"G Marker" + FS + "01 initialflow.apo",
 					";a={Init=true};b={Flow=false};c=b.Flow+a.Init;",
 					"[;, a, =, {, Init, =, true, }, ;, b, =, {, Flow, =, false, }, ;, c, =, b.Flow, +, a.Init, ;]",
-					"{_={a=[{Init=[true]}], b=[{Flow=[false]}], c=[b.Flow, +, a.Init]}}" },
-			{
-					"Test Alternative",
+					"{_={a=[{Init=[true]}], b=[{Flow=[false]}], c=[b.Flow, +, a.Init]}}" 
+					},
+			{	"Test Alternative",
 					"G Marker" + FS + "02 alternative.apo",
-					"a=:IF:(A):THEN:(B):IF:(C):THEN:(D):THEN:(E);",
-					"[a, =, :IF:, (, A, ), :THEN:, (, B, ), :IF:, (, C, ), :THEN:, (, D, ), :THEN:, (, E, ), ;]",
-					"{_={a=[:IF:, (, A, ), :THEN:, (, B, ), :IF:, (, C, ), :THEN:, (, D, ), :THEN:, (, E, )]}}" },
+					";c=5;a=WENN(A,B,WENN(C,D,EE));e=2;b=WENN(F,G,WENN(H,I,JJ));d=10;",
+					"[;, c, =, 5, ;, a, =, WENN, (, A, ,, B, ,, WENN, (, C, ,, D, ,, EE, ), ), ;, e, =, 2, ;, b, =, WENN, (, F, ,, G, ,, WENN, (, H, ,, I, ,, JJ, ), ), ;, d, =, 10, ;]",
+					"{_={c=[5], a=[WENN, (, A, ,, B, ,, WENN, (, C, ,, D, ,, EE, ), )], e=[2], b=[WENN, (, F, ,, G, ,, WENN, (, H, ,, I, ,, JJ, ), )], d=[10]}}" 
+					},
 			{ "Test InitialFlowAlternative",
 					"G Marker" + FS + "03 initialflowalternative.apo",
-					";:INITIAL:a=true;:WORK:a=false;",
-					"[;, :INITIAL:a, =, true, ;, :WORK:a, =, false, ;]",
-					"{_={:INITIAL:a=[true], :WORK:a=[false]}}", "" },
+					";a={INIT=WENN(A,B,WENN(C,D,E))};",
+					"[;, a, =, {, INIT, =, WENN, (, A, ,, B, ,, WENN, (, C, ,, D, ,, E, ), ), }, ;]",
+					"{_={a=[{INIT=[WENN, (, A, ,, B, ,, WENN, (, C, ,, D, ,, E, ), )]}]}}", "" },
 			{ "Test 2Pass", "G Marker" + FS + "04 2passfunction.apo",
-					";:INITIAL:a=true;:WORK:a=false;",
-					"[;, :INITIAL:a, =, true, ;, :WORK:a, =, false, ;]",
-					"{_={:INITIAL:a=[true], :WORK:a=[false]}}", "" },
+					";a=rint(5.);",
+					"[;, a, =, rint, (, 5., ), ;]",
+					"{_={a=[rint, (, 5., )]}}", "" },
 			{ "Test 3Pass", "G Marker" + FS + "05 3passfunction.apo",
-					";:INITIAL:a=true;:WORK:a=false;",
-					"[;, :INITIAL:a, =, true, ;, :WORK:a, =, false, ;]",
-					"{_={:INITIAL:a=[true], :WORK:a=[false]}}", "" }, };
+					";a=ADR(A,B,C,D);",
+					"[;, a, =, ADR, (, A, ,, B, ,, C, ,, D, ), ;]",
+					"{_={a=[ADR, (, A, ,, B, ,, C, ,, D, )]}}", "" }, };
 
 	/** Testen komplexer Berechnungen */
 	String[][] komplexerechnungenTestdaten = new String[][] {
@@ -268,6 +269,9 @@ public class LoadScriptTest {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
+			} catch (TableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 		}
@@ -320,6 +324,9 @@ public class LoadScriptTest {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
+			} catch (TableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 		}
@@ -378,6 +385,9 @@ public class LoadScriptTest {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
+			} catch (TableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 		}
@@ -437,6 +447,9 @@ public class LoadScriptTest {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
+			} catch (TableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 		}
@@ -496,6 +509,9 @@ public class LoadScriptTest {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
+			} catch (TableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 		}
@@ -555,6 +571,9 @@ public class LoadScriptTest {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
+			} catch (TableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 		}
@@ -614,6 +633,9 @@ public class LoadScriptTest {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
+			} catch (TableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 		}

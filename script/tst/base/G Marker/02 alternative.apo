@@ -1,0 +1,13 @@
+/**
+Bedingung
+*/
+
+c=5
+a= 	IF A THEN B  	IF C THEN D	ELSE EE
+e=2
+b= 	IF F THEN G  	
+	IF H THEN I	
+	ELSE JJ
+d=10	
+
+

@@ -1,0 +1,5 @@
+/*
+Logic Test
+*/
+
+a = true || false && ! false |& a > b &| a < b || a >= b || a<=b || a<>b || a==b 

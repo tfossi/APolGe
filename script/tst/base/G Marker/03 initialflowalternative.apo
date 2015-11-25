@@ -1,0 +1,8 @@
+/**
+Initial mit Alternative
+*/
+a[INIT]=	IF A THEN B 
+	IF C THEN D 
+	ELSE E 
+
+

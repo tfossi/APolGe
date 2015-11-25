@@ -1,0 +1,12 @@
+/*
+Einfache Initial/X Anweisung
+TODO b[Flow]+a[Init]
+*/
+
+
+a[Init] =  true
+b[Flow] = false
+c = b.Flow+a.Init
+
+
+
