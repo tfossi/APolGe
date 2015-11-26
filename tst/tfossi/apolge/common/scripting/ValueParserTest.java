@@ -49,49 +49,49 @@ public class ValueParserTest {
 /** Instanz ValueParser */
 final ValueParser vp = new ValueParser();
 
-	/** Dateien für testFilesystem gibt es nicht */
+	/** Einfache Operationen */
 	String[][] simpleTestdaten = new String[][] {
 //			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
 //			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
-			{ "Test Integer", "A Simple" + FS + "03 Simple Integer" },
+			{ "Test Integer", "A Simple" + FS + "03 Simple Integer",
+				"{g=[false], plus=[3], klg=[true], minus=[-1], ug=[true], grg=[false], durch=[2], gr=[false], mal=[30], kl=[true], h=[64]}" },
 //			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
 //			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
 //			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
 			};
 
+	/** Einfache Funktionen */
+	String[][] simpleFunctions = new String[][] {
+//			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
+//			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
+			{ "Test Pass0 Integer", "B Simple" + FS + "01 Simple Math",
+				"{a=[2]}" },
+//			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
+//			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
+//			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
+			};
 
+	/** Pass2 Funktionen */
+	String[][] pass2Functions = new String[][] {
+//			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
+//			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
+			{ "Test Pass2", "C Pass2" + FS + "01 Math",
+				"{a=[f:=rint( 100.0 ) mit Parameter!]}" },
+//			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
+//			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
+//			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
+			};
 
-	/** Testen der Typzuordnung */
-	String[][] typenzuordnungTestdaten = new String[][] {
-			{ "Test Byte", "C Typenzuordnung" + FS + "01 byte.apo", ";a=5b;",
-					"[;, a, =, 5b, ;]", "{_={a=[5b]}}" },
-			{ "Test Short", "C Typenzuordnung" + FS + "02 short.apo", ";a=5s;",
-					"[;, a, =, 5s, ;]", "{_={a=[5s]}}" },
-			{ "Test Integer", "C Typenzuordnung" + FS + "03 integer.apo",
-					";a=5;", "[;, a, =, 5, ;]", "{_={a=[5]}}" },
-			{ "Test Long", "C Typenzuordnung" + FS + "04 long.apo", ";a=5L;",
-					"[;, a, =, 5L, ;]", "{_={a=[5L]}}" },
-			{ "Test Float", "C Typenzuordnung" + FS + "05 float.apo", ";a=5f;",
-					"[;, a, =, 5f, ;]", "{_={a=[5f]}}" },
-			{ "Test Double", "C Typenzuordnung" + FS + "06 double.apo",
-					";a=5.;", "[;, a, =, 5., ;]", "{_={a=[5.]}}" },
-			{ "Test Bool", "C Typenzuordnung" + FS + "07 bool.apo",
-					";a=true;b=false;", "[;, a, =, true, ;, b, =, false, ;]",
-					"{_={a=[true], b=[false]}}" },
-			{ "Test Hexa", "C Typenzuordnung" + FS + "08 hexa.apo", ";a=0x1C;",
-					"[;, a, =, 0x1C, ;]", "{_={a=[0x1C]}}" },
-			{ "Test Octal", "C Typenzuordnung" + FS + "09 octa.apo", ";a=0o7;",
-					"[;, a, =, 0o7, ;]", "{_={a=[0o7]}}" },
-			{ "Test Binär", "C Typenzuordnung" + FS + "10 binaer.apo",
-					";a=01;", "[;, a, =, 01, ;]", "{_={a=[01]}}" },
-			{ "Test Char", "C Typenzuordnung" + FS + "11 char.apo", ";a='A';",
-					"[;, a, =, A, ;]", "{_={a=[A]}}" },
-			{ "Test String", "C Typenzuordnung" + FS + "12 string.apo",
-					";a=$0$;", "[;, a, =, $0$, ;]", "{_={a=[$0$]}}" },
-
-	};
-
-
+	/** Pass3 Funktionen */
+	String[][] pass3Functions = new String[][] {
+//			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
+//			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
+			{ "Test Pass2", "D Pass3" + FS + "01 Adress",
+				"{a=[f:=ADR( [A, B, INIT] ) mit Parameter!]}" },
+//			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
+//			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
+//			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
+			};
 
 	/**
 	 * Testen der elemmentaren Rechenfunktionen
@@ -113,9 +113,8 @@ final ValueParser vp = new ValueParser();
 				_ElementBuilder eb =
 				this.vp.valueParser(null, ls.getTable(), ls.getTable(), ls.getQuotes(), null, (byte)0);
 		
-//		assertEquals(this.testgruppe[row][0], this.testgruppe[row][5],
-//				eb.toString());
-				System.out.println(eb.toString());
+				assertEquals(this.simpleTestdaten[row][0], this.simpleTestdaten[row][2], eb.toString());
+
 		
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
@@ -129,25 +128,183 @@ final ValueParser vp = new ValueParser();
 					fail(e.getMessage());
 				}
 			} catch (ParseException e) {
+				e.printStackTrace();
 				fail(e.getMessage());
-
 			} catch (ArrayIndexOutOfBoundsException e) {
+				e.printStackTrace();
 				fail(e.getMessage());
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
 			} catch (TableException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail(e.getMessage());
 			} catch (ScriptException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail(e.getMessage());
 			}
 
 		}
 	}
 
+	/**
+	 * Testen der Funktionen und Methoden
+	 * 
+	 * @modified -
+	 */
+	@Test
+	public final void testBFunction() {
+		for (int row = 0; row < this.simpleFunctions.length; row++) {
+			System.out.println("Post2String: "
+					+ this.simpleFunctions[row][0] + LFCR
+					+ this.simpleFunctions[row][1]);
+			try {
+				LoadScript ls = new LoadScript(TESTPATH
+						+ this.simpleFunctions[row][1], null);
+				ls.generateTokenlist();
+				ls.generateTable();
+				_ElementBuilder eb =
+				this.vp.valueParser(null, ls.getTable(), ls.getTable(), ls.getQuotes(), null, (byte)0);
+		
+				assertEquals(this.simpleFunctions[row][0], this.simpleFunctions[row][2], eb.toString());
 
+		
+			} catch (LoadScriptException e) {
+				System.out.println(e.getLocalizedMessage());
+				if (e.getLocalizedMessage().contains("Ordner ["))
+					System.out.println("OK");
+				else if (e.getLocalizedMessage().contains("Datei [")
+						&& e.getLocalizedMessage().contains("Gibt es nicht"))
+					System.out.println("OK");
+				else {
+					e.printStackTrace();
+					fail(e.getMessage());
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (ArrayIndexOutOfBoundsException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (TableException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (ScriptException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			}
+
+		}
+	}
+	
+	/**
+	 * Testen Pass2 
+	 * 
+	 * @modified -
+	 */
+	@Test
+	public final void testCPass2() {
+		for (int row = 0; row < this.pass2Functions.length; row++) {
+			System.out.println("Post2String: "
+					+ this.pass2Functions[row][0] + LFCR
+					+ this.pass2Functions[row][1]);
+			try {
+				LoadScript ls = new LoadScript(TESTPATH
+						+ this.pass2Functions[row][1], null);
+				ls.generateTokenlist();
+				ls.generateTable();
+				_ElementBuilder eb =
+				this.vp.valueParser(null, ls.getTable(), ls.getTable(), ls.getQuotes(), null, (byte)0);
+		
+				assertEquals(this.pass2Functions[row][0], this.pass2Functions[row][2], eb.toString());
+
+		
+			} catch (LoadScriptException e) {
+				System.out.println(e.getLocalizedMessage());
+				if (e.getLocalizedMessage().contains("Ordner ["))
+					System.out.println("OK");
+				else if (e.getLocalizedMessage().contains("Datei [")
+						&& e.getLocalizedMessage().contains("Gibt es nicht"))
+					System.out.println("OK");
+				else {
+					e.printStackTrace();
+					fail(e.getMessage());
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (ArrayIndexOutOfBoundsException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (TableException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (ScriptException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			}
+
+		}
+	}
+	
+	/**
+	 * Testen Pass3 
+	 * 
+	 * @modified -
+	 */
+	@Test
+	public final void testDPass3() {
+		for (int row = 0; row < this.pass3Functions.length; row++) {
+			System.out.println("Post2String: "
+					+ this.pass3Functions[row][0] + LFCR
+					+ this.pass3Functions[row][1]);
+			try {
+				LoadScript ls = new LoadScript(TESTPATH
+						+ this.pass3Functions[row][1], null);
+				ls.generateTokenlist();
+				ls.generateTable();
+				_ElementBuilder eb =
+				this.vp.valueParser(null, ls.getTable(), ls.getTable(), ls.getQuotes(), null, (byte)0);
+		
+				assertEquals(this.pass3Functions[row][0], this.pass3Functions[row][2], eb.toString());
+
+		
+			} catch (LoadScriptException e) {
+				System.out.println(e.getLocalizedMessage());
+				if (e.getLocalizedMessage().contains("Ordner ["))
+					System.out.println("OK");
+				else if (e.getLocalizedMessage().contains("Datei [")
+						&& e.getLocalizedMessage().contains("Gibt es nicht"))
+					System.out.println("OK");
+				else {
+					e.printStackTrace();
+					fail(e.getMessage());
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (ArrayIndexOutOfBoundsException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (TableException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (ScriptException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			}
+
+		}
+	}
 
 
 

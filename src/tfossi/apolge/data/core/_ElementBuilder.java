@@ -69,12 +69,12 @@ public class _ElementBuilder {
 	 */
 	@Override
 	public String toString() {
-		String rc = new String();
-		
-		for(String key :this.firstPassMap.keySet())
-			rc += key+": "+this.firstPassMap.get(key)+LFCR;
-		
-		return rc;
+//		String rc = new String();
+//		
+//		for(String key :this.firstPassMap.keySet())
+//			rc += key+": "+this.firstPassMap.get(key)+LFCR;
+//		return rc;
+		return this.firstPassMap.toString();
 	}
 	
 	// ---- Selbstverwaltung --------------------------------------------------

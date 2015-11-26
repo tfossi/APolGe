@@ -1,6 +1,6 @@
 /**
  * VP_Transfer.java
- * Branch scripting
+ * Branch master
  * APolGe
  * tfossi-team
  * licence GPLv3   
@@ -25,8 +25,9 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import tfossi.apolge.common.constants.ConstValue;
 import tfossi.apolge.common.scripting.t.Table;
+import tfossi.apolge.common.scripting.vp.pm.FuncPType;
+import tfossi.apolge.common.scripting.vp.pm.Operation;
 import tfossi.apolge.data.core.Element;
 
 /**
@@ -44,16 +45,7 @@ import tfossi.apolge.data.core.Element;
  * @since Java 1.6
  */
 public class VP_Transfer {
-	{
-		if (LOGGER)
-			System.out.println(this.getClass().getSimpleName() + " V"
-					+ serialVersionUID);
-	}
-
-	//
-	// /** patternmaps */
-	// private final PatternMaps patternmaps;
-
+	
 	/**
 	 * Übersetzt die Blockbeschreibung in ausgeführten und ausführbare
 	 * Anweisungen.<br>
@@ -63,7 +55,8 @@ public class VP_Transfer {
 	 * <li>Klammern <code>OPEN</code> <code>CLOSE</code> auflösen</li>
 	 * <li></li>
 	 * </ol>
-	 * 
+	 * @param atomname 
+	 * 			Eigenschaftsname
 	 * @param block
 	 *            ????
 	 * 
@@ -72,7 +65,7 @@ public class VP_Transfer {
 	 * @param quotes
 	 *            Liste der Strings
 	 * @param mode
-	 *            {@linkplain ConstValue#PMODE0}
+	 *            0,2,3
 	 * @return Liefert
 	 *         <ul>
 	 *         <li>Ready-Status für die Umsetzung.<br>
@@ -83,7 +76,7 @@ public class VP_Transfer {
 	 *         </ul>
 	 * @modified -
 	 */
-	public int transfer(String atomname, Table block, VP_Tokenlist valuetokens,
+	public int transfer(String atomname, Table block, VP_Tokenlist<Object> valuetokens,
 			List<String> quotes, byte mode) {
 		return parseVariable(atomname, block, valuetokens, 0, valuetokens.size() - 1,
 				quotes, mode);
@@ -92,7 +85,8 @@ public class VP_Transfer {
 
 	/**
 	 * Setze bekannte VAriable ein.
-	 * 
+	 * @param atomname 
+	 * 				????
 	 * @param block
 	 *            ????
 	 * @param valuetokens
@@ -108,42 +102,25 @@ public class VP_Transfer {
 	 * @return ????
 	 * @modified -
 	 */
-	public int parseVariable(String atomname, Table block, VP_Tokenlist valuetokens,
+	public int parseVariable(String atomname, Table block, VP_Tokenlist<Object> valuetokens,
 			final int firstElement, int lastElement, List<String> quotes,
 			final int mode) {
 		
-		// if (LOGGER)
-		// logger.debug("Kommt eine lokale Variable vor, setze sie ein."
-		// + LFCR + valuetokens);
-		// /** Ist Umsetzung ohne weitere Pass komplett? */
-		// @SuppressWarnings("unused")
-		// boolean complete = true;
-		//
-		// assert valuetokens != null :
-		// "Testfall: Wie kann valuetokens=null sein?";
 		if (valuetokens == null)
 			return -1;
 		
 		// Lauf 2PASS (mode=1) ist für 1PASS valuetokens nicht notwendig, da gelöst
 		if(mode==1 && !(valuetokens.isTwoPass()|| valuetokens.isThreePass()))
 			return -1;
-			
-//			assert false:"Lauf 2PASS (mode=1) ist für 1PASS valuetokens nicht notwendig, da gelöst";
+
 		// Lauf 3PASS (mode=2) ist für 1PASS und 2PASS valuetokens nicht notwendig, da gelöst
 		if(mode==2 && ! valuetokens.isThreePass())
 			return -1;
-//			assert false: "Lauf 3PASS (mode=2) ist für 1PASS und 2PASS valuetokens nicht notwendig, da gelöst";
-		//
-		// assert block != null : "Table-Value ist nicht initiiert!";
-		//
 
 		// Gehe jeden Listen-Eintrag durch und checke, ob es eine Variable ist.
 		// wenn ja, Ersetze den Eintrag durch die Variable
 		for (int ndx = firstElement; ndx <= lastElement; ndx++) {
-			//
-			// assert valuetokens.get(ndx) != null : "valuetokens.get(" + ndx
-			// + ") ist nicht initiiert!";
-			//
+			
 			if (LOGGER)
 				logger.trace("Check Variable  : " + valuetokens.get(ndx));
 			// if (LOGGER)
@@ -186,6 +163,7 @@ public class VP_Transfer {
 	 * max(1.,max(2,5.)) * (max(6.,@1.2.3.4*2) + (1.+rint(8.));
 	 * 
 	 * Klammer (1., max(2.,3.+4.)) Klammer (2.,5.) Seperra 2. Seperra 3.+4.
+	 * @param atomname TODO
 	 * 
 	 * 
 	 * @param valuetokens
@@ -199,7 +177,7 @@ public class VP_Transfer {
 	 * @param quotes
 	 *            Liste der Strings
 	 * @param mode
-	 *            {@linkplain ConstValue#PMODE0}
+	 *            0,2,3
 	 * @return Liefert
 	 *         <ul>
 	 *         <li>Ready-Status für die Umsetzung.<br>
@@ -233,9 +211,8 @@ public class VP_Transfer {
 
 			if (ndx > 0
 					&& (isFunction = valuetokens.get(ndx - 1).toString()
-							.contains("f:="))) {
-				//
-//				assert !isFunction;
+							.contains("f:="))) {	
+//				assert false;
 			}
 
 			// OPEN-Klammer entfernen
@@ -318,25 +295,15 @@ public class VP_Transfer {
 			logger.trace("Unterste Rekursionsebene ist ohne Klammer!" + NTAB
 					+ valuetokens.subList(firstElement, last + 1));
 
-		
-//		// Bearbeite klammerfreien Eintrag
-//		if (// complete &&
-//		valuetokens.size() > 1) {
-//			// complete =
-//			parseSeparator(valuetokens, firstElement, last, quotes, mode);
-//		} else if (// complete &&
-//		valuetokens.size() == 1) {
-//			// parseCore(valuetokens, firstElement, firstElement, quotes, mode);
 			parseOperation(valuetokens, firstElement, last, quotes,
 					mode);
-//			quotesEinsetzen(valuetokens, 0, 0, quotes);
-//		}
+
 		if (LOGGER)
 			logger.debug("Ergebnis:" + NTAB + valuetokens);
 		if(this.e!=null){
 			this.e.put(atomname, valuetokens);
 		}
-		// return complete;
+
 		return -1;
 	}
 
@@ -362,7 +329,7 @@ public class VP_Transfer {
 	 * @param quotes
 	 *            Liste der Strings
 	 * @param mode
-	 *            {@linkplain ConstValue#PMODE0}
+	 *            0,2,3
 	 * @return Liefert
 	 *         <ul>
 	 *         <li>Ready-Status für die Umsetzung.<br>
@@ -380,8 +347,6 @@ public class VP_Transfer {
 			logger.debug("Prüfe auf Separator , :" + NTAB
 					+ valuetokens.subList(firstElement, lastElement + 1));
 
-		// /** Ist Umsetzung ohne weitere Pass komplett? */
-		// boolean complete = true;
 
 		// Suche ein SEPARATOR in valuetokens
 		int index = valuetokens.subList(firstElement, lastElement + 1).indexOf(
@@ -411,19 +376,10 @@ public class VP_Transfer {
 				first -= (testA-testB);
 				index -= (testA-testB);	
 				last -= (testA-testB);
-				// int diff = parseCore(valuetokens, first, index, quotes,
-				// mode);
-				// index -= diff;
-				// last -= diff;
-				// if (!complete)
-				// break;
-
+				
 				// Suche weitere Kommas
 				first = index + 1;
-				// if (LOGGER)
-				// logger.trace("Elementenzahl: " + valuetokens + NTAB
-				// + "Neuer Start: " + first + "/" + (last + 1) + NTAB
-				// + diff);
+				
 				index = valuetokens.subList(first, last + 1).indexOf(
 						new Character(KOMMA))
 						+ first;
@@ -443,13 +399,12 @@ public class VP_Transfer {
 		} else {
 			if (LOGGER)
 				logger.trace("NOSEP");
-			// parseCore(valuetokens, firstElement, lastElement, quotes, mode);
 			complete &= parseOperation(valuetokens, firstElement, lastElement, quotes, mode);
 		}
 		return complete;
 	}
 
-	/**
+	/*
 	 * Parst alle Elemente in der Formel von offset bis offset+length. Es sollte
 	 * kein {@link #OPEN}, {@link #CLOSE} oder link #SEPARATOR} zwischen
 	 * <code>firstElement</code> und <code>lastElement</code> (einschließlich)
@@ -477,53 +432,7 @@ public class VP_Transfer {
 	 *         <li>DOC</li>
 	 *         </ul>
 	 */
-	private int parseCore(VP_Tokenlist valuetokens, final int firstElement,
-			int lastElement, List<String> quotes, final int mode) {
 
-		if (LOGGER)
-			logger.debug("Nacheinander durchrechnen:" + NTAB
-					+ valuetokens.subList(firstElement, lastElement + 1));
-
-		// int last = lastElement;
-
-		// // quotes einsetzen #### Ist doch schon
-		// // quotesEinsetzen(valuetokens, firstElement, last, quotes);
-		//
-		// logger.trace("Vor Func: " + valuetokens.subList(firstElement, last +
-		// 1));
-		// int testA = valuetokens.size();
-		// complete =
-		// parseCoreFunction(valuetokens, firstElement, last, mode);
-		// int testB = valuetokens.size();
-		// int diff = testA - testB;
-
-		// last -= diff;
-		// logger.trace("Nach Func: "
-		// + valuetokens.subList(firstElement, last + 1) + NTAB
-		// + firstElement + NTAB + last + NTAB + valuetokens + NTAB + diff);
-		//
-		// // Weiter hat keinen Sinn, da noch Adressen enthalten sind
-		// if (valuetokens.isAddressesMarker())
-		// return -1;
-		//
-		// logger.trace("Vor Op: " + valuetokens.subList(firstElement, last +
-		// 1));
-		// testA = valuetokens.size();
-		// complete =
-		parseCoreOperation(valuetokens, firstElement, lastElement, mode);
-		assert false;
-		// testB = valuetokens.size();
-		// diff = testA - testB;
-		// last -= diff;
-		//
-		// if (LOGGER)
-		// logger.debug("Ergebnis:" + NTAB
-		// + valuetokens.subList(firstElement, last + 1) + NTAB
-		// + "Complete: " + complete + NTAB + "Diff: " + diff);
-		// return diff;
-		// // return complete;
-		return -1;
-	}
 
 	/**
 	 * Funktionen ausführen
@@ -537,7 +446,7 @@ public class VP_Transfer {
 	 *            letztes Element aus <code>valuetokens</code>, das zu
 	 *            untersuchen ist
 	 * @param mode
-	 *            {@linkplain ConstValue#PMODE0}
+	 *           0,2,3
 	 * @return Liefert
 	 *         <ul>
 	 *         <li>Ready-Status für die Umsetzung.<br>
@@ -547,7 +456,7 @@ public class VP_Transfer {
 	 *         </ul>
 	 */
 	@SuppressWarnings("unchecked")
-	private boolean parseCoreFunction(VP_Tokenlist valuetokens,
+	private boolean parseCoreFunction(VP_Tokenlist<Object> valuetokens,
 			final int firstElement, int lastElement, final int mode) {
 
 		if (LOGGER)
@@ -556,7 +465,6 @@ public class VP_Transfer {
 		
 		
 		int last = lastElement;
-//		int lastOperator = -1;
 
 		// Formel endet hier!
 
@@ -669,8 +577,9 @@ public class VP_Transfer {
 								+ NTAB + "Beginn der Zusammenfassung bei ndx-Position: " + ndx
 								+ NTAB + "Componente: " + fptclazz.getComponentType()
 								+ NTAB + fptclazz
-								+ NTAB + valuetokens.subList(ndx, ndx
-										+ aufrufparameter.size() + 1));
+//								+ NTAB + valuetokens.subList(ndx, ndx
+//										+ aufrufparameter.size() + 1)
+										);
 					}
 					// Die Überzähligen Parameter in einem Array
 					// zusammenfassen und in der letzen Position speichern
@@ -769,8 +678,8 @@ public class VP_Transfer {
 //										+ "3PASS: " + fpt.function.threePass()
 										);
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
+					} catch (Exception e1) {
+						e1.printStackTrace();
 						assert false;
 					}
 
@@ -804,6 +713,7 @@ public class VP_Transfer {
 	 *            die untersuchte Methode
 	 * @param aufrufparameter
 	 *            die gefundenen Aufrufparameter
+	 * @param mode TODO
 	 * @return <i>true</i> passen zusammen
 	 * @modified -
 	 */
@@ -909,18 +819,18 @@ public class VP_Transfer {
 	/**
 	 * TODO Comment
 	 * 
-	 * @param valuetokens
-	 * @param aufrufparameter
-	 * @param ndx
-	 * @param lastElement
-	 * @param fpt
-	 * @param mode
-	 * @return
+	 * @param valuetokens TODO
+	 * @param aufrufparameter TODO
+	 * @param firstElement  TODO
+	 * @param lastElement TODO
+	 * @param fpt TODO
+	 * @param mode TODO
+	 * @return TODO
 	 * @modified -
-	 */
-	@SuppressWarnings({ "rawtypes", "static-method" })
+	 */	
+	@SuppressWarnings("static-method")
 	private final int calculate(VP_Tokenlist<Object> valuetokens,
-			VP_Tokenlist aufrufparameter, int firstElement, int lastElement,
+			VP_Tokenlist<Object> aufrufparameter, int firstElement, int lastElement,
 			FuncPType fpt, int mode) {
 
 //		int last = lastElement;
@@ -989,8 +899,8 @@ public class VP_Transfer {
 
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e1) {
+			e1.printStackTrace();
 
 			assert false : "Testfall: Fehlersituation klären.";
 		}
@@ -1006,8 +916,9 @@ public class VP_Transfer {
 	 * @param lastElement
 	 *            letztes Element aus <code>valuetokens</code>, das zu
 	 *            untersuchen ist
+	 * @param quotes TODO
 	 * @param mode
-	 *            {@linkplain ConstValue#PMODE0}
+	 *            0,2,3 für Pass
 	 * @return Liefert
 	 *         <ul>
 	 *         <li>Ready-Status für die Umsetzung.<br>
@@ -1016,138 +927,8 @@ public class VP_Transfer {
 	 *         <li>DOC</li>
 	 *         </ul>
 	 */
-	// @SuppressWarnings({ "static-method", "unchecked" })
-	private final boolean parseCoreOperation(VP_Tokenlist valuetokens,
-			final int firstElement, int lastElement, final int mode) {
-
-		if (LOGGER)
-			logger.debug("Operationen berechnen: " + NTAB
-					+ valuetokens.subList(firstElement, lastElement + 1));
-
-		assert false;
-		// /** Ist Umsetzung ohne weitere Pass komplett? */
-		// boolean complete = true;
-		//
-		// @SuppressWarnings("unused")
-		// int countElements = lastElement - firstElement;
-		int last = lastElement;
-		//
-		// @SuppressWarnings("unused")
-		// int index = -1;
-		//
-
-		int lowPrio = 0;
-
-		for (int prio = 10; prio >= lowPrio; prio--) {
-			// Ermittle die höchste Priorität aller Operationen (Punkt vor
-			// Strichrechnung!)
-
-			// Berechnung
-			for (int ndx = firstElement + 1; ndx <= last; ndx++) {
-
-				if (valuetokens.get(ndx - 1).equals(OPEN))
-					continue;
-
-				if (valuetokens.get(ndx - 1).equals(OPEN))
-					continue;
-				Object actToken = valuetokens.get(ndx);
-
-				// Ist keine Operation
-				if (!(actToken instanceof Operation))
-					continue;
-
-				// Die falsche Priorität
-				if (prio != ((Operation) actToken).getPriority()) {
-					continue;
-				}
-				// Links ist eine unaufgelöste Funktion
-				if (valuetokens.get(ndx - 1) instanceof FuncPType) {
-					// Operator ist niedrigste Priorität, da sonst Strich vor
-					// Punktrechnung droht
-					lowPrio = ((Operation) actToken).getPriority();
-
-					if (LOGGER)
-						logger.debug("Operationprio: " + lowPrio);
-					continue;
-				}
-				if (LOGGER)
-					logger.debug("Operation NOW: " + actToken);
-				Object lks = null;
-				Object re = null;
-
-				// linker Operator a ist Liste
-				if (valuetokens.get(ndx - 1) instanceof List) {
-					// Element 0 holen
-					lks = ((List<Object>) valuetokens.get(ndx - 1)).get(0);
-					assert false : "Testfall: Welche Situation kann das erzeugen?";
-				} else {
-					// ist Einzelwert.
-					lks = valuetokens.get(ndx - 1);
-				}
-
-				// rechter Operator a ist Liste
-				if (valuetokens.get(ndx + 1) instanceof List) {
-					re = ((List<Object>) valuetokens.get(ndx + 1)).get(0);
-					assert false;
-				} else {
-					// ist Einzelwert.
-					re = valuetokens.get(ndx + 1);
-				}
-
-				if (lks.getClass().equals(re.getClass())
-				// || //(lks.getClass().equals(Matrix.class) &&
-				// (re
-				// .getClass().getSuperclass().equals(Number.class) && lks
-				// .getClass().getSuperclass().equals(Number.class))
-				) {
-					if (LOGGER)
-						logger.trace("Operation " + actToken
-								+ " ausführen mit " + lks + ", " + re);
-					valuetokens.add(ndx - 1,
-							((Operation) actToken).calculate(lks, re));
-					if (LOGGER)
-						logger.trace("Operation " + valuetokens.get(ndx - 1));
-					// Lösche Operator und die zwei Werte
-					valuetokens.remove(ndx);
-					valuetokens.remove(ndx);
-					valuetokens.remove(ndx);
-					// ndx-Zeiger um 2 Elemente kürzen: -3 f. Op und Wert +1 f.
-					// Ergebnis
-					last--;
-					last--;
-					// Die gleiche Prio nochmals durchgehen, für weitere mgl.
-					// Berechnungen dieser Priorität
-					prio++;
-				} else {
-					// if (lks.getClass().equals(String.class)) {
-					// assert false : valuetokens.isAddressesMarker() + NTAB
-					// + lks.getClass().getClass() + NTAB
-					// + re.getClass();
-					// } else if (re.getClass().equals(String.class)) {
-					// assert false : valuetokens.isAddressesMarker() + NTAB
-					// + lks + ":" + lks.getClass() + NTAB + re + ":"
-					// + re.getClass();
-					// }
-					// assert false : valuetokens.isAddressesMarker() + NTAB
-					// + lks.getClass() + NTAB + re.getClass() + NTAB
-					// + (lks.getClass().equals(Matrix.class)) + NTAB
-					// + Matrix.class;
-					assert false : "Operation " + actToken + " ausführen mit "
-							+ lks.getClass().getSuperclass() + ", "
-							+ re.getClass();
-				}
-			}
-		}
-		//
-		// if (LOGGER)
-		// logger.debug("Operationen berechnen: " + LFCR
-		// + valuetokens.subList(firstElement, last + 1));
-		// return complete;
-		return true;
-	}
-
-	@SuppressWarnings("unchecked")
-	private final boolean parseOperation(VP_Tokenlist valuetokens,
+	@SuppressWarnings({ "unchecked", "static-method" })
+	private final boolean parseOperation(VP_Tokenlist<Object> valuetokens,
 			final int firstElement, int lastElement, List<String> quotes,
 			final int mode) {
 
@@ -1278,60 +1059,39 @@ public class VP_Transfer {
 		}
 		return complete;
 	}
-
-	/**
-	 * TODO Comment
-	 * 
-	 * @param valuetokens
-	 *            ????
-	 * @param from
-	 *            ????
-	 * @return ????
-	 * @modified -
-	 */
-	// @SuppressWarnings({ "unused", "static-method" })
-	// private final int indexOfOperation(final VP_Tokenlist valuetokens,
-	// final int from) {
-	// int size = valuetokens.size();
-	// for (int index = from; index < size; index++) {
-	// if (valuetokens.get(index) instanceof Operation)
-	// return index;
-	// }
-	// return -1;
-	// }
-
-	/**
-	 * Quotes wieder einsetzen
-	 * 
-	 * @param valuetokens
-	 *            Tokenliste
-	 * @param firstElement
-	 *            ????
-	 * @param lastElement
-	 *            ????
-	 * @param quotes
-	 *            Liste der Quotes
-	 * @modified -
-	 */
-	private static final void quotesEinsetzen(VP_Tokenlist valuetokens,
-			final int firstElement, final int lastElement, List<String> quotes) {
-		for (int ndx = firstElement; ndx <= lastElement; ndx++) {
-			Object actToken = valuetokens.get(ndx);
-
-			if (actToken instanceof String) {
-
-				String aT = (String) actToken;
-				if (aT.startsWith("$") && aT.endsWith("$")) {
-					int varStart = 1;
-					int varEnd = aT.length() - 1;
-					int nr = Integer.valueOf(aT.substring(varStart, varEnd))
-							.intValue();
-					valuetokens.remove(ndx);
-					valuetokens.add(ndx, quotes.get(nr));
-				}
-			}
-		}
-	}
+	
+//	/**
+//	 * Quotes wieder einsetzen
+//	 * 
+//	 * @param valuetokens
+//	 *            Tokenliste
+//	 * @param firstElement
+//	 *            ????
+//	 * @param lastElement
+//	 *            ????
+//	 * @param quotes
+//	 *            Liste der Quotes
+//	 * @modified -
+//	 */
+//	private static final void quotesEinsetzen(VP_Tokenlist valuetokens,
+//			final int firstElement, final int lastElement, List<String> quotes) {
+//		for (int ndx = firstElement; ndx <= lastElement; ndx++) {
+//			Object actToken = valuetokens.get(ndx);
+//
+//			if (actToken instanceof String) {
+//
+//				String aT = (String) actToken;
+//				if (aT.startsWith("$") && aT.endsWith("$")) {
+//					int varStart = 1;
+//					int varEnd = aT.length() - 1;
+//					int nr = Integer.valueOf(aT.substring(varStart, varEnd))
+//							.intValue();
+//					valuetokens.remove(ndx);
+//					valuetokens.add(ndx, quotes.get(nr));
+//				}
+//			}
+//		}
+//	}
 
 	/**
 	 * liefert die Objectklasse eines primitiven Typs
@@ -1366,42 +1126,14 @@ public class VP_Transfer {
 			else if (t == boolean.class)
 				return Boolean.class;
 			assert false;
-		}
-		// // if (t == Boolean.class)
-		// // return Boolean.class;
-		// // else if (t == Number.class)
-		// // return Number.class;
-		// // else if (t == String.class)
-		// // return String.class;
-		// // else if (((Class<? extends Object>) t).isArray())
-		// // return Object[].class;
+		}	
 
 		return (Class<?>) t;
 	}
 
-	/**
-	 * Testet ob Formel ein DEFINITION enthält
-	 * 
-	 * @author tfossi
-	 * @version 01.08.2014
-	 * @modified -
-	 * @since Java 1.6
-	 * 
-	 * @param formula
-	 *            Formel
-	 * @return true, wenn DEFINITION enthalten ist
-	 */
-	// @SuppressWarnings("unused")
-	// private boolean testGFLsung2(List<Object> formula) {
-	// assert false;
-	// for (String key : this.patternmaps.svar.keySet())
-	// if (formula.contains(key))
-	// return true;
-	// return false;
-	// }
-
 	// ---- Selbstverwaltung --------------------------------------------------
 	/** serialVersionUID */
+	@SuppressWarnings("unused")
 	private final static long serialVersionUID = VERSION;
 
 	/** logger */
@@ -1410,17 +1142,19 @@ public class VP_Transfer {
 
 	/**
 	 * TODO Comment
-	 * 
-	 * @param pm
-	 *            ????
 	 * @modified -
 	 */
-	public VP_Transfer() { // final PatternMaps pm) {
+	public VP_Transfer() { 
 		this.e = null;
-		// this.patternmaps = pm;
 	}
 
+	/** e */
 	private final Element e;
+	/**
+	 * TODO Comment
+	 * @param e TODO
+	 * @modified -
+	 */
 	public VP_Transfer(Element e) {
 		this.e = e;
 	}

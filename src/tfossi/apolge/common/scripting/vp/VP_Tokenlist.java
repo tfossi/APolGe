@@ -16,20 +16,10 @@ import tfossi.apolge.common.scripting.t.Table;
  * Es k�nnen sich um einen neuen Block (Table) oder Valueanweisungen List<String>) handeln.
  * 
  * Ist eine Erweiterung der List um Flags.
- * Verwaltet die Flags:
- * Complete
- * Table
- * ConstantsMarker
- * DefinitionsMarker
- * IndividualsMarker
- * AddressesMarker
- * TemporesMarker
- * SpezConstantsMarker
- * MAKEPassMarker
- * GFPassMarker
  *
  * @author tfossi
  * @version 16.08.2014
+ * @param <T> Datentyp
  * @modified -
  * @since Java 1.6
  */
@@ -50,41 +40,72 @@ public interface VP_Tokenlist <T> extends List<T> {
 	@Override
 	public int indexOf(Object o);
 	
-//
+
+	/**
+	 * TODO Comment
+	 * @modified - 
+	 */
 	public void setTwoPass();
+	/**
+	 * TODO Comment
+	 * @modified - 
+	 */
 	public void clrTwoPass();
+	/**
+	 * TODO Comment
+	 * @return TODO
+	 * @modified - 
+	 */
 	public boolean isTwoPass();
+	/**
+	 * TODO Comment
+	 * @modified - 
+	 */
 	public void setThreePass();
+	/**
+	 * TODO Comment
+	 * @modified - 
+	 */
 	public void clrThreePass();
+	/**
+	 * TODO Comment
+	 * @return TODO
+	 * @modified - 
+	 */
 	public boolean isThreePass();
+	/**
+	 * TODO Comment
+	 * @modified - 
+	 */
 	public void setInit();
+	/**
+	 * TODO Comment
+	 * @modified - 
+	 */
 	public void clrInit();
+	/**
+	 * TODO Comment
+	 * @return TODO
+	 * @modified - 
+	 */
 	public boolean isInit();
+	/**
+	 * TODO Comment
+	 * @modified - 
+	 */
 	public void setFlow();
+	/**
+	 * TODO Comment
+	 * @modified - 
+	 */
 	public void clrFlow();
+	/**
+	 * TODO Comment
+	 * @return TODO
+	 * @modified - 
+	 */
 	public boolean isFlow();
-	
-	
-	
-	
-//	/**
-//	 * Setzt die Liste auf 'Complete'. Damit ist sie komplett umgesetzt. 
-//	 * @modified - 
-//	 */
-//	public void setComplete();
-//	
-//	/**
-//	 * Setzt die Liste auf Nicht-'Complete'.  
-//	 * @modified - 
-//	 */
-//	public void clrComplete();
-//	
-//	/**
-//	 * @return Hole den Status von 'Complete'
-//	 * @modified - 
-//	 */
-//	public boolean isComplete();
-//		
+		
 	/**
 	 * TODO Comment
 	 * @return -
@@ -97,170 +118,5 @@ public interface VP_Tokenlist <T> extends List<T> {
 	 * @return Table or null
 	 */
 	public Table getTable();
-//
-//	/**
-//	 * TODO Comment
-//	 * @param key ????
-//	 * @param newPreKey ????
-//	 * @return ????
-//	 * @modified - 
-//	 */
-//	public String setMarker(String key, String newPreKey);
-//	
-//	// CONSTANTS
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void setConstantsMarker();
-//	/**
-//	 * TODO Comment
-//	 * @return -
-//	 * @modified - 
-//	 */
-//	public boolean isConstantsMarker();
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void clrConstantsMarker();
-//	
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void setSVARMarker();
-//	/**
-//	 * TODO Comment
-//	 * @return -
-//	 * @modified - 
-//	 */
-//	public boolean isSVARMarker();
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void clrSVARMarker();
-//
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void setINDIMarker();
-//	/**
-//	 * TODO Comment
-//	 * @return -
-//	 * @modified - 
-//	 */
-//	public boolean isINDIMarker();
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void clrINDIMarker();
-//	
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void setAddressesMarker();
-//	/**
-//	 * TODO Comment
-//	 * @return -
-//	 * @modified - 
-//	 */
-//	public boolean isAddressesMarker();
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void clrAddressesMarker();
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void setAUXVARMarker();
-//	/**
-//	 * TODO Comment
-//	 * @return -
-//	 * @modified - 
-//	 */
-//	public boolean isAUXVMarker();
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void clrAUXVARMarker();
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void setSCONMarker();
-//	/**
-//	 * TODO Comment
-//	 * @return -
-//	 * @modified - 
-//	 */
-//	public boolean isSCONMarker();
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void clrSCONMarker();
-//	
-//	// FIXME Ab hier ist Bedarf zu checken!
-//	
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void setMAKEPassMarker();
-//	/**
-//	 * TODO Comment
-//	 * @return -
-//	 * @modified - 
-//	 */
-//	public boolean isMAKEPassMarker();
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void clrMAKEPassMarker();
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void setGFPassMarker();
-//	/**
-//	 * TODO Comment
-//	 * @return -
-//	 * @modified - 
-//	 */
-//	public boolean isGFPassMarker();
-//	/**
-//	 * TODO Comment
-//	 * @modified - 
-//	 */
-//	public void clrGFPassMarker();
-//	
-//	/**
-//	 * TODO Comment
-//	 * @return -
-//	 * @modified - 
-//	 */
-//	public String makeString();
-//
-//	/**
-//	 * TODO Comment
-//	 * @return -
-//	 * @modified - 
-//	 */
-//	public String getMarker();
-//
-//	/**
-//	 * TODO Comment
-//	 * @return ????
-//	 * @modified 8.12.2014 / BuildGuideline 
-//	 */
-//	public Object getValue();
+
 }

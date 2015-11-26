@@ -1,23 +1,30 @@
 /**
  * VPTests.java
- * Branch scripting
+ * Branch master
  * APolGe
  * tfossi-team
  * licence GPLv3  
  */
 package tfossi.apolge.common.scripting.vp;
 
-import java.util.Arrays;
-import java.util.List;
+import static tfossi.apolge.common.constants.ConstValue.CLOSE;
+import static tfossi.apolge.common.constants.ConstValue.FLOW;
+import static tfossi.apolge.common.constants.ConstValue.INITIAL;
+import static tfossi.apolge.common.constants.ConstValue.KOMMA;
+import static tfossi.apolge.common.constants.ConstValue.LFCR;
+import static tfossi.apolge.common.constants.ConstValue.LOGGER;
+import static tfossi.apolge.common.constants.ConstValue.NTAB;
+import static tfossi.apolge.common.constants.ConstValue.OPEN;
+import static tfossi.apolge.common.constants.ConstValue.extractWissDigittoken;
+import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import static tfossi.apolge.common.constants.ConstValue.*;
-import static tfossi.apolge.common.constants.ConstValueExtension.*;
-
-import tfossi.apolge.common.scripting.vp.ValueParser;
+import tfossi.apolge.common.scripting.vp.pm.Operation;
+import tfossi.apolge.common.scripting.vp.pm.PatternMaps;
 
 /**
  * TODO Comment
@@ -72,9 +79,9 @@ final class VP_Tests {
 	
 	/** intValue */
 	public static final Pattern intValue = Pattern.compile("^[0-9]+$");
-	// short
+	/** shortValue */
 	public static final Pattern shortValue = Pattern.compile("^[0-9]+s$");
-	// byte
+	/** byteValue */
 	public static final Pattern byteValue = Pattern.compile("^[0-9]+b$");
 	// char
 	// hex
@@ -191,7 +198,7 @@ final class VP_Tests {
 	 *            -
 	 * @return <code>true</code> and KOMMA or <code>false</code>
 	 */
-	static final boolean testKommaNChg(VP_Tokenlist tokenliste, int ndx, Object tk,
+	static final boolean testKommaNChg(VP_Tokenlist<Object> tokenliste, int ndx, Object tk,
 			Object tkpre) {
 		if (!(tk instanceof CharSequence))
 			return false;
@@ -219,7 +226,7 @@ final class VP_Tests {
 	 * 			Das Token vor dem aktuellen Token oder <code>null</code>, wenn aktuelle Token das Erste ist.
 	 * @return <code>true</code> if tk is <code>CLOSE</code>
 	 */
-	static final boolean testCloseNChg(VP_Tokenlist valuetokens, int ndx,
+	static final boolean testCloseNChg(VP_Tokenlist<Object> valuetokens, int ndx,
 			Object tk, Object tkpre) {
 		if (!(tk instanceof CharSequence))
 			return false;
@@ -247,7 +254,7 @@ final class VP_Tests {
 	 * 			Das Token vor dem aktuellen Token oder <code>null</code>, wenn aktuelle Token das Erste ist.
 	 * @return <code>true</code> if tk is <code>OPEN</code>
 	 */
-	static final boolean testOpenNChg(VP_Tokenlist valuetokens, int ndx,
+	static final boolean testOpenNChg(VP_Tokenlist<Object> valuetokens, int ndx,
 			Object tk, Object tkpre) {
 		if (!(tk instanceof CharSequence))
 			return false;
@@ -262,7 +269,16 @@ final class VP_Tests {
 		return false;
 	}
 	
-	static final boolean testInitialNChg(VP_Tokenlist valuetokens, int ndx,
+	/**
+	 * TODO Comment
+	 * @param valuetokens TODO
+	 * @param ndx TODO
+	 * @param tk TODO
+	 * @param tkpre TODO
+	 * @return TODO
+	 * @modified - 
+	 */
+	static final boolean testInitialNChg(VP_Tokenlist<Object> valuetokens, int ndx,
 			Object tk, Object tkpre) {
 		if (!(tk instanceof CharSequence))
 			return false;
@@ -277,7 +293,16 @@ final class VP_Tests {
 		return false;
 	}
 
-	static final boolean testFlowNChg(VP_Tokenlist valuetokens, int ndx,
+	/**
+	 * TODO Comment
+	 * @param valuetokens TODO
+	 * @param ndx TODO
+	 * @param tk TODO
+	 * @param tkpre TODO
+	 * @return TODO
+	 * @modified - 
+	 */
+	static final boolean testFlowNChg(VP_Tokenlist<Object> valuetokens, int ndx,
 			Object tk, Object tkpre) {
 		if (!(tk instanceof CharSequence))
 			return false;
@@ -305,7 +330,7 @@ final class VP_Tests {
 	 * @return -
 	 * @modified -
 	 */
-	final static boolean testQuote(VP_Tokenlist tokenliste, int ndx,
+	final static boolean testQuote(VP_Tokenlist<?> tokenliste, int ndx,
 			Object tk, Object tkpre) {
 		if (!(tk instanceof CharSequence))
 			return false;
@@ -317,132 +342,6 @@ final class VP_Tests {
 		}
 		return false;
 	}
-
-//	/**
-//	 * Teste auf Boolean und trage bei positiven Ergebnis Typ BOOLEAN ein.
-//	 * 
-//	 * @param vp
-//	 *            -
-//	 * @param tokenliste
-//	 *            -
-//	 * @param ndx
-//	 *            -
-//	 * @param tk
-//	 *            -
-//	 * @param tkpre
-//	 *            -
-//	 * @return <code>true</code> and BOOLEAN or <code>false</code>
-//	 */
-//	static final boolean testNumberNChg(VP_Tokenlist valuetokens, int ndx,
-//			Object tk, Object tkpre) {
-////	static final boolean testBooleanNChg(ValueParser vp,
-////			VP_Tokenlist valuetokens, int ndx, Object tk, Object tkpre) {
-//		if (!(tk instanceof CharSequence))
-//			return false;
-//		CharSequence ctk = (CharSequence) tk;
-//		if (ctk.length() == 1 && ctk.charAt(0) == '.')
-//			return false;
-//		Matcher m = booleanValue.matcher(ctk);
-//		if (m.matches()) {
-//			// Es handelt sich um ein BOOLEAN!
-//			valuetokens.remove(ndx);			
-//			valuetokens.add(ndx, PatternMaps.finalConstants.get(tk)); //..booleans.get(tk));
-//			if (LOGGER)
-//				logger.trace("Type changed to BOOLEAN: " + tk);
-//			return true;
-//		}
-//		return false;
-//	}
-
-	/** 
-	 * Teste, ob Token ein Marker vom Typ <code>definitions</code> ist.
-	 * @param pm ????
-	 * @param tk
-	 * 			Das aktuelle Token an der Position <code>ndx</code> der Valuezuweisung <code>valuetokens</code>
-	 * @return <code>true</code> if tk is in <code>definitions</code>
-	 */
-//	static final boolean testSVAR(PatternMaps pm, Object tk) {
-//		if (!(tk instanceof CharSequence))
-//			return false;
-//		CharSequence cstk = (CharSequence) tk;
-//		Matcher m = pm.svarPattern.matcher(cstk);
-//		return m.matches() && pm.svar.containsKey(tk); 
-//	}
-
-	/** 
-	 * Teste, ob Token ein Marker vom Typ <code>individuals</code> ist.
-	 * @param pm ????
-	 * @param tk
-	 * 			Das aktuelle Token an der Position <code>ndx</code> der Valuezuweisung <code>valuetokens</code>
-	 * @return <code>true</code> if tk is in <code>individuals</code>
-	 */
-//	static final boolean testIndividuals(PatternMaps pm, Object tk) {
-//		if (!(tk instanceof CharSequence))
-//			return false;
-//		CharSequence cstk = (CharSequence) tk;
-//		Matcher m = pm.indiPattern.matcher(cstk);
-//		return m.matches() && pm.indi.containsKey(tk);
-//
-//	}
-
-	/** 
-	 * Teste, ob Token ein Marker vom Typ <code>tempores</code> ist.
-	 * @param pm ????
-	 * @param tk
-	 * 			Das aktuelle Token an der Position <code>ndx</code> der Valuezuweisung <code>valuetokens</code>
-	 * @return <code>true</code> if tk is in <code>tempores</code>
-	 */
-//	static final boolean testAUXV(PatternMaps pm, Object tk) {
-//		if (!(tk instanceof CharSequence))
-//			return false;
-//		CharSequence cstk = (CharSequence) tk;
-//		Matcher m = pm.auxvPattern.matcher(cstk);
-//		return m.matches() && pm.auxv.containsKey(tk);
-//	}
-
-	/**
-	 * TODO Comment
-	 * 
-	 * @param vp
-	 *            -
-	 * @param tokenliste
-	 *            -
-	 * @param ndx
-	 *            -
-	 * @param tk
-	 *            -
-	 * @param tkpre
-	 *            -
-	 * @return -
-	 * @modified -
-	 */
-//	static final boolean SCONNChg(ValueParser vp,
-//			VP_Tokenlist tokenliste, int ndx, Object tk, Object tkpre) {
-//		assert false;
-//
-//		// Constanten einsetzen
-//		Matcher m = vp.patternmaps.sconPattern.matcher((CharSequence) tk);
-//		if (m.matches() && vp.patternmaps.scon.containsKey(tk)) {
-//			VP_Tokenlist vpt = vp.patternmaps.scon.get(tk);
-//			if (LOGGER)
-//				logger.trace("Es handelt sich um eine SPEZCONSTANTE " + tk
-//						+ "= " + vpt + "!");
-//
-//
-//			tokenliste.remove(ndx);
-//
-//			assert vpt != null;
-//			List<Object> c = vpt;
-//
-//			tokenliste.addAll(ndx, c);
-//
-//			if (LOGGER)
-//				logger.trace("Trage aus " + tk + " " + c + " ein!");
-//
-//			return true;
-//		}
-//		return false;
-//	}
 
 	/**
 	 * TODO Comment
@@ -461,7 +360,7 @@ final class VP_Tests {
 	 * @modified -
 	 */
 	static final boolean testConstantsNChg(ValueParser vp,
-			VP_Tokenlist valuetokens, int ndx, Object tk, Object tkpre) {
+			VP_Tokenlist<Object> valuetokens, int ndx, Object tk, Object tkpre) {
 
 		if (!(tk instanceof CharSequence))
 			return false;
@@ -478,136 +377,6 @@ final class VP_Tests {
 		return false;
 	}
 
-	/** 
-	 * Teste, ob Token ein Marker vom Typ <code>constants</code> ist.
-	 * @param pm ????
-	 * @param tk
-	 * 			Das aktuelle Token an der Position <code>ndx</code> der Valuezuweisung <code>valuetokens</code>
-	 * @return <code>true</code> if tk is in <code>constants</code>
-	 */
-//	static final boolean testConstants(PatternMaps pm, Object tk) {
-//		assert false;
-//		return false;
-//	}
-
-	/**
-	 * TODO Comment
-	 * 
-	 * @param vp
-	 *            -
-	 * @param tokenliste
-	 *            -
-	 * @param ndx
-	 *            -
-	 * @param tk
-	 *            -
-	 * @param tkpre
-	 *            -
-	 * @return -
-	 * @modified -
-	 */
-//	static final boolean SCON(ValueParser vp,
-//			VP_Tokenlist tokenliste, int ndx, Object tk, Object tkpre) {
-//		assert false;
-//
-//
-//		// Constanten einsetzen
-//		Matcher m = vp.patternmaps.sconPattern.matcher((CharSequence) tk);
-//		if (m.matches() && vp.patternmaps.scon.containsKey(tk)) {
-//			VP_Tokenlist vpt = vp.patternmaps.scon.get(tk);
-//
-//			tokenliste.remove(ndx);
-//
-//			assert vpt != null;
-//			List<Object> c = vpt;
-//
-//			tokenliste.addAll(ndx, c);
-//
-//			if (LOGGER)
-//				logger.trace("Trage für SPEZCONSTANTE [" + tk + "] den token " + c + " ein!");
-//
-//			return true;
-//		}
-//		return false;
-//	}
-	/** 
-	 * Teste, ob Token ein Marker vom Typ <code>scon</code> ist.
-	 * @param pm ????
-	 * @param tk
-	 * 			Das aktuelle Token an der Position <code>ndx</code> der Valuezuweisung <code>valuetokens</code>
-	 * @return <code>true</code> if tk is in <code>scon</code>
-	 */
-//	static final boolean SCON(PatternMaps pm, Object tk) {
-//		return pm.scon.containsKey(tk);
-//	}
-
-	/** 
-	 * Teste, ob Token ein Marker vom Typ <code>addresses</code> ist.
-	 * @param pm  ????
-	 * @param tk
-	 * 			Das aktuelle Token an der Position <code>ndx</code> der Valuezuweisung <code>valuetokens</code>
-	 * @return <code>true</code> if tk is in <code>addresses</code>
-	 */
-//	static final boolean testAdresse(PatternMaps pm, Object tk) {
-//		if (!(tk instanceof CharSequence))
-//			return false;
-//		CharSequence cstk = (CharSequence) tk;
-//		Matcher m = pm.addressesValue.matcher(cstk);
-//		return m.matches() && pm.addresses.containsKey(tk);
-//	}
-
-	/** 
-	 * Teste, ob Token ein Marker vom Typ <code>preaddresses</code> ist.
-	 * @param pm  ????
-	 * @param tk
-	 * 			Das aktuelle Token an der Position <code>ndx</code> der Valuezuweisung <code>valuetokens</code>
-	 * @return <code>true</code> if tk is in <code>preaddresses</code>
-	 */
-//	static final boolean testPreAdresse(PatternMaps pm, Object tk) {
-//		return pm.addresses.containsKey(tk);
-//	}
-	
-	/**
-	 * TODO Comment
-	 * 
-	 * @param vp
-	 *            -
-	 * @param tokenliste
-	 *            -
-	 * @param ndx
-	 *            -
-	 * @param tk
-	 *            -
-	 * @param tkpre
-	 *            -
-	 * @return -
-	 * @modified -
-	 */
-//	static final boolean testMatrix1(ValueParser vp,
-//			List<Object> tokenliste, int ndx, Object tk, Object tkpre) {
-//		
-//		if (!(tk instanceof CharSequence))
-//			return false;
-//		// 1. Test: PASS2 Funktion
-//		Matcher m = vp.patternmaps.functionValue.matcher((CharSequence) tk);
-//		if (m.matches()) {
-//			tokenliste.remove(ndx);
-//			if (vp.patternmaps.functions.containsKey("\\" + tk)) {
-//				if (LOGGER)
-//					logger.trace("Es handelt sich um eine R-FUNCTION [" + tk
-//							+ "]!");
-//				tokenliste.add(ndx, vp.patternmaps.functions.get("\\" + tk));
-//			} else {
-//
-//				if (LOGGER)
-//					logger.trace("Ändere Token in L-FUNCTION [" + tk + "]");
-//				tokenliste.add(ndx, vp.patternmaps.functions.get(tk));
-//			}
-//			return true;
-//		}
-//		return false;
-//	}
-	
 	/**
 	 * Teste, ob token eine Methode sein könnte
 	 * 
@@ -625,11 +394,8 @@ final class VP_Tests {
 	 * @modified -
 	 */
 	static final boolean testFunktional(ValueParser vp,
-			VP_Tokenlist tokenliste, int ndx, Object tk, Object tkpre) {
+			VP_Tokenlist<Object> tokenliste, int ndx, Object tk, Object tkpre) {
 
-//		return testFunktionalPass1(vp, tokenliste, ndx, tk, tkpre);
-//	static final boolean testFunktionalPass1(ValueParser vp,
-//			List<Object> tokenliste, int ndx, Object tk, Object tkpre) {
 		if (!(tk instanceof CharSequence))
 			return false;
 		
@@ -647,8 +413,7 @@ final class VP_Tests {
 			if (LOGGER)
 				logger.trace("Ändere Token in L-FUNCTION [" + tk + "]");
 			tokenliste.add(ndx, PatternMaps.finalFunctions.get(tk));
-			return true;
-//			return PatternMaps.finalFunctions.get(tk).get(0).function.twoPass();			
+			return true;			
 		}
 		return false;
 	}
@@ -672,7 +437,7 @@ final class VP_Tests {
 	 * @modified -
 	 */
 	static final boolean testOperableNChg(ValueParser vp,
-			VP_Tokenlist tokenliste, int ndx, Object tk, Object tkpre,
+			VP_Tokenlist<Object> tokenliste, int ndx, Object tk, Object tkpre,
 			final byte mode) {
 
 		if(LOGGER)logger.trace("Check "+tk
@@ -741,101 +506,15 @@ final class VP_Tests {
 			
 			
 			return true;
-//		} else if (tkpre instanceof PreAddress) {
-//			// Ist das vorherige Zeichen eine Klammer zu, dann ist es
-//			// Operabel
-//			assert false;
-
 		} else if (!(tkpre instanceof CharSequence)) {
 			return false;
-//		} else if (vp.patternmaps.constantsPattern.matcher((CharSequence) tkpre)
-//				.matches()) {
-//	//
-//		} else if (vp.patternmaps.svarPattern.matcher((CharSequence) tkpre)
-//				.matches()) {
-//			// Ist das vorherige Zeichen eine Klammer zu, dann ist es
-//			// Operabel
-//		} else if (vp.patternmaps.indiPattern.matcher((CharSequence) tkpre)
-//				.matches()) {
-//			// Ist das vorherige Zeichen eine Klammer zu, dann ist es
-//			// Operabel
-//		} else if (booleanValue.matcher((CharSequence) tkpre).matches()) {
-//			// Ist das vorherige Zeichen eine Klammer zu, dann ist es
-//			// Operabel
-//		} else if (seperatorValue.matcher((CharSequence) tkpre).matches()) {
-//			// Ist das vorherige Zeichen ein SEPARATOR, dann ist es
-//			// Operabel
-//		} else if (vp.patternmaps.auxvPattern.matcher((CharSequence) tkpre).matches()) {
-//			// Ist das vorherige Zeichen ein SEPARATOR, dann ist es
-//			// Operabel
-//		} else if (vp.patternmaps.sconPattern.matcher((CharSequence) tkpre).matches()) {
-//			// Ist das vorherige Zeichen ein SEPARATOR, dann ist es
-//			// Operabel
-		} else {
-			// Ist irgendetwas anderes, was nicht vorgesehen ist.
-			// Vergessen?
-//			if (LOGGER)
-//				logger.error(LFCR + "Number?: " + (tkpre instanceof Number)
-//						+ LFCR + "TK: " + tk + LFCR + " other TKPRE: " + tkpre
-//						+ LFCR + tkpre.getClass() + LFCR + vp.patternmaps.indi+LFCR+vp.patternmaps.constantsPattern+LFCR+
-//						vp.patternmaps.constantsPattern.matcher((CharSequence) tkpre)
-//						.matches()		);
-//			if (LOGGER)
-//				logger.error("INDI:"+LOGTAB+vp.patternmaps.indiPattern.pattern());
-//			if (LOGGER)
-//				logger.error("SVAR:"+LOGTAB+vp.patternmaps.svarPattern.pattern());
-//			if (LOGGER)
-//				logger.error("SCON:"+LOGTAB+vp.patternmaps.sconPattern.pattern());
-//			if (LOGGER)
-//				logger.error("AUXV:"+LOGTAB+vp.patternmaps.auxvPattern.pattern());
+		} else {			
 			assert false : tkpre + LFCR + tk+LFCR+tkpre.getClass();
 		}
-		
-//
 
-//		String tks = (String)tk;
-//		if(tks.length()==1)tks="\\" +tks;
-//		else tks = "\\" +tks.charAt(0)+"\\" +tks.charAt(1);
-//		if (vp.patternmaps.operations.containsKey(tks)) {
-//			if (LOGGER)
-//				logger.trace("Es handelt sich um die OPERATION: "
-//						+ vp.patternmaps.operations.get(tks));
-//			tokenliste.remove(ndx);
-//			tokenliste.add(ndx, vp.patternmaps.operations.get(tks));
-//			return true;
-//		}
-//
 		return false;
 	}
 
-//	static final boolean testMatrix(ValueParser vp,
-//			VP_Tokenlist tokenliste, int ndx, Object tk, Object tkpre) {
-//
-//		return testMatrix1(vp, tokenliste, ndx, tk, tkpre);
-//
-//	}
-//	/**
-//	 * TODO Comment
-//	 * 
-//	 * @param vp
-//	 *            -
-//	 * @param tokenliste
-//	 *            -
-//	 * @param ndx
-//	 *            -
-//	 * @param tk
-//	 *            -
-//	 * @param tkpre
-//	 *            -
-//	 * @return -
-//	 * @modified -
-//	 */
-//	static final boolean testFunktional(ValueParser vp,
-//			VP_Tokenlist tokenliste, int ndx, Object tk, Object tkpre) {
-//
-//		return testFunktionalPass1(vp, tokenliste, ndx, tk, tkpre);
-//
-//	}
 
 	/**
 	 * Teste auf <code>[Zahl]</code> und tausche das aktuelle Token bei positivem Testergebnis gegen typenrichtige <code>Number</code> ein.<br>

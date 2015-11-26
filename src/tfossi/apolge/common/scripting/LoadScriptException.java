@@ -17,7 +17,7 @@ package tfossi.apolge.common.scripting;
  */
 public class LoadScriptException extends Exception {
 	/**
-	 * TODO Comment
+	 * Exception 
 	 * @param string -
 	 * @modified -
 	 */

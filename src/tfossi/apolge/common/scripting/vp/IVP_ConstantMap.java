@@ -9,6 +9,8 @@ package tfossi.apolge.common.scripting.vp;
 
 import java.util.Map;
 
+import tfossi.apolge.common.scripting.vp.pm.PatternMaps;
+
 /**
  * Speichert alle Konstanten aus ConstValue und Sonderfällen !...
  * 

@@ -7,7 +7,7 @@
  */
 package tfossi.apolge.common.constants;
 
-import tfossi.apolge.common.scripting.vp.PatternMaps;
+import tfossi.apolge.common.scripting.vp.pm.PatternMaps;
 
 /**
  * Konstanten, die aus dem Script 'config' eingelesen werden. 
