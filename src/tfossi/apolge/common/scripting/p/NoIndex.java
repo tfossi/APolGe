@@ -20,8 +20,6 @@ import org.apache.log4j.Logger;
  * Suche Index [...] und löse den Index auf. <br>
  * <i>a[i] = v </i> nach <i>a = { i = v }</i>
  * 
- * TODO Index in Zuweisung a = b[Flow] 
- * 
  * @author tfossi
  * @version 01.08.2014
  * @modified -

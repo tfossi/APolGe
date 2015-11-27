@@ -1,0 +1,46 @@
+/** 
+ * config
+ * Branch base
+ * APolGe
+ * tfossi-team
+ * licence GPLv3 
+ */
+VERSION = 000003L
+
+// 68,27% aller Messwerte haben eine Abweichung von höchstens σ vom Mittelwert 
+SIGMA1= 0.6827
+W68 = 1.
+// 95,45 % aller Messwerte haben eine Abweichung von höchstens 2σ vom Mittelwert 
+SIGMA2 = 0.9545
+W95 = 2.
+// 99,73 % aller Messwerte haben eine Abweichung von höchstens 3σ vom Mittelwert 
+SIGMA3 = 0.9973
+W99 = 3.
+
+
+// Vor dem Zeitpunkt die letzte Eventgruppe -500 
+START= 0L
+// Vor dem Zeitpunkt die letzte Eventgruppe -500 
+PRE5= 10L
+// Vor dem Zeitpunkt die vorletzte Eventgruppe -400
+PRE4=20L
+// Vor dem Zeitpunkt die zweite Eventgruppe -300
+PRE3= 30L
+// Vor dem Zeitpunkt die erste Eventgruppe -200
+PRE2= 40L
+// Vor dem Zeitpunkt die erste Eventgruppe -100
+PRE1= 50L
+// Standard 0 
+NORMAL= 60L
+// Nach dem Zeitpunkt der erste Nachtrag 100
+POST1= 70L
+// Nach dem Zeitpunkt der zweite Nachtrag 200
+POST2= 80L
+// Nach dem Zeitpunkt der mittlere Nachtrag 300
+POST3= 90L
+// Nach dem Zeitpunkt der vorletzte Nachtrag 400 
+POST4= 100L
+// Nach dem Zeitpunkt der letzte Nachtraggruppe 500 
+POST5= 110L
+// Nicht definiert und Test 
+UNDEF= 1L

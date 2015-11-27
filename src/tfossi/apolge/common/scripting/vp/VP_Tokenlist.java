@@ -1,6 +1,6 @@
 /**
  * VP_Tokenlist.java
- * Branch scripting
+ * Branch master
  * APolGe
  * tfossi-team
  * licence GPLv3  
@@ -13,7 +13,7 @@ import tfossi.apolge.common.scripting.t.Table;
 
 /**
  * Schnittstelle zur Liste der Tokens, die in ValueParser ausgewertet werden.<br>
- * Es k�nnen sich um einen neuen Block (Table) oder Valueanweisungen List<String>) handeln.
+ * Es können sich um einen neuen Block (Table) oder Valueanweisungen List<String>) handeln.
  * 
  * Ist eine Erweiterung der List um Flags.
  *
@@ -31,9 +31,9 @@ public interface VP_Tokenlist <T> extends List<T> {
 	public VP_Tokenlist <T> subList(int fromIndex, int toIndex);
 
 	/**
-	 * TODO Comment
-	 * @param fromIndex ????
-	 * @return ????
+	 * Typensichere Sublist
+	 * @param fromIndex von
+	 * @return Teiliste
 	 * @modified - 
 	 */
 	public VP_Tokenlist <T> subList(int fromIndex);
@@ -42,73 +42,51 @@ public interface VP_Tokenlist <T> extends List<T> {
 	
 
 	/**
-	 * TODO Comment
+	 * Setze 2-Passmarker
 	 * @modified - 
 	 */
 	public void setTwoPass();
 	/**
-	 * TODO Comment
+	 * Lösche 2-Passmarker
 	 * @modified - 
 	 */
 	public void clrTwoPass();
 	/**
-	 * TODO Comment
-	 * @return TODO
+	 * @return <i>true</i> wenn es 2-Pass ist
 	 * @modified - 
 	 */
 	public boolean isTwoPass();
 	/**
-	 * TODO Comment
+	 * Setze 3-Passmarker
 	 * @modified - 
 	 */
 	public void setThreePass();
 	/**
-	 * TODO Comment
+	 * Lösche 3-Passmarker
 	 * @modified - 
 	 */
 	public void clrThreePass();
 	/**
-	 * TODO Comment
-	 * @return TODO
+	 * @return <i>true</i> wenn es 2-Pass ist
 	 * @modified - 
 	 */
 	public boolean isThreePass();
-	/**
-	 * TODO Comment
-	 * @modified - 
-	 */
-	public void setInit();
-	/**
-	 * TODO Comment
-	 * @modified - 
-	 */
-	public void clrInit();
-	/**
-	 * TODO Comment
-	 * @return TODO
-	 * @modified - 
-	 */
-	public boolean isInit();
-	/**
-	 * TODO Comment
-	 * @modified - 
-	 */
-	public void setFlow();
-	/**
-	 * TODO Comment
-	 * @modified - 
-	 */
-	public void clrFlow();
-	/**
-	 * TODO Comment
-	 * @return TODO
-	 * @modified - 
-	 */
-	public boolean isFlow();
+
+// FIXME  Wo und wie auf Init und Flow reagieren?
+//	public void setInit();
+
+//	public void clrInit();
+
+//	public boolean isInit();
+
+//	public void setFlow();
+
+//	public void clrFlow();
+
+//	public boolean isFlow();
 		
 	/**
-	 * TODO Comment
-	 * @return -
+	 * @return <i>true</i> Eintrag ist Table
 	 * @modified - 
 	 */
 	public boolean isTable();

@@ -18,7 +18,6 @@ import org.apache.log4j.Logger;
 
 import tfossi.apolge.common.scripting.ScriptException;
 import tfossi.apolge.common.scripting.t.Table;
-import tfossi.apolge.common.scripting.vp.pm.PatternMaps;
 
 /**
  * Übersetzt alle Einträge in der Tokenliste von Text(String) auf echtes
@@ -46,8 +45,6 @@ public class VP_Parse {
 	 * <li>Klammern () werden ermittelt</li>
 	 * </ul>
 	 * 
-	 * @param prePM
-	 *            ???
 	 * @param vp
 	 *            ???
 	 * @param root
@@ -70,7 +67,7 @@ public class VP_Parse {
 	 * 
 	 * @modified -
 	 */
-	final static VP_Tokenlist<Object> parse(PatternMaps prePM, final ValueParser vp,
+	final static VP_Tokenlist<Object> parse(final ValueParser vp,
 			final Table root, final Table block, VP_Tokenlist<Object> valuetokens,
 			List<String> quotes, String prename, final byte mode)
 			throws ScriptException {
@@ -113,21 +110,6 @@ public class VP_Parse {
 			if (VP_Tests.testCloseNChg(valuetokens, ndx, tk, tkpre)) {
 				continue;
 			}
-
-			// Test4: INITIAL und einsetzen
-			if (VP_Tests.testInitialNChg(valuetokens, ndx, tk, tkpre)) {
-				continue;
-			}
-
-			// Test5: FLOW und einsetzen
-			if (VP_Tests.testFlowNChg(valuetokens, ndx, tk, tkpre)) {
-				continue;
-			}
-			
-			// Test6: OperatorFLOW und einsetzen
-			if (VP_Tests.testFlowNChg(valuetokens, ndx, tk, tkpre)) {
-				continue;
-			}
 					
 			// Testen und bei positivem Befunde in Number wandeln
 			if (VP_Tests.testNumberNChg(valuetokens, ndx, tk, tkpre)) {
@@ -160,7 +142,7 @@ public class VP_Parse {
 			 continue;
 			 }
 
-			logger.warn("KEINE ÜBERSETZUNG VON: " + tk);			
+			logger.warn("KEINE ÜBERSETZUNG VON: [" + tk+"]. Variable?");			
 		}
 
 		logger.trace("RETURN: " + valuetokens);

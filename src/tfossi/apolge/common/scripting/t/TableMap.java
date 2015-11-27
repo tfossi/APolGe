@@ -34,13 +34,11 @@ implements Table {
 	 */
 	@Override
 	public Table supertable() {
-		// TODO Auto-generated method stub
 		return this.superblock;
 	}
 	
 	@Override
 	public Table root() {
-		// TODO Auto-generated method stub
 		return this.root;
 	}
 		

@@ -114,7 +114,8 @@ public class NoComment {
 						return resultBuffer.append(";");
 					}
 					// Schalte Logging des Einlesens vom Config-File aus
-					if (line.contains("VERSION")) {
+					if (line.contains("VERSION")&&logger!=null) {
+						
 						logger.warn("Schalte Logger für Const... auf WARN!");
 						logger.setLevel(Level.WARN);
 					}

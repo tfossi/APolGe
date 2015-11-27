@@ -1,0 +1,12 @@
+/** 
+ * config
+ * Branch master
+ * APolGe
+ * tfossi-team
+ * licence GPLv3 
+ */
+ VERSION = 025L
+
+// Konsolen-Konstanten
+BREITE= 25
+MAXBREITE= 4 * BREITE

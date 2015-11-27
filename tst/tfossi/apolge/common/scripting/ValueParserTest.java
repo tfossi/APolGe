@@ -31,10 +31,6 @@ import tfossi.apolge.data.core._ElementBuilder;
  * Voraussetzung für alle weiteren Vorgänge ist das Funktionieren des
  * Scriptings. <br>
  * 
- * TODO Testen der Datumstypen.<br>
- * TODO Testen der Stringberechnungen <br>
- * TODO Testen der Datumfunktionen<br>
- * 
  * @author tfossi
  * @version 1.07.2014
  * @modified Coderevision, tfossi, 31.07.2014
@@ -76,7 +72,7 @@ final ValueParser vp = new ValueParser();
 //			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
 //			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
 			{ "Test Pass2", "C Pass2" + FS + "01 Math",
-				"{a=[f:=rint( 100.0 ) mit Parameter!]}" },
+				"{a=[f:=rint( 100.0 ) mit Pass2-Parameter!]}" },
 //			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
 //			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
 //			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
@@ -87,7 +83,18 @@ final ValueParser vp = new ValueParser();
 //			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
 //			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
 			{ "Test Pass2", "D Pass3" + FS + "01 Adress",
-				"{a=[f:=ADR( [A, B, INIT] ) mit Parameter!]}" },
+				"{a=[f:=ADR( [A, B, INIT] ) mit Pass3-Parameter!]}" },
+//			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
+//			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
+//			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
+			};
+	
+	/** Config Funktionen */
+	String[][] configFunctions = new String[][] {
+//			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
+//			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
+			{ "Test config", "configs" + FS + "config",
+				"{VERSION=[25], BREITE=[25], MAXBREITE=[100]}" },
 //			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
 //			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
 //			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
@@ -98,7 +105,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testASimple() {
 
 		for (int row = 0; row < this.simpleTestdaten.length; row++) {
@@ -111,7 +118,7 @@ final ValueParser vp = new ValueParser();
 				ls.generateTokenlist();
 				ls.generateTable();
 				_ElementBuilder eb =
-				this.vp.valueParser(null, ls.getTable(), ls.getTable(), ls.getQuotes(), null, (byte)0);
+				this.vp.valueParser(ls.getTable(), ls.getTable(), ls.getQuotes(), (byte)0);
 		
 				assertEquals(this.simpleTestdaten[row][0], this.simpleTestdaten[row][2], eb.toString());
 
@@ -152,7 +159,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testBFunction() {
 		for (int row = 0; row < this.simpleFunctions.length; row++) {
 			System.out.println("Post2String: "
@@ -164,7 +171,7 @@ final ValueParser vp = new ValueParser();
 				ls.generateTokenlist();
 				ls.generateTable();
 				_ElementBuilder eb =
-				this.vp.valueParser(null, ls.getTable(), ls.getTable(), ls.getQuotes(), null, (byte)0);
+				this.vp.valueParser(ls.getTable(), ls.getTable(), ls.getQuotes(), (byte)0);
 		
 				assertEquals(this.simpleFunctions[row][0], this.simpleFunctions[row][2], eb.toString());
 
@@ -205,7 +212,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testCPass2() {
 		for (int row = 0; row < this.pass2Functions.length; row++) {
 			System.out.println("Post2String: "
@@ -217,11 +224,11 @@ final ValueParser vp = new ValueParser();
 				ls.generateTokenlist();
 				ls.generateTable();
 				_ElementBuilder eb =
-				this.vp.valueParser(null, ls.getTable(), ls.getTable(), ls.getQuotes(), null, (byte)0);
+				this.vp.valueParser(ls.getTable(), ls.getTable(), ls.getQuotes(), (byte)0);
 		
 				assertEquals(this.pass2Functions[row][0], this.pass2Functions[row][2], eb.toString());
 
-		
+//				System.err.print(VERSION);
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
 				if (e.getLocalizedMessage().contains("Ordner ["))
@@ -258,7 +265,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testDPass3() {
 		for (int row = 0; row < this.pass3Functions.length; row++) {
 			System.out.println("Post2String: "
@@ -270,7 +277,7 @@ final ValueParser vp = new ValueParser();
 				ls.generateTokenlist();
 				ls.generateTable();
 				_ElementBuilder eb =
-				this.vp.valueParser(null, ls.getTable(), ls.getTable(), ls.getQuotes(), null, (byte)0);
+				this.vp.valueParser(ls.getTable(), ls.getTable(), ls.getQuotes(), (byte)0);
 		
 				assertEquals(this.pass3Functions[row][0], this.pass3Functions[row][2], eb.toString());
 
@@ -306,10 +313,60 @@ final ValueParser vp = new ValueParser();
 		}
 	}
 
+	
 
 
+	/**
+	 * Testen Pass3 
+	 * 
+	 * @modified -
+	 */
+	@Test
+	public final void testConfig() {
+		for (int row = 0; row < this.configFunctions.length; row++) {
+			System.out.println("Post2String: "
+					+ this.configFunctions[row][0] + LFCR
+					+ this.configFunctions[row][1]);
+			try {
+				LoadScript ls = new LoadScript(this.configFunctions[row][1], null);
+				ls.generateTokenlist();
+				ls.generateTable();
+				_ElementBuilder eb =
+				this.vp.valueParser(ls.getTable(), ls.getTable(), ls.getQuotes(), (byte)0);
+		
+				assertEquals(this.configFunctions[row][0], this.configFunctions[row][2], eb.toString());
 
+		
+			} catch (LoadScriptException e) {
+				System.out.println(e.getLocalizedMessage());
+				if (e.getLocalizedMessage().contains("Ordner ["))
+					System.out.println("OK");
+				else if (e.getLocalizedMessage().contains("Datei [")
+						&& e.getLocalizedMessage().contains("Gibt es nicht"))
+					System.out.println("OK");
+				else {
+					e.printStackTrace();
+					fail(e.getMessage());
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (ArrayIndexOutOfBoundsException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (TableException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (ScriptException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			}
 
+		}
+	}
 
 
 	// ---- Selbstverwaltung --------------------------------------------------

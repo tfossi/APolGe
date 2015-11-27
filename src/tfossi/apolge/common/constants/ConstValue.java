@@ -31,7 +31,7 @@ public class ConstValue {
 	 * If <code>LOGGER</code> is equals false, the JIT eliminate the Codeline<br>
 	 * <code>if(LOGGER)...<br>, because its ever wrong
 	 */
-	public static final boolean LOGGER = true;
+	public static final boolean LOGGER = false;
 
 	// ---- Textsteuerung Konsole --------------------------------------------
 	/**
@@ -74,7 +74,7 @@ public class ConstValue {
 
 	/** Path to the Configurationfile */
 	public final static String CONFIGFILE = System.getProperty("user.dir") + FS
-			+ "configs" + FS + "config";
+			+ "configs" + FS;
 
 	/** Path to the Instalation: Programm, Scripts, Makros, Documentation */
 	public final static String INSTALLATION_PATH = System
@@ -122,11 +122,6 @@ public class ConstValue {
 	public static final Character OPEN = new Character('(');
 	/** CLOSE */
 	public static final Character CLOSE = new Character(')');
-
-	/** INITIAL */
-	public static final char INITIAL = 8;
-	/** FLOW */
-	public static final char FLOW = 10;
 
 	/** Methoden, die zur Elementerstellung ausgeführt werden */
 	public static final String[] twoPass = new String[] { "random", "rint",

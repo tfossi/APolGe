@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +38,7 @@ import tfossi.apolge.common.scripting.t.MakeTable;
 import tfossi.apolge.common.scripting.t.Table;
 import tfossi.apolge.common.scripting.t.TableException;
 import tfossi.apolge.common.scripting.t.TableMap;
+import tfossi.apolge.common.scripting.vp.ValueParser;
 
 /**
  * Aufgabe ist
@@ -51,7 +51,7 @@ import tfossi.apolge.common.scripting.t.TableMap;
  * Die Daten werden in Tables abgelegt. Das Roottable (Rootkey = '_') ist das
  * oberste Table<br>
  * Tables sind typsichere {@link java.util.Map} und {@link java.util.HashMap}
- *
+ * 
  * @see Table
  * @see TableMap
  * 
@@ -60,16 +60,17 @@ import tfossi.apolge.common.scripting.t.TableMap;
  * @since java version "1.6.0_0"
  */
 public class LoadScript {
-	
+
 	/** Datenstrom Filename */
-	private InputStream fis;
+	// private InputStream fis;
+	private final BufferedReader din;
 
 	/** POST-decoded Script */
 	private StringBuffer postscript = new StringBuffer();
-	
+
 	/** Token-decoded postscript */
 	private List<String> tokenline = new LinkedList<String>();
-	
+
 	/** Roottabelle der Daten */
 	private final Table roottable = new TableMap(null, null, null);
 
@@ -88,11 +89,10 @@ public class LoadScript {
 	 *         Untersuchungsstring ersetz werden
 	 * @modified -
 	 */
-	final List<String> getQuotes() {
+	public final List<String> getQuotes() {
 		return this.quotes;
 	}
 
-	
 	/**
 	 * Liefert das Table-Objekt des Eintrags <code>name</code> im Table
 	 * <code>table</code>.
@@ -113,7 +113,7 @@ public class LoadScript {
 	private final static Object getObject(final Table table, final String name)
 			throws NoSuchFieldException, ArrayIndexOutOfBoundsException,
 			NullPointerException {
-		return getObject(table, name, 0);		
+		return getObject(table, name, 0);
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class LoadScript {
 			ArrayIndexOutOfBoundsException {
 		if (table == null)
 			throw new NoSuchFieldException("Table-Value ist nicht initiiert!");
-		
+
 		else if (table.containsKey(name)) {
 			if (table.get(name) instanceof List) {
 				@SuppressWarnings("unchecked")
@@ -145,7 +145,7 @@ public class LoadScript {
 				if (liste == null)
 					throw new NoSuchFieldException("Table-Value [" + name
 							+ "] ist nicht initiiert!");
-				
+
 				if (liste.isEmpty())
 					throw new NoSuchFieldException("Es gibt für [" + name
 							+ "] keine Valueinträge in der Tabelle!");
@@ -163,7 +163,6 @@ public class LoadScript {
 				+ table.toString() + " nicht gefunden!");
 	}
 
-	
 	/**
 	 * Liefert ein Objekt eines Eintrags [name] in der Tabelle [table]
 	 * 
@@ -187,7 +186,107 @@ public class LoadScript {
 
 	}
 
-	
+	// /**
+	// * Liefert ein integer-Wert eines Eintrags [name] in der aktuellen
+	// Tabelle.
+	// *
+	// * @param name
+	// * der Eintrag
+	// * @return der Wert oder Fehlerausgabe.
+	// */
+	// public final synchronized int getIntValue(String name) {
+	// try {
+	// return ((Integer) this.getObject(name)).intValue();
+	// } catch (Exception e) {
+	// // ErrApp.PARSEFATAL.erraufruf(name + LFCR + e.getMessage());
+	// logger.warn("Eintrag [" + name + "] nicht im Script gefunden!"
+	// + LOGTAB + "default: 0");
+	// return 0;
+	// }
+	// }
+	//
+	/**
+	 * Liefert ein Objekt eines Eintrags [name] in der Tabelle [table]
+	 * 
+	 * @param table
+	 *            die Tabelle
+	 * @param name
+	 *            der Eintrag
+	 * @return der Wert oder Fehlerausgabe. Name des Object existiert nicht
+	 * @throws NullPointerException
+	 *             Object existiert nicht
+	 * @throws ArrayIndexOutOfBoundsException
+	 *             Es gibt für name keine Einträge in der Liste
+	 */
+	public final synchronized static int getIntValue(Table table, String name) {
+
+		try {
+			return ((Integer) LoadScript.getObject(table, name)).intValue();
+		} catch (ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-3);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-3);
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-3);
+		}
+		return Integer.MIN_VALUE;
+	}
+
+	// /**
+	// * Liefert ein long-Wert eines Eintrags [name] in der aktuellen Tabelle.
+	// *
+	// * @param name
+	// * der Eintrag
+	// * @return der Wert oder Fehlerausgabe.
+	// */
+	// public final synchronized long getLongValue(String name) {
+	// try {
+	// return ((Long) this.getObject(name)).longValue();
+	// } catch (Exception e) {
+	// ErrApp.PARSEFATAL.erraufruf(name + LFCR + e.getMessage());
+	// return 0L;
+	// }
+	// }
+	//
+	/**
+	 * Liefert ein Objekt eines Eintrags [name] in der Tabelle [table]
+	 * 
+	 * @param table
+	 *            die Tabelle
+	 * @param name
+	 *            der Eintrag
+	 * @return der Wert oder Fehlerausgabe. Name des Object existiert nicht
+	 * @throws NullPointerException
+	 *             Object existiert nicht
+	 * @throws ArrayIndexOutOfBoundsException
+	 *             Es gibt für name keine Einträge in der Liste
+	 */
+	public final synchronized static long getLongValue(Table table, String name) {
+
+		try {
+			return ((Long) LoadScript.getObject(table, name)).longValue();
+		} catch (ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-3);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-3);
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-3);
+		}
+		return Long.MIN_VALUE;
+	}
+
 	/**
 	 * Liefert ein Objekt eines Eintrags [name] in der Tabelle [table]
 	 * 
@@ -211,13 +310,10 @@ public class LoadScript {
 
 	}
 
-	
 	/** @return die Roottable */
 	public synchronized final Table getTable() {
 		return (Table) this.roottable.get(LoadScript.rootKey);
 	}
-
-	
 
 	/**
 	 * Prüft, ob die Table <code>table</code> einen Eintrag <code>name</code>
@@ -238,9 +334,10 @@ public class LoadScript {
 		}
 		return false;
 	}
+
 	/**
-	 * Parsed ein Script nach den Ausdrücken und erstellt eine normierte
-	 * Liste zur Erstellung der APO-Tabellen.<br>
+	 * Parsed ein Script nach den Ausdrücken und erstellt eine normierte Liste
+	 * zur Erstellung der APO-Tabellen.<br>
 	 * Die Normierung hat grundsätzlich die Form <i>;key=value;</i>
 	 * <p>
 	 * <b>Regeln zum Parsen</b><br>
@@ -296,11 +393,12 @@ public class LoadScript {
 	 */
 	@SuppressWarnings("unused")
 	private synchronized final void generatePostscript(
-			final BufferedReader din, final StringBuffer in1,
-			@SuppressWarnings("hiding") final List<String> quotes) throws ParseException {
+			@SuppressWarnings("hiding") final BufferedReader din, final StringBuffer in1,
+			@SuppressWarnings("hiding") final List<String> quotes)
+			throws ParseException {
 
 		/** Entfernt die Kommentare, stellt Logger ein. */
-		new NoComment(din, in1, this.postscript);
+		new NoComment(this.din, in1, this.postscript);
 
 		/** Entfernt die Strings und stellt Platzhalter ein. */
 		new NoQuote(this.postscript, quotes);
@@ -334,8 +432,8 @@ public class LoadScript {
 	 * @throws ParseException
 	 *             Parser Exception
 	 */
-	synchronized final void generateTokenlist() throws ParseException {
-		
+	public synchronized final void generateTokenlist() throws ParseException {
+
 		try {
 			tokenlist(this.tokenline, this.postscript);
 		} catch (ParseException e) {
@@ -345,14 +443,14 @@ public class LoadScript {
 		if (LOGGER)
 			logger.debug(this.tokenline);
 	}
-	
+
 	/**
 	 * Zerlege das Script in zusammengehörige Token, entferne die überflüssigen
 	 * Zeichen und speichere die Token in einer <i>List&lt;String&gt;</i><br>
-	 * <b>Bedingung</b>
-	 * normierter Eintrag
-	 * @param tokenline 
-	 * 		Ergebnisliste der Token
+	 * <b>Bedingung</b> normierter Eintrag
+	 * 
+	 * @param tokenline
+	 *            Ergebnisliste der Token
 	 * 
 	 * @param resultbuffer
 	 *            Eingabebuffer
@@ -360,28 +458,31 @@ public class LoadScript {
 	 *             Fehler in der Tokenbildung
 	 */
 	@SuppressWarnings("static-method")
-	private final void tokenlist(@SuppressWarnings("hiding") final List<String> tokenline,
+	private final void tokenlist(
+			@SuppressWarnings("hiding") final List<String> tokenline,
 			final StringBuffer resultbuffer) throws ParseException {
 		if (LOGGER)
 			logger.debug("Zerlege die Einträge in Token.");
 
-		/** RegEx, um Keys zu finden: zwischen ;{ und = 
-		 * p{Alnum} und '?' mindestens 1 oder mehr (+) gefolgt von einem '=' */
-		String extractKeytoken = "([0-9a-zA-Z?]+)(?=[=])"; 
-		
+		/**
+		 * RegEx, um Keys zu finden: zwischen ;{ und = p{Alnum} und '?'
+		 * mindestens 1 oder mehr (+) gefolgt von einem '='
+		 */
+		String extractKeytoken = "([0-9a-zA-Z?]+)(?=[=])";
+
 		/**
 		 * RegEx, um Werte zu finden (Zahlen, Namen, Quotes, Addressen, Zeiten,
 		 * Datum)
 		 */
-		String extractValtoken = "([0-9a-zA-Z@.$:]+)"; 
+		String extractValtoken = "([0-9a-zA-Z@.$:]+)";
 
 		/** RegEx, um Klammern zu finden */
 		String extractKlammertoken = "([{}\\(\\),;=]{1}?)";
-		
+
 		/** RegEx, um algebra und bool-Operatoren zu finden */
 		String op = "(==)|(\\<=)|(\\>=)|(\\<\\>)|(=)|([\\+\\-\\*\\/\\^\\<\\>!])";
 		String op2 = "(&&)|(\\|\\|)|(!&)|(!\\|)";
-		
+
 		/**
 		 * RegEx, um bekannte Token wie Zahlen, Funktionen, Werte, Klammern und
 		 * Operatoren zu finden
@@ -412,29 +513,31 @@ public class LoadScript {
 		while (m.find()) {
 			tokenline.add(m.group());
 		}
-		
+
 		if (tokenline.isEmpty()) {
-			throw new ParseException("Fehler in der Tokenbildung:" + LFCR + resultbuffer);
+			throw new ParseException("Fehler in der Tokenbildung:" + LFCR
+					+ resultbuffer);
 		}
 	}
-	
+
 	/**
 	 * Tabelle erstellen
+	 * 
 	 * @throws TableException
-	 * 			Fehlerexception
-	 * @modified - 
+	 *             Fehlerexception
+	 * @modified -
 	 */
-	synchronized final void generateTable() throws TableException {
+	public synchronized final void generateTable() throws TableException {
 
 		// Es wird die Roottabelle 'rootKey' erzeugt. Es werden ggfs. daraus
 		// weitere Tables untergehängt.
 		this.roottable.put(LoadScript.rootKey,
-				new MakeTable(this.tokenline).makeTable());		
+				new MakeTable(this.tokenline).makeTable());
 		if (LOGGER)
 			logger.debug(this.tokenline);
 
 	}
-	
+
 	// ----Selbstverwaltung----------------------------------------------------
 
 	/**
@@ -447,6 +550,50 @@ public class LoadScript {
 	/** logger */
 	private final static Logger logger = Logger.getLogger(LoadScript.class
 			.getPackage().getName());
+
+	/**
+	 * Liest ein Script vollständig aus File <code>fileName</code> oder String
+	 * <code>doString</code> ein.<br>
+	 * Im Fehlerfall wird eine Exception zum Fehler ausgeworfen.
+	 * 
+	 * @param fileName
+	 *            Name of the File with Apo-Script.
+	 * @param doString
+	 *            String with Apo-Script.
+	 * @param test
+	 *            Kennzeichen für Vollparsen
+	 * @throws LoadScriptException
+	 *             Fehler mit Beschreibung der Fehlerursache
+	 * @throws ParseException
+	 *             Fehlerexception beim Parsen mit Hinweis zum Grund der
+	 *             Exception
+	 */
+	public LoadScript(final String fileName, final String doString, boolean test)
+			throws LoadScriptException, ParseException {
+		this(fileName, doString);
+		try {
+			this.generateTokenlist();
+			this.generateTable();
+			new ValueParser().valueParser(this.getTable(),
+					this.getTable(), this.getQuotes(),(byte) 0);
+			this.postscript = null;
+			this.tokenline = null;
+		} catch (ScriptException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-4);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-4);
+		} catch (TableException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-4);
+		}
+
+		// this.generatePostscript(din, in1, quotes)
+	}
 
 	/**
 	 * Liest ein Script aus File <code>fileName</code> oder String
@@ -472,7 +619,8 @@ public class LoadScript {
 					+ fileName.substring(fileName.lastIndexOf(FS) + 1) + "]");
 
 			try {
-				this.fis = new FileInputStream(fileName);
+				this.din = new BufferedReader(new InputStreamReader(
+						new FileInputStream(fileName)));
 			} catch (FileNotFoundException e) {
 				// Prüfe, ob Pfad oder Filename falsch ist.
 				int ch = fileName.lastIndexOf(FS);
@@ -485,17 +633,19 @@ public class LoadScript {
 						+ "] existiert nicht!");
 			}
 
-			// Es wird ein normiertes Postscript erzeugt. 
-			generatePostscript(new BufferedReader(new InputStreamReader(
-					this.fis)), null, this.quotes);
+			// Es wird ein normiertes Postscript erzeugt.
+			generatePostscript(this.din, null, this.quotes);
 
 		} else if (fileName == null && doString != null) {
+			this.din = null;
 			logger.info((System.currentTimeMillis() - ConstValue.applicationstarttime)
 					+ " Einlesen aus String\n" + doString);
 
 		} else if (fileName == null && doString == null) {
+			this.din = null;
 			throw new LoadScriptException("Kein Script angegeben!");
 		} else {
+			this.din = null;
 			throw new LoadScriptException("Zwei Scripte angegeben!");
 		}
 		this.closeScript();
@@ -509,38 +659,42 @@ public class LoadScript {
 	 */
 	public synchronized final void closeScript() throws LoadScriptException {
 		try {
-			if (this.fis != null)
-				this.fis.close();
+
+			if (this.din != null)
+				this.din.close();
 		} catch (IOException e) {
 			throw new LoadScriptException(e.getMessage());
 		}
 	}
 
-
 	/**
 	 * Anzeigestring Eingabeformatierung
+	 * 
 	 * @return String
-	 * @modified - 
+	 * @modified -
 	 */
 	public synchronized final String postscript2String() {
 		return this.postscript.toString();
 	}
+
 	/**
 	 * Anzeigestring Tokenliste
+	 * 
 	 * @return String
-	 * @modified - 
+	 * @modified -
 	 */
 	public synchronized final String tokenlist2String() {
 		return this.tokenline.toString();
 	}
+
 	/**
 	 * Anzeigestring Tabellenliste
+	 * 
 	 * @return String
-	 * @modified - 
+	 * @modified -
 	 */
 	public synchronized final String block2String() {
 		return this.roottable.toString();
 	}
-
 
 }

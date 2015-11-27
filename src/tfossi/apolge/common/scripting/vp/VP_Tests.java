@@ -8,8 +8,6 @@
 package tfossi.apolge.common.scripting.vp;
 
 import static tfossi.apolge.common.constants.ConstValue.CLOSE;
-import static tfossi.apolge.common.constants.ConstValue.FLOW;
-import static tfossi.apolge.common.constants.ConstValue.INITIAL;
 import static tfossi.apolge.common.constants.ConstValue.KOMMA;
 import static tfossi.apolge.common.constants.ConstValue.LFCR;
 import static tfossi.apolge.common.constants.ConstValue.LOGGER;
@@ -27,7 +25,7 @@ import tfossi.apolge.common.scripting.vp.pm.Operation;
 import tfossi.apolge.common.scripting.vp.pm.PatternMaps;
 
 /**
- * TODO Comment
+ * Übersetze Stringtoken und berechenbare Größe oder Steuerzeichen
  * 
  * @author tfossi
  * @version 16.08.2014
@@ -42,47 +40,37 @@ final class VP_Tests {
 	}
 
 	/** seperatorValue */
-	public static final Pattern seperatorValue = Pattern.compile(",");
+	private static final Pattern seperatorValue = Pattern.compile(",");
 
 	/** closeValue */
-	public static final Pattern closeValue = Pattern.compile("\\)"); // {1}?");
+	private static final Pattern closeValue = Pattern.compile("\\)"); // {1}?");
 
 	/** openValue */
-	public static final Pattern openValue = Pattern.compile("\\(");
-	
-	/** initialValue */
-	public static final Pattern initialValue = Pattern.compile("INIT:");
-	
-	/** flowValue */
-	public static final Pattern flowValue = Pattern.compile("FLOW:");
-
-	/** booleanValue */
-	public static final Pattern booleanValue = Pattern
-			.compile("(true)|(false)");
+	private static final Pattern openValue = Pattern.compile("\\(");
 	
 	/** wissValue */
-	public static final Pattern wissValue = Pattern
+	private static final Pattern wissValue = Pattern
 			.compile(extractWissDigittoken);
 
 	/** doubleValue */
-	public static final Pattern doubleValue = Pattern
+	private static final Pattern doubleValue = Pattern
 			.compile("([0-9]*\\.[0-9]*([eE][-+]?[0-9]+)?)$|"
 					+ "([0-9]+[eE][-+]?[0-9]+)$"); // [-+]?
 	
 	/** floatValue */
-	public static final Pattern floatValue = Pattern
+	private static final Pattern floatValue = Pattern
 			.compile("([0-9.]+([eE][-+]?[0-9]+)?)f$|"
 					+ "([0-9]+[eE][-+]?[0-9]+)[fF]$");
 	
 	/** longValue */
-	public static final Pattern longValue = Pattern.compile("[0-9]*L$");
+	private static final Pattern longValue = Pattern.compile("[0-9]*L$");
 	
 	/** intValue */
-	public static final Pattern intValue = Pattern.compile("^[0-9]+$");
+	private static final Pattern intValue = Pattern.compile("^[0-9]+$");
 	/** shortValue */
-	public static final Pattern shortValue = Pattern.compile("^[0-9]+s$");
+	private  static final Pattern shortValue = Pattern.compile("^[0-9]+s$");
 	/** byteValue */
-	public static final Pattern byteValue = Pattern.compile("^[0-9]+b$");
+	private static final Pattern byteValue = Pattern.compile("^[0-9]+b$");
 	// char
 	// hex
 	/** digitValue */
@@ -97,92 +85,74 @@ final class VP_Tests {
 			+ "|" + byteValue.pattern()			
 			+ "|" + wissValue.pattern());
 
-	/** Pattern für INDIVIDUALS */
-	public static final Pattern indiValue = Pattern.compile("^#.*");
-
-	/** adressValue */
-	public static final Pattern adressValue = Pattern.compile("^@.*");
-
-	/** stringValue */
-	public static final Pattern stringValue = Pattern.compile("^\\$.*\\$$");
 
 	// ---- CAST-Functions ----------------------------------------------------
 	 /**
-	 * TODO Comment
-	 * @param v -
-	 * @param tk -
-	 * @return -
+	 * String in Double
+	 * @param v Typvorgabe new Double()
+	 * @param tk String
+	 * @return Ergebnis
 	 * @modified -
 	 */
-	 public static final double casten(Double v, String tk) {
+	 private static final double casten(Double v, String tk) {
 	 return Double.valueOf(tk).doubleValue();
 	 }
 	
 	 /**
-	 * TODO Comment
-	 * @param v -
-	 * @param tk -
-	 * @return -
+	 * String in Float
+	 * @param v Typvorgabe new Float()
+	 * @param tk String
+	 * @return Ergebnis
 	 * @modified -
 	 */
-	 public static final float casten(Float v, String tk) {
+	 private static final float casten(Float v, String tk) {
 	 return Float.valueOf(tk).floatValue();
 	 }
 	
 	 /**
-	 * TODO Comment
-	 * @param v -
-	 * @param tk -
-	 * @return -
+	 * String in Long
+	 * @param v Typvorgabe new Long()
+	 * @param tk String
+	 * @return Ergebnis
 	 * @modified -
 	 */
-	 public static final long casten(Long v, String tk) {
+	 private static final long casten(Long v, String tk) {
 	 return Long.valueOf(tk.substring(0, tk.length() - 1)).longValue();
 	 }
 	
 	 /**
-	 * TODO Comment
-	 * @param v -
-	 * @param tk -
-	 * @return -
+	 * String in Integer
+	 * @param v Typvorgabe new Integer()
+	 * @param tk String
+	 * @return Ergebnis
 	 * @modified -
 	 */
-	 public static final int casten(Integer v, String tk) {
+	 private static final int casten(Integer v, String tk) {
 	 return Integer.valueOf(tk).intValue();
 	 }
 	
 	 /**
-	 * TODO Comment
-	 * @param v -
-	 * @param tk -
-	 * @return -
+	 * String in Byte
+	 * @param v Typvorgabe new Byte()
+	 * @param tk String
+	 * @return Ergebnis
 	 * @modified -
 	 */
-	 public static final byte casten(Byte v, String tk) {
+	 private static final byte casten(Byte v, String tk) {
 	 return Byte.valueOf(tk.substring(0, tk.length() - 1)).byteValue();
 	 }
+	 
 	 /**
-	 * TODO Comment
-	 * @param v -
-	 * @param tk -
-	 * @return -
+	 * String in Short
+	 * @param v Typvorgabe new Short()
+	 * @param tk String
+	 * @return Ergebnis
 	 * @modified -
 	 */
-	 public static final byte casten(Short v, String tk) {
+	 private  static final byte casten(Short v, String tk) {
 	 return Short.valueOf(tk.substring(0, tk.length() - 1)).byteValue();
 	 }
-	
-	 /**
-	 * TODO Comment
-	 * @param v -
-	 * @param tk -
-	 * @return -
-	 * @modified -
-	 */
-	 public static final boolean casten(Boolean v, String tk) {
-	 return Boolean.valueOf(tk).booleanValue();
-	 }
-	
+		
 	 // ---- Tests ------------------------------------------------------------
 	 
 	/**
@@ -268,66 +238,19 @@ final class VP_Tests {
 		}
 		return false;
 	}
-	
-	/**
-	 * TODO Comment
-	 * @param valuetokens TODO
-	 * @param ndx TODO
-	 * @param tk TODO
-	 * @param tkpre TODO
-	 * @return TODO
-	 * @modified - 
-	 */
-	static final boolean testInitialNChg(VP_Tokenlist<Object> valuetokens, int ndx,
-			Object tk, Object tkpre) {
-		if (!(tk instanceof CharSequence))
-			return false;
-		Matcher m = initialValue.matcher((CharSequence) tk);
-		if (m.matches()) {
-			if (LOGGER)
-				logger.trace("Tausche ["+tk+"] gegen INITIAL");
-			valuetokens.remove(ndx);
-			valuetokens.add(ndx, new Character(INITIAL));
-			return true;
-		}
-		return false;
-	}
 
 	/**
-	 * TODO Comment
-	 * @param valuetokens TODO
-	 * @param ndx TODO
-	 * @param tk TODO
-	 * @param tkpre TODO
-	 * @return TODO
-	 * @modified - 
-	 */
-	static final boolean testFlowNChg(VP_Tokenlist<Object> valuetokens, int ndx,
-			Object tk, Object tkpre) {
-		if (!(tk instanceof CharSequence))
-			return false;
-		Matcher m = flowValue.matcher((CharSequence) tk);
-		if (m.matches()) {
-			if (LOGGER)
-				logger.trace("Tausche ["+tk+"] gegen FLOW");
-			valuetokens.remove(ndx);
-			valuetokens.add(ndx, new Character(FLOW));
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * TODO Comment
+	 * Teste auf quote
 	 * 
 	 * @param tokenliste
-	 *            -
+	 *       		Alle Token einer Valuezuweisung
 	 * @param ndx
-	 *            -
+	 *       	Position des zu untersuchenden Token in der Valuezuweisung <code>valuetokens</code>
 	 * @param tk
-	 *            -
+	 * 			Das aktuelle Token an der Position <code>ndx</code> der Valuezuweisung <code>valuetokens</code>
 	 * @param tkpre
-	 *            -
-	 * @return -
+	 * 			Das Token vor dem aktuellen Token oder <code>null</code>, wenn aktuelle Token das Erste ist.
+	 * @return <code>true</code> if tk is Quote
 	 * @modified -
 	 */
 	final static boolean testQuote(VP_Tokenlist<?> tokenliste, int ndx,
@@ -344,19 +267,18 @@ final class VP_Tests {
 	}
 
 	/**
-	 * TODO Comment
-	 * 
-	 * @param vp
-	 *            -
-	 * @param valuetokens
-	 *            -
+	 * Teste auf Constante und gegen in PM definierten Wert tauschen
+	 * @param vp 
+	 * 			ValueParser
+	 * @param valuetokens 
+	 *       		Alle Token einer Valuezuweisung
 	 * @param ndx
-	 *            -
+	 *       	Position des zu untersuchenden Token in der Valuezuweisung <code>valuetokens</code>
 	 * @param tk
-	 *            -
+	 * 			Das aktuelle Token an der Position <code>ndx</code> der Valuezuweisung <code>valuetokens</code>
 	 * @param tkpre
-	 *            -
-	 * @return -
+	 * 			Das Token vor dem aktuellen Token oder <code>null</code>, wenn aktuelle Token das Erste ist.
+	 * @return <code>true</code> if tk is Constante
 	 * @modified -
 	 */
 	static final boolean testConstantsNChg(ValueParser vp,
@@ -518,9 +440,6 @@ final class VP_Tests {
 
 	/**
 	 * Teste auf <code>[Zahl]</code> und tausche das aktuelle Token bei positivem Testergebnis gegen typenrichtige <code>Number</code> ein.<br>
-	 * 
-	 * TODO Transfer boolean
-	 * TODO Transfer wissdigit
 	 * 
 	 * @param valuetokens
 	 *       		Alle Token einer Valuezuweisung

@@ -7,19 +7,15 @@
  */
 package tfossi.apolge.data.core;
 
-import static tfossi.apolge.common.constants.ConstValue.LFCR;
-import static tfossi.apolge.common.constants.ConstValue.LOGGER;
 import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import tfossi.apolge.common.scripting.vp.VP_Tokenlist;
+import tfossi.apolge.common.scripting.t.Table;
 
 /**
  * Enthält einen Elelemtbauplan und erstellt Elemente
+ * FIXME Testvariante für Parsertests
  * 
  * @author tfossi
  * @version 29.10.2015
@@ -28,9 +24,20 @@ import tfossi.apolge.common.scripting.vp.VP_Tokenlist;
  */
 public class _ElementBuilder {
 	
-	/** firstPassMap */
-	private final Map<String, VP_Tokenlist<?>> firstPassMap = new HashMap<String,VP_Tokenlist<?>>();
+//	/** firstPassMap */
+//	private final Map<String, VP_Tokenlist<?>> firstPassMap = new HashMap<String,VP_Tokenlist<?>>();
 
+	/** attributes */
+	private Table attributes = null;
+	/**
+	 * @param block attributeblock des Elements
+	 * @modified - 
+	 */
+	public void addEigenschaften(Table block) {
+		this.attributes = block;
+		
+	}
+	
 	/**
 	 * Bestandteile des Elements
 	 *
@@ -49,20 +56,20 @@ public class _ElementBuilder {
 
 	}
 	
-	/**
-	 * Füge eine 0-Pass-Eigenschaft hinzu
-	 * @param key
-	 * 			Name der Eigenschaft
-	 * @param valuetokens
-	 * 			Wert der Eigenschaft
-	 * @modified - 
-	 */
-	public void addEigenschaften(final String key, final VP_Tokenlist<?> valuetokens){
-		if(LOGGER)
-			logger.info("Register "+key);
-		this.firstPassMap.put(key, valuetokens);
-
-	}
+//	/**
+//	 * Füge eine 0-Pass-Eigenschaft hinzu
+//	 * @param key
+//	 * 			Name der Eigenschaft
+//	 * @param valuetokens
+//	 * 			Wert der Eigenschaft
+//	 * @modified - 
+//	 */
+//	public void addEigenschaften(final String key, final VP_Tokenlist<?> valuetokens){
+//		if(LOGGER)
+//			logger.info("Register "+key);
+//		this.firstPassMap.put(key, valuetokens);
+//
+//	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -74,7 +81,8 @@ public class _ElementBuilder {
 //		for(String key :this.firstPassMap.keySet())
 //			rc += key+": "+this.firstPassMap.get(key)+LFCR;
 //		return rc;
-		return this.firstPassMap.toString();
+//		return this.firstPassMap.toString();
+		return this.attributes.toString();
 	}
 	
 	// ---- Selbstverwaltung --------------------------------------------------
@@ -83,8 +91,11 @@ public class _ElementBuilder {
 	private final static long serialVersionUID = VERSION;
 
 	/** logger */
+	@SuppressWarnings("unused")
 	private final static Logger logger = Logger.getLogger(_ElementBuilder.class
 			.getPackage().getName() + "._ElementBuilder");
+
+
 
 
 }

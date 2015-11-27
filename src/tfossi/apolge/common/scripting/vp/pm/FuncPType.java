@@ -50,7 +50,7 @@ public class FuncPType {
 			}else{
 				rc += " ";
 			}
-			rc = rc.substring(0, rc.length()-2)+" ) mit Parameter!";
+			rc = rc.substring(0, rc.length()-2)+" ) mit "+(this.function.threePass()?"Pass3":(this.function.twoPass()?"Pass2":"Pass?"))+"-Parameter!";
 		}
 		return rc;
 	}

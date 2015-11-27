@@ -1,0 +1,18 @@
+/** 
+ * config
+ * Branch base
+ * APolGe
+ * tfossi-team
+ * licence GPLv3 
+ */
+ VERSION = 000002L
+
+// 68,27% aller Messwerte haben eine Abweichung von höchstens σ vom Mittelwert 
+SIGMA1= 0.6827
+W68 = 1.
+// 95,45 % aller Messwerte haben eine Abweichung von höchstens 2σ vom Mittelwert 
+SIGMA2 = 0.9545
+W95 = 2.
+// 99,73 % aller Messwerte haben eine Abweichung von höchstens 3σ vom Mittelwert 
+SIGMA3 = 0.9973
+W99 = 3.

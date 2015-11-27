@@ -29,10 +29,6 @@ import tfossi.apolge.common.scripting.t.TableException;
  * Voraussetzung für alle weiteren Vorgänge ist das Funktionieren des
  * Scriptings. <br>
  * 
- * TODO Testen der Datumstypen.<br>
- * TODO Testen der Stringberechnungen <br>
- * TODO Testen der Datumfunktionen<br>
- * 
  * @author tfossi
  * @version 1.07.2014
  * @modified Coderevision, tfossi, 31.07.2014
@@ -270,8 +266,8 @@ public class LoadScriptTest {
 				e.printStackTrace();
 				fail(e.getMessage());
 			} catch (TableException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail(e.getMessage());
 			}
 
 		}
@@ -325,8 +321,8 @@ public class LoadScriptTest {
 				e.printStackTrace();
 				fail(e.getMessage());
 			} catch (TableException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail(e.getMessage());
 			}
 
 		}
@@ -386,8 +382,8 @@ public class LoadScriptTest {
 				e.printStackTrace();
 				fail(e.getMessage());
 			} catch (TableException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail(e.getMessage());
 			}
 
 		}
@@ -448,8 +444,8 @@ public class LoadScriptTest {
 				e.printStackTrace();
 				fail(e.getMessage());
 			} catch (TableException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail(e.getMessage());
 			}
 
 		}
@@ -510,8 +506,8 @@ public class LoadScriptTest {
 				e.printStackTrace();
 				fail(e.getMessage());
 			} catch (TableException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail(e.getMessage());
 			}
 
 		}
@@ -572,8 +568,8 @@ public class LoadScriptTest {
 				e.printStackTrace();
 				fail(e.getMessage());
 			} catch (TableException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail(e.getMessage());
 			}
 
 		}
@@ -634,8 +630,8 @@ public class LoadScriptTest {
 				e.printStackTrace();
 				fail(e.getMessage());
 			} catch (TableException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail(e.getMessage());
 			}
 
 		}

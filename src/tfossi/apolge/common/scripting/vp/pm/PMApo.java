@@ -1,6 +1,6 @@
 /**
  * PMApo.java
- * Branch scripting
+ * Branch master
  * APolGe
  * tfossi-team
  * licence GPLv3   
@@ -23,10 +23,6 @@ import tfossi.apolge.common.constants.ConstMethod;
 import tfossi.apolge.common.constants.ConstValue;
 import tfossi.apolge.common.scripting.vp.Function;
 
-/**
- * @author 2007991
- *
- */
 /**
  * Implementierung APO-Funktionen
  *
@@ -71,7 +67,6 @@ public class PMApo {
 				 * tfossi.apolge.common.scripting.Function#calculate(java.lang
 				 * .Object[])
 				 */
-				@SuppressWarnings("null")
 				@Override
 				public Object calculate(Object[] values) {
 

@@ -148,41 +148,6 @@ public class VP_ArrayTokenlist<T> extends ArrayList<T> implements
 		return this.threePass;
 	}
 
-	/** init */
-	private boolean init = false;
-
-	@Override
-	public final void setInit() {
-		this.init = true;
-	}
-
-	@Override
-	public final void clrInit() {
-		this.init = false;
-	}
-
-	@Override
-	public final boolean isInit() {
-		return this.init;
-	}
-
-	/** flow */
-	private boolean flow = false;
-
-	@Override
-	public final void setFlow() {
-		this.flow = true;
-	}
-
-	@Override
-	public final void clrFlow() {
-		this.flow = false;
-	}
-
-	@Override
-	public final boolean isFlow() {
-		return this.flow;
-	}
 
 	// ---- Selbstverwaltung --------------------------------------------------
 
