@@ -39,15 +39,11 @@ public class _ElementBuilder {
 
 	/** atypeRegister */
 	public final Map<String, _AType<?>> atypeRegister = new HashMap<String, _AType<?>>();
-	// /** children */
-	// private final Map<String, Table> firstPassMap = new HashMap<String,
-	// Table>();
+	
 	/** children */
 	public final Map<String, _ElementBuilder> _ElementBuilderMap = new HashMap<String, _ElementBuilder>();
 
-	/** attributes */
-	// private Table attributes = null;
-
+	/** Name des Elementbuilders */
 	private String name;
 
 	/** parent */
@@ -59,17 +55,25 @@ public class _ElementBuilder {
 
 	/** id */
 	public int id = 0;
+	
 	/** attributes */
 	private TableMap attributes;
 
-	@SuppressWarnings("javadoc")
+	/**
+	 * Liste der Steuerelement
+	 *
+	 * @author tfossi
+	 * @version 29.11.2015
+	 * @modified -
+	 * @since Java 1.6
+	 */
 	enum nogo {
-		CHILDS, XRAY;
+		/** CHILDS */
+		CHILDS;
 	}
 
-	/** nogolst */
-	private final static// List<nogo>
-	String nogolst = Arrays.asList(nogo.values()).toString();
+	/** Steuerelemente als Liste */
+	private final static String nogolst = Arrays.asList(nogo.values()).toString();
 
 	/**
 	 * TODO Comment
@@ -80,6 +84,7 @@ public class _ElementBuilder {
 	 */
 	public Element create(Element p, _ElementBuilder ebCounter) {
 		Element e = new Element(p, ebCounter.id++);
+		
 		System.out.println(LFCR + "#" + ebCounter.id + " Anlage: " + this.name);
 		System.out.println(this.toString());
 		for (String key : this.atypeRegister.keySet()) {
@@ -102,16 +107,16 @@ public class _ElementBuilder {
 					new VP_Transfer().transfer(key, eb.attributes, ebl,
 							(List<String>) null, (byte) 1);
 
-					System.err.println("     2-Pass: " + ebl.isTwoPass());
-					System.err.println("     3-Pass: " + ebl.isThreePass());
-					System.err.println("        ebl: " + ebl.toString());
+//					System.err.println("     2-Pass: " + ebl.isTwoPass());
+//					System.err.println("     3-Pass: " + ebl.isThreePass());
+//					System.err.println("        ebl: " + ebl.toString());
 					ebl.clrTwoPass();
 				}
 				
-				System.err.println("Anzahl subs: " + eb.attributes.getClass());
-				// Anzahl der Subs?
-				System.err.println("Anzahl subs: "
-						+ LoadScript.getIntValue(eb.attributes, "count"));
+//				System.err.println("Anzahl subs: " + eb.attributes.getClass());
+//				// Anzahl der Subs?
+//				System.err.println("Anzahl subs: "
+//						+ LoadScript.getIntValue(eb.attributes, "count"));
 				for (int nr = 0; nr < LoadScript.getIntValue(eb.attributes,
 						"count"); nr++)
 					eb.create(e, ebCounter);
@@ -122,25 +127,7 @@ public class _ElementBuilder {
 	}
 
 	/**
-	 * Bestandteile des Elements
-	 * 
-	 * @author tfossi
-	 * @version 26.11.2015
-	 * @modified -
-	 * @since Java 1.6
-	 */
-	enum scpt {
-		/** ELEMENT */
-		ELEMENT, /** EIGENSCHAFT */
-		EIGENSCHAFT, /** DATENTYP */
-		DATENTYP, /** INITIALDATEN */
-		INITIALDATEN, /** INITIALPARAMETER */
-		INITIALPARAMETER;
-
-	}
-
-	/**
-	 * TODO Comment
+	 * Gegen einfachen Zugriff sperren
 	 * @modified -
 	 */
 	@SuppressWarnings("unused")
@@ -161,37 +148,24 @@ public class _ElementBuilder {
 	public _ElementBuilder(final String name, final TableMap attributes,
 			final _ElementBuilder parent, final Table block, final String path) {
 
-		// this.nogolst = Arrays.asList(nogo.values());
-
 		this.name = name;
 		this.parent = parent;
 		this.path = path;
 		this.attributes = attributes;
 
-		// Object childs = this.attributes.get("CHILDS");
+		
+
 		Object childs = block.get("CHILDS");
 		if (childs != null) {
+			// Lege die Childs an.
 			Table childtable = ((VP_Tokenlist<?>) childs).getTable();
+			
+			// Alle Einträge durchgehen
 			for (String childname : childtable.keySet()) {
-				// this.firstPassMap.put(childname, ((VP_Tokenlist<?>)
-				// childtable
-				// .get(childname)).getTable());
-				System.err.println(childname);
-				try {
-					System.err.println(LoadScript.getObjectValue(childtable,
-							childname));
-				} catch (ArrayIndexOutOfBoundsException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (NullPointerException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (NoSuchFieldException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				
 				LoadScript ls;
 				try {
+					// Child-APO-Script im selben Pfad unter Childnamen!
 					ls = new LoadScript(path + childname, null, true);
 					this._ElementBuilderMap.put(
 							childname,
@@ -206,98 +180,68 @@ public class _ElementBuilder {
 					e.printStackTrace();
 					assert false;
 				} catch (ArrayIndexOutOfBoundsException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					assert false;
 				} catch (NullPointerException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					assert false;
 				} catch (NoSuchFieldException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					assert false;
 				}
-
 			}
+			// Alle Childs sind angelegt!
 		}
 
-		// for (String key : this.attributes.keySet()) {
-		for (String key : block.keySet()) {
-			if (nogolst.contains(key))
+		// Alle Attribute des Elements anlegen!
+		for (String attrName : block.keySet()) {
+			
+			// Gesperrte Anweisungen ignorieren
+			if (nogolst.contains(attrName))
 				continue;
 
 			Object o = null;
 			try {
-				o = LoadScript.getObjectValue(block, key);
+				o = LoadScript.getObjectValue(block, attrName);
 			} catch (ArrayIndexOutOfBoundsException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				assert false;
 			} catch (NullPointerException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				assert false;
 			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				assert false;
 			}
+			
 			@SuppressWarnings("null")
 			String clzzname = o.getClass().getSimpleName();
 			if (clzzname.equals("Integer")) {
-				this.atypeRegister.put(key, new N_AType<Integer>(key,
+				this.atypeRegister.put(attrName, new N_AType<Integer>(attrName,
 						(Integer) o));
+				
 			} else if (clzzname.equals("Long")) {
-				this.atypeRegister.put(key, new N_AType<Long>(key, (Long) o));
+				this.atypeRegister.put(attrName, new N_AType<Long>(attrName, (Long) o));
+				
 			} else if (clzzname.equals("Float")) {
-				this.atypeRegister.put(key, new N_AType<Float>(key, (Float) o));
+				this.atypeRegister.put(attrName, new N_AType<Float>(attrName, (Float) o));
+				
 			} else if (clzzname.equals("Double")) {
-				this.atypeRegister.put(key,
-						new N_AType<Double>(key, (Double) o));
+				this.atypeRegister.put(attrName,
+						new N_AType<Double>(attrName, (Double) o));
+				
 			} else if (clzzname.equals("String")) {
-				this.atypeRegister.put(key,
-						new T_AType<String>(key, (String) o));
+				this.atypeRegister.put(attrName,
+						new T_AType<String>(attrName, (String) o));
+				
 			} else if (clzzname.equals("ArrayList")) {
-				this.atypeRegister.put(key, new A_AType<ArrayList>(key,
+				this.atypeRegister.put(attrName, new A_AType<ArrayList>(attrName,
 						(ArrayList) o));
+				
 			} else
-				assert false : key + LFCR + clzzname + LFCR + o.toString();
-			// _AType t = new _AType(key,block.keySet());
+				assert false : attrName + LFCR + clzzname + LFCR + o.toString();
 		}
-
 	}
-
-	/*
-	 * String name = "root"; String parent = null; LoadScript ls = new
-	 * LoadScript(TESTPATH + this.createElements[row][1], null,true);
-	 * 
-	 * _ElementBuilder eb = new _ElementBuilder(name, parent, ls.getTable());
-	 */
-	// /**
-	// * Füge eine 0-Pass-Eigenschaft hinzu
-	// * @param key
-	// * Name der Eigenschaft
-	// * @param valuetokens
-	// * Wert der Eigenschaft
-	// * @modified -
-	// */
-	// public void addEigenschaften(final String key, final VP_Tokenlist<?>
-	// valuetokens){
-	// if(LOGGER)
-	// logger.info("Register "+key);
-	// this.firstPassMap.put(key, valuetokens);
-	//
-	// }
-	// public final Object getAttribut(final String name) {
-	// try {
-	// return LoadScript.getObjectValue(this.attributes, name);
-	// } catch (ArrayIndexOutOfBoundsException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (NullPointerException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (NoSuchFieldException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// return null;
-	// }
 
 	/*
 	 * (non-Javadoc)
@@ -317,17 +261,7 @@ public class _ElementBuilder {
 			rc += key + ": " + t.name + "/" + t.value + "/"
 					+ t.value.getClass().getSimpleName() + LFCR;
 		}
-		// for (int i = 0; i < iI.length; i++)
-		// rc += nI[i] + "= " + iI[i] + LFCR;
-		// for (int i = 0; i < iL.length; i++)
-		// rc += nL[i] + "= " + iL[i] + LFCR;
-		// for (int i = 0; i < iF.length; i++)
-		// rc += nF[i] + "= " + iF[i] + LFCR;
-		// for (int i = 0; i < iD.length; i++)
-		// rc += nD[i] + "= " + iD[i] + LFCR;
-
-		// assert false:nI[1];
-
+		
 		return rc;
 	}
 

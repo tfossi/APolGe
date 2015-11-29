@@ -35,6 +35,15 @@ public class ConstValue {
 	
 	/** CONFIGLOGGER=false, then no Logging during reading the configfile(s) */
 	protected static final boolean CONFIGLOGGER = false;
+	
+	 /**
+	  * Zeit Debuggen on/off
+	  */
+	public static final boolean TIMEEM = true;
+	 /**
+	 * Threadpause --> 0 / automatik
+	 */
+	 public static final boolean TIMESTEPOFF = true;
 
 	// ---- Textsteuerung Konsole --------------------------------------------
 	/**

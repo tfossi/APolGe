@@ -98,6 +98,65 @@ public class ConstValueExtension extends ConstValue {
 	 ((VERSION - (VERSION % 1000L)) % 100000L) / 1000L),
 	 new Long((VERSION % 1000L))));
 
+		// ---- Zeitsteuerung: Time-Shifts ----------------------------------------
+
+		// Die Events laufen in der Reihenfolge
+		// PRE5 ... PRE1 , 0 Event, POST1 ... POST5
+		//
+		/**
+		 * TODO Comment
+		 *
+		 * @author tfossi
+		 * @version 11.08.2014
+		 * @modified -
+		 * @since Java 1.6
+		 */
+		public static enum Shift {
+			// PRE5 bis POST5 bitte genau in dieser Reihenfolge
+			// stehen lassen!
+			/**
+			 * Vor dem Zeitpunkt VOR der letzten Eventgruppe -999
+			 */
+			START(LoadScript.getLongValue(CONFIG_SCRIPT,"START")),
+			/** Vor dem Zeitpunkt die letzte Eventgruppe -500 */
+			PRE5(LoadScript.getLongValue(CONFIG_SCRIPT,"PRE5")),
+			/** Vor dem Zeitpunkt die vorletzte Eventgruppe -400 */
+			PRE4(LoadScript.getLongValue(CONFIG_SCRIPT,"PRE4")),
+			/** Vor dem Zeitpunkt die zweite Eventgruppe -300 */
+			PRE3(LoadScript.getLongValue(CONFIG_SCRIPT,"PRE3")),
+			/** Vor dem Zeitpunkt die erste Eventgruppe -200 */
+			PRE2(LoadScript.getLongValue(CONFIG_SCRIPT,"PRE2")),
+			/** Vor dem Zeitpunkt die erste Eventgruppe -100 */
+			PRE1(LoadScript.getLongValue(CONFIG_SCRIPT,"PRE1")),
+			/** Standard 0 */
+			NORMAL(LoadScript.getLongValue(CONFIG_SCRIPT,"NORMAL")),
+			/** Nach dem Zeitpunkt der erste Nachtrag 100 */
+			POST1(LoadScript.getLongValue(CONFIG_SCRIPT,"POST1")),
+			/** Nach dem Zeitpunkt der zweite Nachtrag 200 */ 
+			POST2(LoadScript.getLongValue(CONFIG_SCRIPT,"POST2")),
+			/** Nach dem Zeitpunkt der mittlere Nachtrag 300 */
+			POST3(LoadScript.getLongValue(CONFIG_SCRIPT,"POST3")),
+			/** Nach dem Zeitpunkt der vorletzte Nachtrag 400 */
+			POST4(LoadScript.getLongValue(CONFIG_SCRIPT,"POST4")),
+			/** Nach dem Zeitpunkt der letzte Nachtraggruppe 500 */
+			POST5(LoadScript.getLongValue(CONFIG_SCRIPT,"POST5")),
+
+			/** Nicht definiert und Test */
+			UNDEF(LoadScript.getLongValue(CONFIG_SCRIPT,"UNDEF"));
+
+			/** ms */
+			public final long ms;
+
+			/**
+			 * TODO Comment
+			 * @param ms -
+			 * @modified -
+			 */
+			private Shift(long ms) {
+				this.ms = ms;
+			}
+		}
+	 
 	// ---- Konsolen-Konstanten -----------------------------------------------
 	/** Zellenbreite für Consolenanzeige */
 	 public static final int BREITE =
