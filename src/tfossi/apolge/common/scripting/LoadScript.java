@@ -230,6 +230,10 @@ public class LoadScript {
 			e.printStackTrace();
 			System.err.println("Abbruch: " + e.getMessage());
 			System.exit(-3);
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + name+": "+e.getMessage());
+			System.exit(-3);
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 			System.err.println("Abbruch: " + e.getMessage());
@@ -549,7 +553,7 @@ public class LoadScript {
 
 	/** logger */
 	private final static Logger logger = Logger.getLogger(LoadScript.class
-			.getPackage().getName());
+			.getPackage().getName()+".LoadScript");
 
 	/**
 	 * Liest ein Script vollständig aus File <code>fileName</code> oder String
@@ -574,7 +578,7 @@ public class LoadScript {
 		try {
 			this.generateTokenlist();
 			this.generateTable();
-			new ValueParser().valueParser(this.getTable(),
+			new ValueParser().valueParser(
 					this.getTable(), this.getQuotes(),(byte) 0);
 			this.postscript = null;
 			this.tokenline = null;

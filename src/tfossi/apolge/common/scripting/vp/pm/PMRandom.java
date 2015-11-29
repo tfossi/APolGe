@@ -39,6 +39,9 @@ public class PMRandom {
 	public static void implement(){
 		final List<String> twoPass = Arrays.asList(ConstValue.twoPass);
 		final List<String> threePass = Arrays.asList(ConstValue.threePass);
+		
+		final Random methObject = new Random();
+		
 		for (Method meth : Random.class.getMethods()) {
 			final Method method = meth;			
 			String name = meth.getName();
@@ -61,12 +64,12 @@ public class PMRandom {
 				public Object calculate(Object[] values) {
 
 					try {
-
+												
 						if (LOGGER)
 							logger.trace("Berechne Zufallsfunktion \""
 									+ method.getName() + "\"" + LFCR
-									+ "mit Parameter " + Arrays.asList(values));
-						return method.invoke(null, values);
+									+ "mit Parameter " + Arrays.asList(values));//												
+						return method.invoke(methObject, values);
 					} catch (IllegalArgumentException e) {
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {

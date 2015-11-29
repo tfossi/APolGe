@@ -31,7 +31,10 @@ public class ConstValue {
 	 * If <code>LOGGER</code> is equals false, the JIT eliminate the Codeline<br>
 	 * <code>if(LOGGER)...<br>, because its ever wrong
 	 */
-	public static final boolean LOGGER = false;
+	public static final boolean LOGGER = true;
+	
+	/** CONFIGLOGGER=false, then no Logging during reading the configfile(s) */
+	protected static final boolean CONFIGLOGGER = false;
 
 	// ---- Textsteuerung Konsole --------------------------------------------
 	/**
@@ -124,7 +127,7 @@ public class ConstValue {
 	public static final Character CLOSE = new Character(')');
 
 	/** Methoden, die zur Elementerstellung ausgeführt werden */
-	public static final String[] twoPass = new String[] { "random", "rint",
+	public static final String[] twoPass = new String[] { "random", "rint","nextInt",
 			"ident", "ADR" };
 
 	/** Methoden, die zur Laufzeit der Elemente ausgeführt werden werden */

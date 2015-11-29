@@ -19,7 +19,6 @@ import org.apache.log4j.Logger;
 import tfossi.apolge.common.scripting.ScriptException;
 import tfossi.apolge.common.scripting.p.ParseException;
 import tfossi.apolge.common.scripting.t.Table;
-import tfossi.apolge.data.core._ElementBuilder;
 
 /**
  * Liefert eine Konfigurationsseite.<br>
@@ -51,53 +50,46 @@ public class ValueParser {
 	 * @version 01.08.2014
 	 * @param root
 	 *            Roottable 
-	 * @param block
-	 *            unbearbeitete Tabelle mit den Tokenlisten {key=[t1,t2,...]}
 	 * @param quotes
 	 *            Liste der Strings, die in $x$ eingesetzt werden muss.
 	 * @param mode
 	 *            FIXME vollständige Definition steht noch aus PMODE0 0: First
 	 *            Pass PMODEGF0 2: #-Pass
-	 * @return PatternMap des Scripts mit den Ergebnissen des mode
 	 * @throws ScriptException
 	 *             Fehler im Script
 	 * @throws ParseException
 	 *             Fehler beim Parsen
 	 * @modified -
 	 */
-	public final _ElementBuilder valueParser(Table root, Table block,
+	public final void valueParser(Table root,
 			List<String> quotes, final byte mode) throws ScriptException,
 			ParseException {
 
-		_ElementBuilder eb = new _ElementBuilder();
-
-		if (LOGGER) {
-			logger.debug("Parse Values:" + LFCR + block);
+		if (LOGGER && logger!=null) {
+			logger.debug("Parse Values:" + LFCR + root);
 		}
 
-		transferValuetokenlines(eb, root, block, quotes, mode);
-
-		return eb;
+		transferValuetokenlines(root, root, quotes, "", mode);
 	}
 
 	/**
 	 * Zeilenweise die Zuweisungen untersuchen
 	 * 
-	 * @param eb
-	 *            Elementbuilder
 	 * @param root
 	 *           Roottable
 	 * @param block
 	 *            Table die untersucht wird
 	 * @param quotes
 	 *            Stringliste
+	 * @param prename 
+	 * 			vorgestellter Name
 	 * @param mode
 	 *            0,2,3
 	 * @throws ScriptException
 	 *             Scriptfehler
 	 */
-	private final void transferValuetokenlines(_ElementBuilder eb, Table root,
-			Table block, List<String> quotes, final byte mode)
+	final void transferValuetokenlines(Table root,
+			Table block, List<String> quotes, final String prename, final byte mode)
 			throws ScriptException {
 		// KEY ist schon falsch!
 
@@ -105,7 +97,7 @@ public class ValueParser {
 			throw new ScriptException("Leere Anweisung!" + LFCR + root + LFCR
 					+ block);
 
-		if (LOGGER)
+		if (LOGGER && logger!=null)
 			logger.debug("Transfer from Script to Value " + NTAB + "BLOCK: "
 					+ block);
 
@@ -113,8 +105,8 @@ public class ValueParser {
 		// Jeder Key repräsentiert eine Eigenschaft des Elements
 		for (String key : block.keySet()) {
 
-			if (LOGGER)
-				logger.trace("  Check all keys. Next: [" + key + "]" + NTAB
+			if (LOGGER && logger!=null)
+				logger.trace("Check all keys. Next: [" + key + "]" + NTAB
 						+ "Zuweisung: " + block.get(key));
 
 			// TableMap not VP_Tokenlist
@@ -127,20 +119,19 @@ public class ValueParser {
 			valuetokens = VP_Parse.parse(this, root, block, valuetokens,
 					quotes, key, mode);
 
-			if (LOGGER)
+			if (LOGGER && logger!=null)
 				logger.debug("parse-Ergebnis: " + NTAB + key + "="
 						+ valuetokens + " (" + ")");
 
 			// Geht in die Berechnung.
 			this.vp_transfer.transfer(key, block, valuetokens, quotes, mode);
 
+			if (LOGGER && logger!=null)
+				logger.debug("transfer-Ergebnis: " + NTAB + key + "="
+						+ valuetokens + " (" + ")");
 			// Ergebnis sichern
-			// ...im Table (für config)
 			block.put(key, valuetokens);
-			// ...im Elementbuilder
-//	FIXME		eb.addEigenschaften(key, valuetokens);
 		}
-		eb.addEigenschaften(block);
 	}
 
 	// ---- Selbstverwaltung --------------------------------------------------

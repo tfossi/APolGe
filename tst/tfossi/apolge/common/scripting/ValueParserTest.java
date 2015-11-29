@@ -117,9 +117,9 @@ final ValueParser vp = new ValueParser();
 						+ this.simpleTestdaten[row][1], null);
 				ls.generateTokenlist();
 				ls.generateTable();
-				_ElementBuilder eb =
-				this.vp.valueParser(ls.getTable(), ls.getTable(), ls.getQuotes(), (byte)0);
-		
+				this.vp.valueParser(ls.getTable(), ls.getQuotes(), (byte)0);
+
+				_ElementBuilder eb = new _ElementBuilder(this.simpleTestdaten[row][0], null,null,  ls.getTable(), TESTPATH);
 				assertEquals(this.simpleTestdaten[row][0], this.simpleTestdaten[row][2], eb.toString());
 
 		
@@ -170,9 +170,9 @@ final ValueParser vp = new ValueParser();
 						+ this.simpleFunctions[row][1], null);
 				ls.generateTokenlist();
 				ls.generateTable();
-				_ElementBuilder eb =
-				this.vp.valueParser(ls.getTable(), ls.getTable(), ls.getQuotes(), (byte)0);
-		
+				this.vp.valueParser( ls.getTable(), ls.getQuotes(), (byte)0);
+
+				_ElementBuilder eb = new _ElementBuilder(this.simpleFunctions[row][0], null, null, ls.getTable(), TESTPATH);
 				assertEquals(this.simpleFunctions[row][0], this.simpleFunctions[row][2], eb.toString());
 
 		
@@ -223,9 +223,10 @@ final ValueParser vp = new ValueParser();
 						+ this.pass2Functions[row][1], null);
 				ls.generateTokenlist();
 				ls.generateTable();
-				_ElementBuilder eb =
-				this.vp.valueParser(ls.getTable(), ls.getTable(), ls.getQuotes(), (byte)0);
-		
+				
+				this.vp.valueParser(ls.getTable(), ls.getQuotes(), (byte)0);
+
+				_ElementBuilder eb = new _ElementBuilder(this.pass2Functions[row][0], null, null, ls.getTable(), TESTPATH);
 				assertEquals(this.pass2Functions[row][0], this.pass2Functions[row][2], eb.toString());
 
 //				System.err.print(VERSION);
@@ -276,9 +277,9 @@ final ValueParser vp = new ValueParser();
 						+ this.pass3Functions[row][1], null);
 				ls.generateTokenlist();
 				ls.generateTable();
-				_ElementBuilder eb =
-				this.vp.valueParser(ls.getTable(), ls.getTable(), ls.getQuotes(), (byte)0);
-		
+				this.vp.valueParser( ls.getTable(), ls.getQuotes(), (byte)0);
+
+				_ElementBuilder eb = new _ElementBuilder(this.pass3Functions[row][0], null, null, ls.getTable(), TESTPATH);
 				assertEquals(this.pass3Functions[row][0], this.pass3Functions[row][2], eb.toString());
 
 		
@@ -331,12 +332,10 @@ final ValueParser vp = new ValueParser();
 				LoadScript ls = new LoadScript(this.configFunctions[row][1], null);
 				ls.generateTokenlist();
 				ls.generateTable();
-				_ElementBuilder eb =
-				this.vp.valueParser(ls.getTable(), ls.getTable(), ls.getQuotes(), (byte)0);
-		
-				assertEquals(this.configFunctions[row][0], this.configFunctions[row][2], eb.toString());
-
-		
+				this.vp.valueParser( ls.getTable(), ls.getQuotes(), (byte)0);
+				
+				assertEquals(this.configFunctions[row][0], this.configFunctions[row][2],ls.getTable().toString()); 
+					
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
 				if (e.getLocalizedMessage().contains("Ordner ["))

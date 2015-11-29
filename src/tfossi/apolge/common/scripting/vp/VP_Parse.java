@@ -101,6 +101,16 @@ public class VP_Parse {
 				logger.debug("Parse Eintragstoken " + NTAB + "[" + tk
 						+ "] (ndx #" + ndx + ") in " + valuetokens);
 			
+			// Test1: Table
+			if (tk instanceof Table) {
+				if (LOGGER)
+					logger.trace("Innerer BLOCK: " + tk);
+				Table subblock = (Table) tk;
+				vp.transferValuetokenlines( root, subblock, quotes,
+						(prename == null ? "" : prename), mode);
+							continue;
+			}
+			
 			// Test2: Klammer auf (OPEN) und einsetzen
 			if (VP_Tests.testOpenNChg(valuetokens, ndx, tk, tkpre)) {
 				continue;

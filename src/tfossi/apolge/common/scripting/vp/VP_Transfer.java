@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 import tfossi.apolge.common.scripting.t.Table;
 import tfossi.apolge.common.scripting.vp.pm.FuncPType;
 import tfossi.apolge.common.scripting.vp.pm.Operation;
-import tfossi.apolge.data.core.Element;
 
 /**
  * Übersetzt Anweisungen des _ElementtBuilder<br>
@@ -288,9 +287,9 @@ public class VP_Transfer {
 
 		if (LOGGER)
 			logger.debug("Ergebnis:" + NTAB + valuetokens);
-		if (this.e != null) {
-			this.e.put(atomname, valuetokens);
-		}
+		// if (this.e != null) {
+		// this.e.put(atomname, valuetokens);
+		// }
 
 		return -1;
 	}
@@ -434,7 +433,9 @@ public class VP_Transfer {
 		if (LOGGER)
 			logger.trace("Funktioncheck: " + actToken);
 
-		assert actToken.toString().contains("f:=") : actToken;
+		if (!actToken.toString().contains("f:="))
+			return false;
+		// assert actToken.toString().contains("f:=") : actToken;
 
 		// Liste der Functions
 		List<? extends FuncPType> listFPT = (List<? extends FuncPType>) ((List<?>) actToken);
@@ -585,6 +586,14 @@ public class VP_Transfer {
 					e1.printStackTrace();
 					assert false;
 				}
+
+				// Ganze Zeile als 2-Pass markieren
+				if (fpt.function.twoPass())
+					valuetokens.setTwoPass();
+
+				// Ganze Zeile als 3-Pass markieren
+				if (fpt.function.threePass())
+					valuetokens.setThreePass();
 				return true;
 			}
 		}
@@ -803,6 +812,13 @@ public class VP_Transfer {
 			}
 
 		} catch (Exception e1) {
+			System.err.println("Parameter: " + aufrufparameter);
+			System.err.println("Methode  : " + fpt.toString());
+			System.err.println();
+			System.err.println();
+			System.err.println();
+			System.err.println();
+
 			e1.printStackTrace();
 
 			assert false : "Testfall: Fehlersituation klären.";
@@ -842,6 +858,30 @@ public class VP_Transfer {
 
 		int last = lastElement;
 		int lowPrio = 0;
+
+		if (valuetokens.isTwoPass() && mode >= 1) {
+
+			for (int ndx = lastElement; ndx >= 0; ndx--) {
+
+				Object actToken = valuetokens.get(ndx);
+				if (actToken.toString().startsWith("f:=")) {
+					FuncPType f = (FuncPType) actToken;
+					if (LOGGER)
+						logger.trace("2-PASS: " + f + NTAB
+								+ valuetokens.subList(ndx, ndx + 1));
+
+					// Parameter zusammenstellen
+					Object erg = f.function
+							.calculate(f.values.length > 0 ? f.values : null);
+
+					// ... und Ergebnis eintragen!
+					valuetokens.set(ndx, erg);
+
+					// FIXME Hier in den Values kann sich eine unterfunktion
+					// verbergen!
+				}
+			}
+		}
 
 		for (int prio = 10; prio >= lowPrio; prio--) {
 			// Ermittle die höchste Priorität aller Operationen (Punkt vor
@@ -1048,11 +1088,11 @@ public class VP_Transfer {
 	 * @modified -
 	 */
 	public VP_Transfer() {
-		this.e = null;
+		// this.e = null;
 	}
 
 	/** e */
-	private final Element e;
+	// private final Element e;
 
 	/**
 	 * constructor
@@ -1061,7 +1101,7 @@ public class VP_Transfer {
 	 *            Element
 	 * @modified -
 	 */
-	public VP_Transfer(Element e) {
-		this.e = e;
-	}
+	// public VP_Transfer(Element e) {
+	// this.e = e;
+	// }
 }

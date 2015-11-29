@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 
@@ -113,12 +112,7 @@ public class NoComment {
 
 						return resultBuffer.append(";");
 					}
-					// Schalte Logging des Einlesens vom Config-File aus
-					if (line.contains("VERSION")&&logger!=null) {
-						
-						logger.warn("Schalte Logger für Const... auf WARN!");
-						logger.setLevel(Level.WARN);
-					}
+					
 					// Zeilenendezeichen wird nicht mit eingelesen, daher hier
 					// nachgetragen
 					line += LFCR;

@@ -85,8 +85,7 @@ public class PMApo {
 						return rc;
 					} catch (IllegalArgumentException  e) {
 
-						
-						if (LOGGER)
+						if (LOGGER && values!=null)
 							logger.trace("Führe aus: " + ((Object[])values[0])[0]);
 						e.printStackTrace();
 						assert false;

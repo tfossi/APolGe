@@ -1,0 +1,22 @@
+CHILDS = {
+	lobby = {
+		count = 1
+	}
+	nation = {
+		count = 1+nextInt(10)
+	}
+}
+
+a = 1
+//	name: a
+//	nameDescription: Important 
+//	init: 1
+//  initDescription: Startvalue 			 
+//	flow: -
+//	flowDescription: Verlaufswerte			,key
+//				keyValue, 
+
+
+
+b = 1.
+c = "ccc"

@@ -1,0 +1,6 @@
+CHILDS = {	
+	person = {
+		count = 1
+	}
+}
+name="MC"
