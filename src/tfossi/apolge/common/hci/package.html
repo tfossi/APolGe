@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="lightgrey">
+Die human control interfaces: Ansteuerung aller Menus und Abbildung des MVC-Modells.
+<p>
+
+<!--
+<h2>Package Specification</h2>
+<h3>Zustandspattern zur Menusteuerung</h3>
+<a href="./IStateContext.html">IStateContext</a> bildet die zentrale Schnittstelle zum Zustandspattern. 
+Die Schnittstelle <a href="./IStateContext.html">IStateContext</a> ist in den Applikationen 
+<a href="../application/Client.html">Client</a>, <a href="../application/Server.html">Server</a>,
+ <a href="../application/Editor.html">Editor</a> und <a href="../application/Simulator.html">Simulator</a> 
+ implementiert. Diese Applikationen steuern ihre Zustände (= Menüs) damit.<br><br>
+
+<a href="./IState.html">IState</a> beschreibt die Methoden, die zur Zustandsänderung im Zustandspattern 
+notwendig.  Die Schnittstelle ist in der abstrakten Klasse 
+<a href="./AbstractMenu.html">AbstractMenu</a> realisiert. Sämtliche Zustände (=Menüs)
+erben dies Eigenschaft.<br><br>
+-->
+
+
+<!--
+
+<h3>MVC-Pattern</h3>
+Das MVC-Pattern teilt den Programmcode in drei Teile auf<br><ul>
+<li>Das abstrakte <a href="./AbstractModel.html">Model</a> enhält alle Daten des Codes. Die Schnittstelle ist
+ <a href="./IModel.html">IModel</a>. Sämtliche Modelle erben diese Eigenschaft</li>  
+<li>Der abstrakte <a href="./AbstractView.html">View</a> übernimmt alle Ein- und Ausgaben. Die Schnittstelle ist
+ <a href="./IView.html">IView</a>. Sämtliche Viewer erben diese Eigenschaft</li>
+<li>Der abstrakte <a href="./AbstractMenu.html">Controller</a> verarbeitet alle Daten und liefert 
+dem <a href="./AbstractModel.html">Model</a> alle Datenänderungen und dem 
+<a href="./AbstractView.html">View</a> alle Datenzustände. Sämtliche Menüs erben diese Eigenschaft.</li></ul><br>
+
+<h3>AbstractMenu</h3>
+<a href="./AbstractMenu.html">AbstractMenu</a> bildet mehrere Pattern gleichzeitig ab!<ul>
+<li>Für <a href="#Zustandspattern zur Menusteuerung">Zustandspattern zur Menusteuerung</a> als StateContext</li> 
+<li>Für <a href="#MVC-Pattern">MVC-Pattern</a> als Controller im MVC-Pattern</li> 
+<li>IReceiver</li> 
+<li>Observer</li> 
+<li>Observable</li></ul><br> 
+-->
+
+<h2>Related Documentation</h2>
+<!-- Put @see and @since tags down here. -->
+<!-- @.todo - - Unbedingt noch auf IReceiver, Observer und Observable referenzieren -->
+</body>
+</html>

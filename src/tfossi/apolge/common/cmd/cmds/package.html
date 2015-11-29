@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<Titel>APolGe: <u>Die Befehle</u> (name.tfossi.apolge.common.cmd.cmds) Technical Referenz</Titel></head>
+<hr>
+<body bgcolor="white">
+</head>
+<p><a href="../package.html">UP</a></p>
+<br>
+Vorgesehen für alle Befehls-Klassen.<br>
+<br>
+
+<h2>Beschreibung</h2>
+<p>Ein Befehl (<code>XYZ.class extends ACmd</code>) dient dazu, einen Befehl zur Ausführung zu bringen, indem er eine 
+spezifische Anforderung über die Methode <code>public final void command()</code> annimmt, aufbereitet und im  
+Receiver die entsprechende Methode aufruft.</p>
+<p>Die Instanzierung erfolgt über den Konstruktor <code>Order(name, manuell)</code>. Erster Parameter ist der 
+Eingabecode des Befehls, der zweite Parameter bestimmt, ob der Befehl manuell aufrufbar ist oder nur von einem Automaten 
+bedient wird.<p>
+<p>Die Methoden <code>public String testParameter(String parameter)</code>, <code>public int maxParameter(String parameter)</code>
+ und <code>public int minParameter(String parameter)</code> dienen zur Parametersteuerung.</p>
+<p>Die Informationskette läuft von:<ol>
+<li>Einsprung in <code>public final void command()</code></li>
+<li>Parameterverarbeitung in <code>public static final void Command.parameterCheck(this, false)</code></li>
+<li>Aufruf des generellen Calls <code>public void call(String parameter, String... value)</code></li>
+<li>Daraus erfolgt der Aufruf des parameterspezifischen Calls im  <code>Enumeration c: public void call(ICmd cmd, String... value)</code>. 
+Ggfs. können hier auch kleinere Datenverarbeitungen stattfinden.</li>
+<li>Aufruf der Receiverfunktion <code>cmd.getReceiver().methode()</code></li></ol>
+<p>Ist kein Parameter vorhanden, kann schon in <code>public final void command()</code> der Receiver aufgerufen werden.</p>
+<p>Die Parameter werden in folgender Form eingeben:<code><ul>
+<li>show: Wird angezeigt.</li>
+<li>buttontext: Beschriftung des Buttons im SWT</li>
+<li>tooltiptext: Hinweistext im SWT</li>
+<li>parameterMin: Mindestanzahl der Parameter</li>
+<li>parameterMax: Maximalanzahl der Parameter</li>
+</ul></code>.
+Der Aufruf erfolgt im Parameter-Enummeration c mit <code>paramter(show,buttontext,tooltiptext,paramtermin, paramtermax)</code>
+Einige Parameter müssen implementiert sein:<ul>
+<li>help, ?, h<ul> die Hilfe zu diesem Befehl</ul></li>
+<li>tst<ul> der Schalter, um den Befehl nur zu testen, aber nicht auszuführen</ul></li>
+</ul>
+
+		
+		
+<h2>Package Specification</h2>
+
+
+<h2>Related Documentation</h2>
+
+<!--
+For overviews, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+  <li><a href="">##### REFER TO NON-SPEC DOCUMENTATION HERE #####</a>
+</ul>
+-->
+<!-- Put @see and @since tags down here. -->
+<p><a href="../package.html">UP</a></p>
+</body>
+</html>

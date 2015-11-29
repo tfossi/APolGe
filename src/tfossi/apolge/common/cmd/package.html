@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<Titel>APolGe: <u>Die Befehlsverarbeitung</u> (name.tfossi.apolge.common.cmd) Technical Referenz</Titel></head>
+<hr>
+<body bgcolor="white">
+</head>
+<p><a href="../package.html">UP</a></p>
+<br>
+Vorgesehen für alle Klassen und Schnittstellen der Befehlssteuerung.<br>
+<br>
+Die Commandklassen steuern die Befehlsabwicklung. Der Einsprung ist immer gleich <code><pre>
+public void command()</pre></code>Der <code>ConcreteCommand</code> kennt den oder auch mehrere 
+die Methoden des Receivers und ruft diese ggfs. entsprechend der Parameter auf. 
+Die eigentliche Befehlsausführung (Code) findet also im Receiver statt.<br>
+Es gibt ein paar Standardparameter, die immer angeboten werden:<pre><code>
+public void back();
+public void contentRecorder();
+public void recRecorder(String macroname, String comment);
+public void stopRecorder();
+public void playRecorder(String ... value);
+public void exit();
+public void credit();
+</code></pre>  
+<h2>Beschreibung Command-Pattern</h2>
+Die Befehlssteuerung ist nach dem <a href="">Command-Pattern</a> designed worden.<br>
+<ul>
+<li>Command: abstract class ACmd<ul>ist die zentrale Klasse des Commandpatterns. 
+Hier wird der Receiver eingetragen, die Befehlsparameter, binäre Daten, Informationen für das SWT und weitere Screeninfos.</ul></li>
+<li>Command: interface ICmd<ul>ist die Schnittstelle zur Ausführung der Befehle und der Vorbereitung. Für das SWT stehen noch besondere Methoden bereit.</ul></li>
+<li>Command: interface IBuildSWTWidget<ul>spezielle Schnittstelle für SWT-Steuerung</ul></li>
+<li>Command: class Command<ul>dient zur Parameterauswertung</ul></li>
+<li>Command: class ConcreteCommand<ul>enthält den eigentlichen Befhelfsaufruf</ul></li>
+<li>Receiver: class AMenuReceiver<ul>Alle Methoden zur Befehlssteuerung</ul></li>
+<li>Receiver: interface IGeneralReceiver<ul>Enthält die Signaturen der Methoden, die der Receiver beherrschen muss</ul></li>
+<li>Receiver: interface IReceiver<ul>Marker</ul></li>
+<li>Receiver: interface INetReceiver<ul>Enthält die Signaturen der Methoden für die Netzsteuerung</ul></li>
+<li>Receiver: class ConcreteMenu<ul>Die konkrete Klasse, die die Commands empfängt und verarbeitet.</ul></li>
+</ul> 
+<h2>Beschreibung der Anmeldung von Commands</h2>
+<p>Jedes Command muss instanziert und angemeldet werden, sonst kann es nicht ausgeführt werden. Dazu 
+wird ein Script genutzt, was es ermöglicht, nur mit Teilcompilierung des Codes neue Befehle einzubauen und einfach
+Befehlszuordnungen abzuschalten.</p>
+<p>Die Instanzierung erfolgt im Konstruktor der Klasse <code>CommandMaps()</code>. Aus der Konfigurationstabelle <a href="">config</a>
+wird das Feld <code>CMP</code> ausgelesen und die Commands per Reflection instanziert.</p> 
+<p>Es gibt eine weitere Liste im Konfigurationsscript <a href="">config</a>, in der beschrieben ist, welche Befehle den Modellen (<code>MENU</code>) oder den
+Views (<code>..VIEW</code>) zugewiesen sind.</p>
+<p>Die Klasse <code>new CommandMaps().fetchList(..VIEW)</code> ordnet dann (hier: dem View) die gültigen Befehle zu.</p> 
+<p>Ein weitere Liste (<code>GRAYED...</code>) im Konfigurationsscript <a href="">config</a> definiert die initial <i>ausgegrauten</i> Menüs.</p>
+ 
+<h2>Package Specification</h2>
+
+
+<h2>Related Documentation</h2>
+<h3>Packages<h3>
+<b>List of Packages</b>
+<ul>
+<li><a href="cmds/package.html">cmds</a><ul><li></li></ul></li>
+</ul>
+<!--
+For overviews, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+  <li><a href="">##### REFER TO NON-SPEC DOCUMENTATION HERE #####</a>
+</ul>
+-->
+<!-- Put @see and @since tags down here. -->
+<p><a href="../package.html">UP</a></p>
+</body>
+</html>
