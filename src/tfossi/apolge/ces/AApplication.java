@@ -7,8 +7,10 @@
  */
 package tfossi.apolge.ces;
 
+import static tfossi.apolge.common.constants.ConstValue.LOGGER;
+import static tfossi.apolge.common.constants.ConstValue.NTAB;
+import static tfossi.apolge.common.constants.ConstValue.ON;
 import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
-import static tfossi.apolge.common.constants.ConstValue.*;
 
 import java.util.Properties;
 import java.util.Stack;
@@ -18,7 +20,6 @@ import org.apache.log4j.Logger;
 import tfossi.apolge.ces.client.Client;
 import tfossi.apolge.ces.editor.Editor;
 import tfossi.apolge.ces.server.Server;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.hci.IState;
 import tfossi.apolge.common.hci.IStateContext;
 import tfossi.apolge.common.system.PreLoad;
@@ -82,7 +83,7 @@ public abstract class AApplication extends Thread implements IStateContext
 	protected final void einrichtenGrafik() {
 		SWTGrafik swt = null;
 		if (this.props.get("screen").equals(new Boolean(ON))) {
-			ErrApp.NI_X.erraufruf("Grafik ist nicht implementiert!");
+			assert false: "ErrApp.NI_X.erraufruf(Grafik ist nicht implementiert!";
 			if(LOGGER) logger.debug("SWT::Stelle Ein- und Ausgabe auf SWT-Betrieb ein!");
 	 		this.cntr = new Cntr(new GuiFactory());
 			swt = new SWTGrafik(this.getId());
@@ -143,7 +144,7 @@ public abstract class AApplication extends Thread implements IStateContext
 	 * 
 	 * @see IState
 	 */
-	private final Stack<IState> actualState = new Stack<>();
+	private final Stack<IState> actualState = new Stack<IState>();
 
 
 	/* (non-Javadoc)

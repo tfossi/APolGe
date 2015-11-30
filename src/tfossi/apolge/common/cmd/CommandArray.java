@@ -85,7 +85,7 @@ public class CommandArray extends ArrayList<ICmd> implements CommandList {
 	public final List<Widget> buildSWTWidget(final Group group) {
 		// assert false;
 		assert group != null;
-		List <Widget> listOfWidgets = new ArrayList<>();
+		List <Widget> listOfWidgets = new ArrayList<Widget>();
 		for (Iterator<ICmd> iter = super.iterator(); iter.hasNext();) {
 			ICmd ac = iter.next();
 			if(LOGGER) logger.trace("SWT::\tBaue Parameter für [" + ac.getClass().getSimpleName()

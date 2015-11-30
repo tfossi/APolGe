@@ -128,7 +128,7 @@ public abstract class ACmd implements Serializable, Cloneable, ICmd {
 	// ------------------------------------------------------------
 
 	/** Parameterqueue für Befehle mit Daten */
-	private Queue<String> parameter = new LinkedList<>();
+	private Queue<String> parameter = new LinkedList<String>();
 
 	/*
 	 * (non-Javadoc)
@@ -204,7 +204,7 @@ public abstract class ACmd implements Serializable, Cloneable, ICmd {
 	}
 
 	/** Widgetinstanz des Befehls */
-	protected List<Widget> widget = new ArrayList<>();
+	protected List<Widget> widget = new ArrayList<Widget>();
 
 	/** group */
 	protected Group group = null;
@@ -253,7 +253,7 @@ public abstract class ACmd implements Serializable, Cloneable, ICmd {
 		return this.unvisible;
 	}
 	/** parameterwidget */
-	protected List<Widget> parameterwidget = new ArrayList<>(0);
+	protected List<Widget> parameterwidget = new ArrayList<Widget>(0);
 
 	@Override
 	public void /* List<Widget> */buildParameterWidgets(
@@ -298,7 +298,7 @@ public abstract class ACmd implements Serializable, Cloneable, ICmd {
 		ACmd result = null;
 		try {
 			result = (ACmd) super.clone();
-			result.parameter = new LinkedList<>();
+			result.parameter = new LinkedList<String>();
 			for (String o : this.parameter)
 				result.parameter.add(o);
 		} catch (CloneNotSupportedException e) {

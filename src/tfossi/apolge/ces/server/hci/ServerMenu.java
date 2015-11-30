@@ -21,7 +21,6 @@ import org.apache.log4j.Logger;
 
 import tfossi.apolge.common.cmd.ICmd;
 import tfossi.apolge.common.cmd.cmds.Gamelist;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.hci.AMenu;
 import tfossi.apolge.common.hci.AModel;
 import tfossi.apolge.common.hci.IStateContext;
@@ -849,12 +848,12 @@ public class ServerMenu extends AMenu implements INetReceiver {
 	 */
 	@Override
 	public synchronized Object[] verifyPassportUs(Object daten, String[] value) {
-		if (daten instanceof ErrApp[]) {
-			ErrApp[] str = (ErrApp[]) daten;
-			if(LOGGER) logger.trace("IO:NET ERROR" + LOGTAB + "Daten: " + Arrays.asList(str) + LOGTAB
-					+ "Value: " + (value == null ? "NULL" : Arrays.asList(value)));
-			return str;
-		}
+//		if (daten instanceof ErrApp[]) {
+//			ErrApp[] str = (ErrApp[]) daten;
+//			if(LOGGER) logger.trace("IO:NET ERROR" + LOGTAB + "Daten: " + Arrays.asList(str) + LOGTAB
+//					+ "Value: " + (value == null ? "NULL" : Arrays.asList(value)));
+//			return str;
+//		}
 		if(LOGGER) logger.trace("IO:NET" + LOGTAB + "Daten: " + daten + LOGTAB + "Value: "
 				+ (value == null ? "NULL" : Arrays.asList(value)));
 
@@ -867,12 +866,12 @@ public class ServerMenu extends AMenu implements INetReceiver {
 	 */
 	@Override
 	public synchronized Object[] verifyAnswerGs(final Object daten, final String[] value) {
-		if (daten instanceof ErrApp[]) {
-			ErrApp[] str = (ErrApp[]) daten;
-			if(LOGGER) logger.trace("IO:NET ERROR" + LOGTAB + "Daten: " + Arrays.asList(str) + LOGTAB
-					+ "Value: " + (value == null ? "NULL" : Arrays.asList(value)));
-			return str;
-		}
+//		if (daten instanceof ErrApp[]) {
+//			ErrApp[] str = (ErrApp[]) daten;
+//			if(LOGGER) logger.trace("IO:NET ERROR" + LOGTAB + "Daten: " + Arrays.asList(str) + LOGTAB
+//					+ "Value: " + (value == null ? "NULL" : Arrays.asList(value)));
+//			return str;
+//		}
 		if(LOGGER) logger.trace("IO:NET" + LOGTAB + "Daten: " + daten + LOGTAB + "Value: "
 				+ (value == null ? "NULL" : Arrays.asList(value)));
 

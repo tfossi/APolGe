@@ -8,6 +8,17 @@
 package tfossi.apolge.common.macrorecorder;
 
 
+import static tfossi.apolge.common.constants.ConstValue.INTUNDEF;
+import static tfossi.apolge.common.constants.ConstValue.LFCR;
+import static tfossi.apolge.common.constants.ConstValue.LOGGER;
+import static tfossi.apolge.common.constants.ConstValue.LOGTAB;
+import static tfossi.apolge.common.constants.ConstValue.MACRO_PATH;
+import static tfossi.apolge.common.constants.ConstValue.NTAB;
+import static tfossi.apolge.common.constants.ConstValue.OFF;
+import static tfossi.apolge.common.constants.ConstValue.ON;
+import static tfossi.apolge.common.constants.ConstValue.TAB;
+import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
+
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
@@ -32,15 +43,12 @@ import java.util.regex.PatternSyntaxException;
 
 import org.apache.log4j.Logger;
 
-import tfossi.apolge.common.hci.menu.IGeneralReceiver;
-import static tfossi.apolge.common.constants.ConstValue.*;
-import static tfossi.apolge.common.constants.ConstValueExtension.*;
 import tfossi.apolge.common.cmd.ACmd;
 import tfossi.apolge.common.cmd.CommandArray;
 import tfossi.apolge.common.cmd.CommandList;
 import tfossi.apolge.common.cmd.CommandMaps;
 import tfossi.apolge.common.cmd.ICmd;
-import tfossi.apolge.common.error.ErrApp;
+import tfossi.apolge.common.hci.menu.IGeneralReceiver;
 import tfossi.apolge.io.console.Key;
 
 /**
@@ -78,7 +86,7 @@ class Recorder implements IRecorder {
 	 * macrolist ist die Map der Makros. Dabei enthält der Key den Namen des
 	 * Makros, Content ist die Liste der Commands/Befehle mit deren Parametern
 	 */
-	private final Map<String, Macro> macroList = new HashMap<>();
+	private final Map<String, Macro> macroList = new HashMap<String, Macro>();
 
 	/** Gefilterte macroList */
 	private Map<String, Macro> macroListFilter;
@@ -122,8 +130,8 @@ class Recorder implements IRecorder {
 			this.actMacroName = macroname;
 			this.recordPointer = 0;
 		} else {
-			ErrApp.MACRONOTFOUND.erraufruf("Name: \"" + macroname
-					+ "\"");
+			assert false; //	ErrApp.MACRONOTFOUND.erraufruf("Name: \"" + macroname
+//					+ "\"");
 			return false;
 		}
 		return true;
@@ -140,8 +148,8 @@ class Recorder implements IRecorder {
 			this.save();
 			if(LOGGER) logger.info("Makro " + macroname + " wurde gelöscht!");
 		} else {
-			ErrApp.MACRONOTFOUND.erraufruf("Name: \"" + macroname
-					+ "\"");
+			assert false; //	ErrApp.MACRONOTFOUND.erraufruf("Name: \"" + macroname
+//					+ "\"");
 		}
 	}
 
@@ -285,8 +293,8 @@ class Recorder implements IRecorder {
 		}
 		return str;
 		}
-			ErrApp.MACRONOTFOUND.erraufruf("Name: \"" + macroname
-					+ "\"");
+		assert false; //		ErrApp.MACRONOTFOUND.erraufruf("Name: \"" + macroname
+//					+ "\"");
 			return "";
 	
 	}
@@ -345,12 +353,12 @@ class Recorder implements IRecorder {
 		// String nogo = "";
 		// List<String> rc = new ArrayList<String>();
 		// Die Liste der Elemente, die herausgefiltert werden sollen
-		List<String> negativ = new ArrayList<>();
+		List<String> negativ = new ArrayList<String>();
 		Set<String> keySet = this.macroListFilter.keySet();
 		if(LOGGER) logger.trace("gefilterte Liste der Macros"+keySet);
 		for (String key : keySet) {
 			if(LOGGER) logger.trace("Untersuche: "+key);
-			List<MatchResult> results = new ArrayList<>();
+			List<MatchResult> results = new ArrayList<MatchResult>();
 			try {
 				for (Matcher m = Pattern.compile(pattern).matcher(key); m
 						.find();){
@@ -434,7 +442,7 @@ class Recorder implements IRecorder {
 	 */
 	@Override
 	public final void contentReset() {
-		this.macroListFilter = new HashMap<>(this.macroList);		
+		this.macroListFilter = new HashMap<String,Macro>(this.macroList);		
 	}
 
 	/* (non-Javadoc)
@@ -574,7 +582,7 @@ class Recorder implements IRecorder {
 			if (dec != null)
 				dec.close();
 		}
-		this.macroListFilter = new HashMap<>(this.macroList);
+		this.macroListFilter = new HashMap<String,Macro>(this.macroList);
 	}
 
 	// ---- Selbstverwaltung --------------------------------------------------
@@ -598,7 +606,7 @@ class Recorder implements IRecorder {
 			this.load();
 
 		} catch (Exception e) {
-			ErrApp.IOERROR.erraufruf("");
+			assert false; //		ErrApp.IOERROR.erraufruf("");
 		}
 	}
 

@@ -7,13 +7,14 @@
  */
 package tfossi.apolge.ces.server.hci;
 
-import static tfossi.apolge.common.constants.ConstValue.*;
-import static tfossi.apolge.common.constants.ConstValueExtension.*;
+import static tfossi.apolge.common.constants.ConstValue.LOGGER;
+import static tfossi.apolge.common.constants.ConstValue.NTAB;
+import static tfossi.apolge.common.constants.ConstValueExtension.SERVERVIEW;
+import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Observable;
-
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
@@ -28,7 +29,6 @@ import org.eclipse.swt.widgets.Widget;
 import tfossi.apolge.ces.editor.hci.EditorMenu;
 import tfossi.apolge.ces.editor.hci.EditorModel;
 import tfossi.apolge.common.cmd.CommandMaps;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.hci.AView;
 import tfossi.apolge.io.ContentString;
 import tfossi.apolge.io.ContentWidget;
@@ -80,7 +80,7 @@ public class ServerView extends AView {
 
 		switch (scr) {
 		case VI:
-			java.util.List<Widget> listOfWidgets = new java.util.ArrayList <> ();			
+			java.util.List<Widget> listOfWidgets = new java.util.ArrayList <Widget> ();			
 			List rc = (List) base;
 			rc.setItems(new String[] { "HALLO from Vienna" });
 			rc.setTopIndex(rc.getItemCount() - 3);
@@ -94,8 +94,8 @@ public class ServerView extends AView {
 //			FIXME 13.01.2015
 			return new ContentString("" /*DEVELOP_PATH + "html" + FS + this.getClass().getSimpleName() + ".html"*/);
 		default:
-			ErrApp.NI_W.erraufruf("SWT::" + this.toString() + "\tContent abholen" + NTAB
-					+ "für " + scr + NTAB + "auf Base " + base);
+			assert false; //	ErrApp.NI_W.erraufruf("SWT::" + this.toString() + "\tContent abholen" + NTAB
+//					+ "für " + scr + NTAB + "auf Base " + base);
 		}
 		return null;
 	}
@@ -108,7 +108,7 @@ public class ServerView extends AView {
 	public java.util.List<Widget> buildCWidget(
 	/* @SuppressWarnings("unused") IModel model, */Group basegrp
 	/* , Widget widget */) {
-		java.util.List<Widget> listOfWidgets = new java.util.ArrayList<>();
+		java.util.List<Widget> listOfWidgets = new java.util.ArrayList<Widget>();
 		Browser browser = new Browser(basegrp, SWT.NONE);
 		FormData data = new FormData();
 		data.right = new FormAttachment(100, 0);

@@ -7,8 +7,13 @@
  */
 package tfossi.apolge.ces.client.hci;
 
-import static tfossi.apolge.common.constants.ConstValue.*;
-import static tfossi.apolge.common.constants.ConstValueExtension.*;
+import static tfossi.apolge.common.constants.ConstValue.LOGGER;
+import static tfossi.apolge.common.constants.ConstValue.LOGTAB;
+import static tfossi.apolge.common.constants.ConstValue.NTAB;
+import static tfossi.apolge.common.constants.ConstValueExtension.GRAYEDCLIENTMENU;
+import static tfossi.apolge.common.constants.ConstValueExtension.HEADTEXT;
+import static tfossi.apolge.common.constants.ConstValueExtension.PORT_NETWORK;
+import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,24 +23,22 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Properties;
 
-import tfossi.apolge.ces.*;
-
 import org.apache.log4j.Logger;
 
+import tfossi.apolge.ces.AApplication;
 import tfossi.apolge.ces.client.states.GameState;
 import tfossi.apolge.ces.client.states.IGameStateCall;
 import tfossi.apolge.ces.client.states.IUserStateCall;
 import tfossi.apolge.ces.client.states.UserState;
 import tfossi.apolge.common.cmd.ICmd;
 import tfossi.apolge.common.cmd.cmds.Gamelist;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.hci.AMenu;
+import tfossi.apolge.common.hci.AModel;
 import tfossi.apolge.common.hci.IStateContext;
 import tfossi.apolge.common.macrorecorder.IRecorder;
 import tfossi.apolge.common.net.UserSession;
 import tfossi.apolge.io.ContentString;
 import tfossi.apolge.io.Screen;
-import tfossi.apolge.common.hci.*;
 
 /**
  * TODO Comment
@@ -137,9 +140,9 @@ public class ClientMenu extends AMenu implements IUserStateCall, IGameStateCall 
 	 */
 	@Override
 	public Object[] verifyAnswerGs(final Object daten, final String[] value) {
-		if (daten instanceof ErrApp[]) {
-			return (ErrApp[]) daten;
-		}
+//		if (daten instanceof ErrApp[]) {
+//			return (ErrApp[]) daten;
+//		}
 		Object[] o = (Object[]) daten;
 		if(LOGGER) logger.info("IO:NET" + LOGTAB + "Daten: "
 				+ (daten == null ? null : Arrays.asList(o)) + LOGTAB
@@ -153,9 +156,9 @@ public class ClientMenu extends AMenu implements IUserStateCall, IGameStateCall 
 	 */
 	@Override
 	public Object[] verifyPassportUs(Object daten, String[] value) {
-		if (daten instanceof ErrApp[]) {
-			return (ErrApp[]) daten;
-		}
+//		if (daten instanceof ErrApp[]) {
+//			return (ErrApp[]) daten;
+//		}
 		Object[] o = (Object[]) daten;
 		if(LOGGER) logger.info("IO:NET" + LOGTAB + "Daten: "
 				+ (daten == null ? null : Arrays.asList(o)) + LOGTAB

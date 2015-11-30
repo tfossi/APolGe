@@ -22,7 +22,6 @@ import org.apache.log4j.Logger;
 
 import tfossi.apolge.common.cmd.CommandList;
 import tfossi.apolge.common.cmd.ICmd;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.hci.IMenu;
 import tfossi.apolge.common.hci.IView;
 import tfossi.apolge.io.Screen;
@@ -229,8 +228,8 @@ public class CnslLoop extends ALoop {
 			}
 			CnslLoop.console = false;
 		} catch (NullPointerException e) {
-			ErrApp.NDEF.erraufruf("Controller: " + menu + NTAB
-					+ "Cmd       : " + cmd);
+			assert false; //ErrApp.NDEF.erraufruf("Controller: " + menu + NTAB
+//					+ "Cmd       : " + cmd);
 		}
 	}
 
@@ -256,7 +255,7 @@ public class CnslLoop extends ALoop {
 		} catch (NullPointerException e) {
 			if(LOGGER) logger.debug("ABBRUCH");
 		} catch (Exception e) {
-			ErrApp.NDEF.erraufruf("");
+			assert false; //ErrApp.NDEF.erraufruf("");
 		}
 		return cmd;
 	}

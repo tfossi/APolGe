@@ -148,6 +148,14 @@ public class VP_ArrayTokenlist<T> extends ArrayList<T> implements
 		return this.threePass;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see tfossi.apolge.common.scripting.VP_Tokenlist#getValue()
+	 */
+	@Override
+	public final Object getValue() {
+		return this.get(0);
+	}
 
 	// ---- Selbstverwaltung --------------------------------------------------
 

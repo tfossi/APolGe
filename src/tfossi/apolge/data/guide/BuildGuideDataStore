@@ -1,0 +1,2646 @@
+
+
+
+
+
+
+
+
+	private final GDC gdc = new GDC();
+	private final GTC gtc = new GTC();
+
+
+
+
+
+	
+
+
+
+	/**
+	 * Anlage der Stammdaten der Stategroups. DOC Beschreibung derStammdaten
+	 * Auswertung der sgl_*.apo-Dateien: '*' ist benannt im "datastructure.apo".<br>
+	 * Die Form ist: Name = Typ Die <i>listenScripts</i> <b>[sgl_<i>Ebene
+	 * XY</i>.apo]</b> oder <b>[sgl_default.apo]</b><br>
+	 * liefern die Beschreibung der Stategruppen einer Ebene. <br>
+	 * Gruppen sollten vom SCON (!) sein! <code><pre>  
+	 * !gruppe1 = <i>TYP</i><br>
+	 * ...<br>
+	 * !gruppeN = { <i>TYP</i>; Activity ="<i>[Beschreibung der Gruppe]</i>"}
+	 * }  
+	 * </pre></code> TYP
+	 * <ul>
+	 * <li>CONST</li>
+	 * <li>RADIO</li>
+	 * <li>DIGIT</li>
+	 * </ul>
+	 * 
+	 * @param msg
+	 *            MetaStateGuideline des aktuellen Games (Root)
+	 * @param sg_path
+	 *            der aktuelle Pfad zu den sgl_*.apo-Dateien GuideStateGroupData
+	 * @param mode
+	 *            Sollte PMODE0 sein, da hier u.a. Hilfsvariable in Frage
+	 *            kommen.
+	 * @modified -
+	 */
+	private final void readNBuildStateGroupFile(final MetaStateGuideline msg,
+			final String sg_path, final byte mode) {
+
+		// Liste der Datenstruktur
+		List<DataGuidelineLevel> listOfDatastructure = msg.getAllDGL(msg
+				.getRootDGL());
+
+		// Array mit Anzahl der Einträgen reservieren
+		this.listenScripts = new PatternMaps[listOfDatastructure.size()];
+
+		int lsIndex = -1;
+		for (DataGuidelineLevel dgl : listOfDatastructure) {
+
+			if (LOGGER)
+				logger.debug("Stategroups der DGL ["
+						+ dgl.getDatenklasse().getLevelelement()
+						+ "] in Ebene [" + dgl.getDatenklasse().getLevel()
+						+ "] einlesen.");
+
+			lsIndex++;
+
+			this.listenScripts[lsIndex] = readStateGroupFile(sg_path, dgl, mode);
+
+			// Daten der Einträge
+			VP_Tokenlist groupdata = null;
+
+			// Erst DGL-Steuerdaten herausholen
+			if (this.listenScripts[lsIndex].scon.containsKey("INITIAL")) {
+				groupdata = this.listenScripts[lsIndex].scon.get("INITIAL");
+				this.listenScripts[lsIndex].scon.remove("INITIAL");
+
+			} else if (this.listenScripts[lsIndex].svar.containsKey("INITIAL")) {
+				groupdata = this.listenScripts[lsIndex].svar.get("INITIAL");
+				this.listenScripts[lsIndex].svar.remove("INITIAL");
+
+			} else if (this.listenScripts[lsIndex].indi.containsKey("INITIAL")) {
+				groupdata = this.listenScripts[lsIndex].indi.get("INITIAL");
+				this.listenScripts[lsIndex].indi.remove("INITIAL");
+
+			} else {
+				groupdata = new VP_ArrayTokenlist(new Integer(1));
+			}
+
+			dgl.getDatenklasse().setInitial(groupdata);
+
+			// dann die Stategroup-Daten
+
+			// Erst die scriptkonstanten Werte. (Können vom Gamefile nicht
+			// überschrieben werden!)
+			for (String groupname : this.listenScripts[lsIndex].scon.keySet()) {
+				// Nur Tables, keine Untereinträge(inhaltlich Parameter), wie
+				// .\?0, .Aktivity ....
+				if (groupname.contains("."))
+					continue;
+
+				// Die zur Variable groupname gehörenden Werte ...
+				groupdata = this.listenScripts[lsIndex].scon.get(groupname);//
+
+				// § Ist keine Gruppe festgelegt, ist eine weitere Bearbeitung
+				// sinnlos
+				if (groupdata == null || groupdata.isEmpty()) {
+					logger.fatal("Eine vollständige sgl_"
+							+ dgl.getDatenklasse().getLevelelement()
+							+ ".apo Datei fehlt!");
+					System.exit(-1);
+				}
+				if (LOGGER)
+					logger.debug("Es sind folgende StateGroup für das Levelelement"
+							+ LOGTAB
+							+ "["
+							+ dgl.getDatenklasse().getLevelelement()
+							+ "] in Ebene ["
+							+ dgl.getDatenklasse().getLevel()
+							+ "] zu registrieren: "
+							+ LOGTAB
+							+ groupname
+							+ " als " + groupdata);
+
+				// FIXME Umgang mit Misserfolg!?
+				if (!this.buildGuide(dgl, null, groupname, groupdata))
+					logger.error("[" + groupname + "] NOT buildet!");
+
+			}
+			for (String groupname : this.listenScripts[lsIndex].svar.keySet()) {
+				// Nur Tables, keine Untereinträge(inhaltlich Parameter), wie
+				// .\?0, .Aktivity ....
+				if (groupname.contains("."))
+					continue;
+				assert false;
+			}
+			for (String groupname : this.listenScripts[lsIndex].indi.keySet()) {
+				// Nur Tables, keine Untereinträge(inhaltlich Parameter), wie
+				// .\?0, .Aktivity ....
+				if (groupname.contains("."))
+					continue;
+				assert false;
+
+			}
+			for (String groupname : this.listenScripts[lsIndex].auxvar.keySet()) {
+				// Nur Tables, keine Untereinträge(inhaltlich Parameter), wie
+				// .\?0, .Aktivity ....
+				if (groupname.contains("."))
+					continue;
+				assert false;
+			}
+		}
+	}
+
+
+
+	/**
+	 * Auswertung der sgd_*.apo-Dateien: '*' ist beschrieben in den
+	 * sgl_*.apo-Dateien nach Name, Typ und Activity
+	 * 
+	 * @param msg
+	 *            die aktuellen MetaStateGuideline
+	 * @param sg_path
+	 *            der aktuelle Pfad zu den sgd_*.apo-Dateien
+	 * @param mode
+	 *            Sollte PMODE0 sein, da hier u.a. Hilfsvariable in Frage
+	 *            kommen.
+	 */
+	private final void readNBuildStateFile(final MetaStateGuideline msg,
+			final String sg_path, final byte mode) {
+
+		// Liste der Datenstruktur
+		List<DataGuidelineLevel> listOfDatastructure = msg.getAllDGL(msg
+				.getRootDGL());
+
+		// Array mit Anzahl der Einträgen reservieren
+		this.detailScripts = new PatternMaps[listOfDatastructure.size()][];
+
+		// Durchzähler der DataGuidelineLevel
+		int dglIdx = -1;
+
+		// Alle DataGuidelineLevel durchgehen
+		for (DataGuidelineLevel dgl : listOfDatastructure) {
+
+			// Nächster DGL und Größe ist Anzahl der StateGroupGuidelines im
+			// aktuellen DGL
+			this.detailScripts[++dglIdx] = new PatternMaps[dgl
+					.numberOfStageGroupGuidelines()];
+
+			// Alle SGG im aktuellen DGL durchgehen
+			for (int sggIdx = 0; sggIdx < dgl.numberOfStageGroupGuidelines(); sggIdx++) {
+
+				// Aktuellen SGG holen
+				StateGroupGuideline sgg = dgl.getStageGroupGuideline(sggIdx);
+				if (LOGGER)
+					logger.debug("Aufbauen der States der Stategroup " + sgg);
+
+				// sgl_File einlesen
+				this.detailScripts[dglIdx][sggIdx] = this.readStateFile(
+						sg_path, dgl, sgg, mode);
+
+				// Daten der Stateeinträge
+				VP_Tokenlist statedata = null;
+				if (LOGGER)
+					logger.trace("Einträge zur Auswertung:" + LFCR
+							+ this.detailScripts[dglIdx][sggIdx]);
+
+				VP_Tokenlist iglTable = null;
+
+				// Alle SCON-Einträge durchgehen!
+				for (String entryname : this.detailScripts[dglIdx][sggIdx].scon
+						.keySet()) {
+					// Nur Tables, keine Untereinträge(inhaltlich Parameter),
+					// wie .\?0, .Aktivity ....
+					if (entryname.contains("."))
+						continue;
+
+					// Zuerst die STATES!
+					if (SGD_Cntrl.getAllCode()
+							.contains(entryname.toUpperCase()))
+						switch (SGD_Cntrl.valueOf(entryname.toUpperCase())) {
+						case STATE:
+							// Erste Steuerzeichen herausholen ...
+							statedata = this.detailScripts[dglIdx][sggIdx].scon
+									.get(entryname);
+							logger.trace(entryname + LFCR + statedata);
+							
+							if (sgg.isDigit) {
+								if (LOGGER)
+									logger.trace("DIGIT-GROUP");
+								// assert false;
+								// // Stelle apo-Tabelle auf IGL ein
+								// apotable = setIGLTable(table);
+								// // Sonderfall Termin
+								// setIGLTermin(apotable, gsgd);
+								// // Auto-Idle generieren
+								// setIdle(apotable);
+								// // Einstellen eines Digit-Vertex
+								// this.buildDigitGuide(gsgd, apotable);
+								this.buildDigitGuide(dgl, sgg, entryname, statedata);
+								// // Einstellen der Geber
+								// this.buildDigitGuideGeber(gsgd, apotable);
+								// // Einstellen der �bertragungsfunktionen f�r Strecke und Regler
+								// this.buildDigitGuideUef(gsgd, apotable);
+								// // Einstellen des Triggers
+								// this.buildDigitGuideTrigger(gsgd, apotable);
+								//
+								// } else if (sgg.isRadio) {
+								// assert false;
+								// // Stelle apo-Tabelle auf IGL ein
+								// apotable = setIGLTable(table);
+								// // Sonderfall Termin
+								// setIGLTermin(apotable, gsgd);
+								// // Einstellen eines Radio-Vertex
+								// return this.buildRadioGuide(gsgd, apotable);
+								//
+								
+							} else if ( sgg.isRadio) {
+								if (LOGGER)
+									logger.trace("RADIO-GROUP ");
+								this.buildRadioGuide(dgl, sgg, entryname, statedata);
+								
+							} else if (sgg.isNonDigit ) {
+								if (LOGGER)
+									logger.trace("CONST-GROUP ");
+								this.buildConstGuide(dgl, sgg, entryname, statedata);
+							}	
+							
+							
+							
+//							this.buildGuide(dgl, sgg, entryname, statedata);
+							break;
+						default:
+							// Zuerst STATE
+							break;
+						}
+
+					// logger.trace(this.detailScripts[dglIdx][sggIdx].scon
+					// .get(entryname));
+					// assert false;
+					//
+					//
+					// // § Ist kein Eintrag vorhanden, ist eine weitere
+					// // Bearbeitung sinnlos
+					//
+					// if (statedata == null || statedata.isEmpty()) {
+					// logger.fatal("Eine vollständige sgd_"
+					// + dgl.getDatenklasse().getLevelelement() + "."
+					// + this.gdc.getName(sgg) + ".apo Datei fehlt!");
+					// System.exit(-1);
+					// }
+					//
+					// if (LOGGER)
+					// logger.debug("Es sind folgende Stateeinträge für die Stategroup"
+					// + LOGTAB
+					// + "["
+					// + sgg.name
+					// + "] in Levelelement"
+					// + "["
+					// + sgg.dgl.getDatenklasse().getLevelelement()
+					// + "] der Ebene ["
+					// + sgg.dgl.getDatenklasse().getLevel()
+					// + "] zu registrieren: "
+					// + LOGTAB
+					// + entryname
+					// + " mit " + statedata);
+					// assert false;
+					// // if(entryname.equals("IGL"))
+					// // iglTable =
+					// // this.setIGLTable(guidedata);
+					//
+					// if (!this.buildGuide(dgl, sgg, entryname, statedata))
+					// logger.error(entryname + " NOT buildet!");
+					// // assert false;
+				}
+				
+				for (String entryname : this.detailScripts[dglIdx][sggIdx].scon
+						.keySet()) {
+					// Nur Tables, keine Untereinträge(inhaltlich Parameter),
+					// wie .\?0, .Aktivity ....
+					if (entryname.contains("."))
+						continue;
+
+					// Als zweites die CONTEXTE!
+					if (SGD_Cntrl.getAllCode()
+							.contains(entryname.toUpperCase()))
+						switch (SGD_Cntrl.valueOf(entryname.toUpperCase())) {
+						case CONTEXT:
+							// Erste Steuerzeichen herausholen ...
+							statedata = this.detailScripts[dglIdx][sggIdx].scon
+									.get(entryname);
+							logger.trace(entryname + LFCR + statedata);
+							buildContextGuide(dgl, sgg, entryname, statedata);							
+							break;
+						default:
+							break;
+						}
+				}
+
+				logger.debug("STATE: " + iglTable);
+				for (String groupname : this.detailScripts[dglIdx][sggIdx].svar
+						.keySet()) {
+					// Nur Tables, keine Untereinträge(inhaltlich Parameter),
+					// wie
+					// .\?0, .Aktivity ....
+					if (groupname.contains("."))
+						continue;
+					assert false;
+				}
+				for (String groupname : this.detailScripts[dglIdx][sggIdx].indi
+						.keySet()) {
+					// Nur Tables, keine Untereinträge(inhaltlich Parameter),
+					// wie
+					// .\?0, .Aktivity ....
+					if (groupname.contains("."))
+						continue;
+					assert false;
+				}
+				for (String groupname : this.detailScripts[dglIdx][sggIdx].auxvar
+						.keySet()) {
+					// Nur Tables, keine Untereinträge(inhaltlich Parameter),
+					// wie
+					// .\?0, .Aktivity ....
+					if (groupname.contains("."))
+						continue;
+					assert false;
+				}
+				// try {
+				//
+				// groupdata = new LoadScript(fn, null).valueParser(PMODEFLAT);
+				// this.listenScripts[lsIndex].scon.get(groupname);//
+				// this.detailScripts[dtIndex][nsIndex] =
+				// this.listenScripts[lsIndex].scon.get(groupname)new
+				// LoadScript(fn,
+				// null).valueParsing(0);
+				//
+				// } catch (DateiNotFoundException e) {
+				// logger.warn("StateGroup Definition-Script zum Datensatz"
+				// + LOGTAB + "[" + gdc.getName(sgg)
+				// + "] nicht gefunden: " + LOGTAB
+				// + "Weitere Ausführung mit ["
+				// + SCRIPT_STATEGROUPDEFINITION + "default"
+				// + SCRIPT_EXTENSION + "]");
+				// try {
+				// this.detailScripts[dtIndex][nsIndex] = new LoadScript(
+				// sg_path + SCRIPT_STATEGROUPDEFINITION
+				// + "default" + SCRIPT_EXTENSION, null)
+				// .valueParsing(0);
+				// // null, new String("GROUPS={}")).valueParsing();
+				// } catch (DateiNotFoundException e1) {
+				// logger.fatal("StateGroup Definition-Script zum Datensatz ["
+				// + gdc.getName(sgg)
+				// + "] nicht gefunden: "
+				// + LOGTAB
+				// + "Weitere Ausführung sind nicht möglich.");
+				// System.exit(LS_FILENOTFOUND);
+				// } catch (FolderNotFoundException e1) {
+				// logger.fatal("Ordner für StateGroups-Script" + NTAB
+				// + "[" + fn + "]" + NTAB + "nicht gefunden: "
+				// + NTAB
+				// + "Weitere Ausführung sind nicht möglich.");
+				// System.exit(LS_FOLDERNOTFOUND);
+				// }
+				// } catch (FolderNotFoundException e) {
+				// logger.fatal("Ordner für StateGroup-Script" + NTAB + "["
+				// + fn + "]" + NTAB + "nicht gefunden: " + NTAB
+				// + "Weitere Ausführung sind nicht möglich.");
+				// System.exit(LS_FOLDERNOTFOUND);
+				// }
+				//
+				// // LoadScript statescript = null;
+				// Table table =
+				// this.detailScripts[dtIndex][nsIndex].getTable();
+				//
+				// System.err.println(table);
+				//
+				// try {
+				// new BuildGuideData().buildGuide(dgl, sgg, table);
+				// } catch (ArrayIndexOutOfBoundsException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// assert false;
+				// } catch (NullPointerException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// assert false;
+				// } catch (NoSuchFieldException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// assert false;
+
+			}
+		}
+	}
+
+	/**
+	 * TODO Comment
+	 * 
+	 * @param sg_path
+	 *            Pfad zu den Scripten
+	 * @param dgl
+	 *            aktueller DataGuidelineLevel
+	 * @param sgg
+	 *            aktuelle StateGroupGuideline
+	 * @param mode
+	 *            Einlesemodus [default=PMODE0]
+	 * @return Ergebnis des Einlesens
+	 * @modified -
+	 */
+	private PatternMaps readStateFile(final String sg_path,
+			final DataGuidelineLevel dgl, final StateGroupGuideline sgg,
+			final byte mode) {
+		PatternMaps pm = null;
+		// Die Definition der States laden.
+		// § In dem Script sgd_'...'.apo ist die Beschreibung der States
+		// enthalten.
+
+		String fn = (sg_path == null ? null : sg_path
+				+ SCRIPT_STATEGROUPDEFINITION
+				+ this.gdc.getDGL(sgg).getDatenklasse().getLevelelement() + "."
+				+ this.gdc.getName(sgg) + SCRIPT_EXTENSION);
+
+		String fdefault = sg_path
+				+ SCRIPT_STATEGROUPDEFINITION
+				+ (this.gdc.isConst(sgg) ? "const"
+						: this.gdc.isDigit(sgg) ? "digit" : "radio")
+				+ ".default" + SCRIPT_EXTENSION;
+		try {
+			pm = new LoadScript(fn, null).valueParser(mode);
+
+		} catch (ScriptException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (LoadScriptException e) {
+			logger.warn("StateGroupFile-Script zum Datensatz ["
+					+ dgl.getDatenklasse().getLevelelement()
+					+ "] nicht gefunden: " + LOGTAB
+					+ "Weitere Ausführung mit [" + SCRIPT_STATEGROUPDEFINITION
+					+ "typ.default" + SCRIPT_EXTENSION + "]");
+
+			try {
+				pm = new LoadScript(fdefault, null).valueParser(mode);
+			} catch (ScriptException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (LoadScriptException e1) {
+				logger.fatal(e1.getMessage() + LFCR
+						+ "StateGroups-Script zum Datensatz ["
+						+ dgl.getDatenklasse().getLevelelement() + "]" + LOGTAB
+						+ " nicht gefunden: " + LOGTAB
+						+ "Weitere Ausführung sind nicht möglich.");
+				System.exit(-2);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return pm;
+	}
+
+
+
+	/**
+	 * Zentrale Fassade zur Einrichtung der Guidelines. Liste der Guidelines
+	 * <ol>
+	 * <li>GuideStateGroupData</li><br>
+	 * ex StateGroupGuideline
+	 * <li>GuideDigitData</li><br>
+	 * mit Auto-Idle, Termin, Geber, Übertragungsfunktionen, Triggerliste
+	 * <li>GuideRadioData</li><br>
+	 * mit Auto-Idle, Termin
+	 * <li>GuideSingleData</li><br>
+	 * ex Const<br>
+	 * mit Auto-Idle, Termin
+	 * <li>GuideContextData</li><br>
+	 * ex ContextGuideline<br>
+	 * mit Auto-Idle, Termin
+	 * </ol>
+	 * <br>
+	 * * <b><u>Zusammenhänge</u></b>
+	 * 
+	 * <code><pre>
+	 * //----------------------------------------------------------
+	 //-- TYPE* Vertex, Radio oder Const
+	 //-- Vertex sind diskret, veränderliche Zustandswerte
+	 //-- Radio sind zweiwertige, veränderliche Zustandswerte
+	 //-- Const sind konstante Zustandswerte
+	 //----------------------------------------------------------
+	 IGL = {
+	 VERTEX[N] = ...
+	 }
+	
+	 IGL[Idle] = {
+	 // Definition...
+	 }
+	
+	
+	 Transition[default] = {
+	 Idle = {
+	 GD[0] = {
+	 IndexGT = 1.
+	 }
+	 }
+	 P = {
+	 GD[0] = {
+	 After = "7:00:00"
+	 IndexGT = {von=65 , bis=85, }
+	 }
+	 GD[1] = {
+	 IndexGT = 15
+	 }
+	 }
+	
+	
+	 I= {
+	 GD[0] = {
+	 IndexGT = 15
+	 }
+	 GD[1] = {
+	 Before = "17:00:00"
+	 IndexGT = 85
+	 }
+	
+	 }
+	
+	 TRANS[0] = "*.*.* *:05:00 PRE1"
+	 TRANS[n] = "*.*.* *:20:00 PRE1"
+	
+	 }
+	 * } </code></pre>
+	 * <p>
+	 * Mögliche Zustände werden in den Guides Digit, Radio und Single
+	 * festgelegt. Dabei gibt es pro GuideStateGroupData nur gleichartige
+	 * Zustände.
+	 * </p>
+	 * <p>
+	 * Die Zustände in Digit können sich zeitabhängig ändern. Dazu steht der
+	 * Termineintrag zur Verfügung. Am entsprechenden Eintrag werden die
+	 * Zustände neu berechnet.<br>
+	 * Eine zweite Möglichkeit besteht darin, die Berechnung dann auszuführen,
+	 * wenn ein andere Zustand einen bestimmten Wert erreicht oder ausgeführt
+	 * wird bzw. eine Transition dies verlangt.
+	 * </p>
+	 * <p>
+	 * Bei den Digit-Zuständen ist immer genau einer aktiv, alle anderen passiv.
+	 * Beispiel: Eine Person schläft, kann aber nicht zeitgleich essen. <br>
+	 * Bei den Radio-Zuständen ist das über einen Schalter gewährleistet. Die
+	 * Werte sind fix.<br>
+	 * Bei den Single-Zuständen sind alle gleichzeitig aktiv.<br>
+	 * </p>
+	 * <p>
+	 * Die Überleitung von einem Zustand in den Anderen erfolgt für Digit und
+	 * Radio per Transition. Dabei ist die Transition eine Berechnung, welche
+	 * den Zielzustand bestimmt. Es ist nicht zwingend ein neuer Zustand, wenn
+	 * die Wertigkeit des aktuellen Zustands hoch genug ist.<br>
+	 * Ausgelöst wird dies Ereignis Termingesteuert, Ereignisgesteuert oder
+	 * Wertgesteuert.<br>
+	 * Eine Transition für Single ist nicht vorgesehen, aber möglich.
+	 * </p>
+	 * <code><pre>
+	 * ----------------------------------------------------------
+	 * -- Context
+	 * -- Die Contextumschaltung wird von einem Ereignis Vertex aus gesteuert
+	 * -- Die Contextumschaltung wird von einem Termin aus gesteuert
+	 * ----------------------------------------------------------
+	 * //---- Auslöser
+	 * CONTEXT = {
+	 * // Termine, zu denen die Transition gestartet wird
+	 * TERMIN[0] = "*.*.* *:05:00 PRE3"
+	 * TERMIN[n] = "*.*.* *:50:00 PRE3"
+	 * }
+	 * CONTEXT = {
+	 * // States, die bei ihrer Bearbeitung auch die Contexttransition über
+	 Triggerliste starten
+	 * STATE[0] = @Adr
+	 * STATE[n] = @Adr
+	 * }
+	 * CONTEXT = {
+	 * // N.I. States, die bei ihrer do-Ausführung auch die Contexttransition
+	 über Triggerliste starten
+	 * DOSTATE[0] = @Adr
+	 * DOSTATE[n] = @Adr
+	 * }
+	 * //---- Transitionsberechnung
+	 * // Dieser Context Idle wird immer angelegt (Standard) und kann
+	 überschrieben werden
+	 * CONTEXT[Idle] = {
+	 * 
+	 * @..Idle. GD[0] = { IndexGT = 1. } TRANS = { TERMIN[0] =
+	 *          "*.*.* *:05:00 PRE3" TERMIN[n] = "*.*.* *:50:00 PRE3" }
+	 *          TRANS[Idle] = { GD[0] = { IndexGT = 1. } } // Für jeden Vertex
+	 *          wird eine Transistion gebraucht. TRANS[xxx] = { GD[0] = {
+	 *          IndexGT = 1. } } } </code></pre>
+	 *          <p>
+	 *          Der komplexeste Anteil ist die Contexttransistion. Es gibt ein
+	 *          (Idle) oder mehrere Contexte GuideContextData, in denen
+	 *          Transitionen hinterlegt sind. Beispiel: Context Tagesablauf
+	 *          Woche und Context Tagesablauf Wochenende. In jedem Context ist
+	 *          eine Transition hinterlegt mit den Auslösern TERMIN und/oder
+	 *          STATE und den Berechnungen hinterlegt.<br>
+	 *          Das Umschalten des aktiven Contextes erfolgt wieder über
+	 *          Transitionen. Ausgelöst werden diese Termingesteuert oder
+	 *          Ereignisgesteuert.
+	 *          <ul>
+	 *          <li>
+	 *          Ein oder mehrere Transitionen sind einem Context zugeordnet und
+	 *          enthalten die Guards, die den Übergang von einem Context zu
+	 *          einem anderen Context zulassen oder unterbinden.</li>
+	 *          <li>Geht nur ein Guard in False ist die Guardliste</li>
+	 *          <li>
+	 *          Die Transitionen legen bei ihrer Instanzierung ein Object
+	 *          ContextSwitch an. Dabei wird entschieden, ob das Object in den
+	 *          Schedular eingehängt (Termin gesteuert) oder in eine
+	 *          Triggerliste eines anderen Objects eingehängt wird
+	 *          (Ereignisgesteuert). Im ContextSwitch wird durch Aufruf der
+	 *          execute-Methoden durch den Schedular oder der Triggerauswrtung
+	 *          eine Bewertung der Transitionen gestartet. Danach erfolgt eine
+	 *          Aktivierung des Contextes mit der höchsten Punktzahl.</li>
+	 *          </ul>
+	 *          </p>
+	 * <br>
+	 * 
+	 * @param dgl
+	 *            ist die DataGuide-Ebene, in der die States agieren.
+	 * @param gsgd
+	 *            sind die GuideStateGroupData oder <i>null</i>, wenn diese
+	 *            selbst angelegt werden sollen.
+	 * @param table
+	 *            passende apo-Table mit den Scriptbeschreibungen.
+	 * @return true
+	 * @throws ArrayIndexOutOfBoundsException
+	 * @throws NullPointerException
+	 * @throws NoSuchFieldException
+	 */
+	public final boolean buildGuide(final DataGuidelineLevel dgl,
+			StateGroupGuideline sgg, final String groupname,
+			final VP_Tokenlist groupdata) // final
+	// Table
+	// table)
+	// throws ArrayIndexOutOfBoundsException, NullPointerException,
+	// NoSuchFieldException
+	{
+
+		assert groupdata != null && groupname != null && !groupname.isEmpty();
+
+		if (groupdata == null || groupname == null || groupname.isEmpty())
+			return false;
+		// apo-Tabelle
+		VP_Tokenlist apotable = null;
+		//
+		// // System.err.println(gsgd);
+		// // System.err.println(apotable);
+
+		// Geht nach TYPE gesteuert zum angeforderten Builder
+
+		if (sgg == null) {
+			// // Tableformat
+			// // ?0 = groupfile
+
+			if (LOGGER)
+				logger.trace("GROUP " + groupname);
+			if (groupname.contains("."))
+				return false;
+			return this.buildStateGroupGuide(dgl, groupname, groupdata); // apotable);
+		} else if (sgg.isDigit) {
+			if (LOGGER)
+				logger.trace("DIGIT-GROUP");
+			// assert false;
+			// // Stelle apo-Tabelle auf IGL ein
+			// apotable = setIGLTable(table);
+			// // Sonderfall Termin
+			// setIGLTermin(apotable, gsgd);
+			// // Auto-Idle generieren
+			// setIdle(apotable);
+			// // Einstellen eines Digit-Vertex
+			// this.buildDigitGuide(gsgd, apotable);
+			return this.buildDigitGuide(dgl, sgg, groupname, groupdata);
+			// // Einstellen der Geber
+			// this.buildDigitGuideGeber(gsgd, apotable);
+			// // Einstellen der �bertragungsfunktionen f�r Strecke und Regler
+			// this.buildDigitGuideUef(gsgd, apotable);
+			// // Einstellen des Triggers
+			// this.buildDigitGuideTrigger(gsgd, apotable);
+			//
+			// } else if (sgg.isRadio) {
+			// assert false;
+			// // Stelle apo-Tabelle auf IGL ein
+			// apotable = setIGLTable(table);
+			// // Sonderfall Termin
+			// setIGLTermin(apotable, gsgd);
+			// // Einstellen eines Radio-Vertex
+			// return this.buildRadioGuide(gsgd, apotable);
+			//
+			
+		} else if ( sgg.isRadio) {
+			if (LOGGER)
+				logger.trace("RADIO-GROUP ");
+			return this.buildRadioGuide(dgl, sgg, groupname, groupdata);
+			
+		} else if (sgg.isNonDigit ) {
+			if (LOGGER)
+				logger.trace("CONST-GROUP ");
+			return this.buildConstGuide(dgl, sgg, groupname, groupdata); // table);
+			
+		} else {
+			assert false;
+			// return false;
+		}
+		//
+		// if (gsgd.isDigit) {
+		//
+		// // Stelle apo-Tabelle auf CONTEXT ein
+		// apotable = setContextTable(table);
+
+		// // Auslöser C-Termin
+		// setContextTermin(apotable, gsgd);
+
+		// // Auslöser State
+		// setContextState(apotable, gsgd);
+
+		// // Default-Context generieren
+		// setContextDefault(apotable);
+
+		// // Einstellen der Contexts
+		// this.buildContextGuide(gsgd, apotable);
+
+		// // Einstellen der Contexttransition(en)
+		// this.buildContextTransitionGuide(gsgd);
+		// // Guards in Contexttransition(en) einsetzen
+		// this.insertContextTransitionGuards(gsgd, apotable);
+		//
+		// // TRANSITION
+		//
+		// for (String ctxname : gtc.cglAll(gsgd)) {
+		// ContextGuideline gcd = (ContextGuideline) gtc.cgl_get(gsgd,
+		// ctxname);
+		// Table transtable = null;
+		// try {
+		// transtable = LoadScript.getTableValue(
+		//
+		// LoadScript.getTableValue(apotable, ctxname), "TRANS");
+		// } catch (NoSuchFieldException e) {
+		// try {
+		// transtable = new LoadScript(null, new String(
+		// "aux={TRANS = {" + LFCR + "} }")).valueParsing(
+		// 0).getTableValue("aux");
+		// } catch (Exception e1) {
+		// // Sollte hier nicht mehr auftreten
+		// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+		// e.printStackTrace();
+		// System.exit(-1);
+		// }
+		// }
+		// // Auslöser V-Termin
+		// setTransitionTermin(gcd, transtable, gsgd);
+		// // Auslöser State
+		// setTransitionState(gcd, transtable);
+		// // Einstellen der Vertextransition(en)
+		// this.buildVertexTransitionGuide(gcd);
+		// // Guards in Vertextransition(en) einsetzen
+		// this.insertVertexTransitionGuards(gcd, transtable);
+		// }
+		// }
+		return true;
+	}
+
+	
+
+	/**
+	 * TODO Comment
+	 * 
+	 * @param statetable
+	 * @return
+	 * @modified -
+	 */
+	private boolean buildStateGuide(final StateGroupGuideline sgg,
+			Table statetable) {
+
+		GuideData build = null;
+		boolean isIdle = false;
+
+		Object y0 = null;
+		int uk = 0;
+		String name = null;
+		String activity = null;
+
+		int idx = sgg.ggl.size();
+
+		VP_Tokenlist[] parameter = new VP_Tokenlist[SGD_Cntrl.STATEATTRIBUTES
+				.values().length];
+		parameter[SGD_Cntrl.STATEATTRIBUTES.PARENT.ordinal()] = new VP_ArrayTokenlist(
+				sgg);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.ACTIVITY.ordinal()] = new VP_ArrayTokenlist(
+				"AUTO-IDLE");
+		// parameter[GuideData.stategroupKeyword.CONST.ordinal()] = new
+		// VP_ArrayTokenlist(
+		// true);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.NAME.ordinal()] = new VP_ArrayTokenlist(
+				"IDLE");
+		parameter[SGD_Cntrl.STATEATTRIBUTES.IDX.ordinal()] = new VP_ArrayTokenlist(
+				new Integer(idx));
+		parameter[SGD_Cntrl.STATEATTRIBUTES.INITIAL.ordinal()] = new VP_ArrayTokenlist(
+				"Idle");
+
+		// if (sgg.isNonDigit)
+		// Irrelevant! build = new GuideConstData(sgg.dgl, parameter);
+
+		if (sgg.isRadio) {
+			build = new GuideRadioData(sgg.dgl, parameter);
+			sgg.ggl.put("IDLE", build);
+		} else if (sgg.isDigit) {
+			parameter[SGD_Cntrl.STATEATTRIBUTES.INITIAL.ordinal()] = new VP_ArrayTokenlist(
+					new Double(0.0));
+			build = new GuideDigitData(sgg.dgl, parameter);
+			sgg.ggl.put("IDLE", build);
+		}
+
+		// Alle Tabelleneinträge durchgehen und zuordnen.
+		for (String tableentry : statetable.keySet()) {
+
+			// Parameter löschen
+			parameter = new VP_Tokenlist[SGD_Cntrl.STATEATTRIBUTES.values().length];
+			String l = tableentry.substring(tableentry.lastIndexOf(".") + 1);
+			name = l;
+
+			VP_Tokenlist v = (VP_Tokenlist) statetable.get(tableentry);
+			isIdle = false;
+			if (LOGGER)
+				logger.trace("Check: " + l + "= " + v);
+			if (SGD_Cntrl.STATEIDLE.getAllCode().contains(l.toUpperCase()))
+				switch (SGD_Cntrl.STATEIDLE.valueOf(l.toUpperCase())) {
+				case IDLE:
+					isIdle = true;
+					l = l.toUpperCase();
+					break;
+				case STATION:
+					// Start bei Radio ist eigentlich immer der erste Zustand
+					// uk=0
+					sgg.radioswitch = ((Integer) v.getValue()).intValue();
+					continue;
+				default:
+					assert false;
+					break;
+				}
+
+			logger.info("[" + l + "] ist neuer State.");
+
+			if (v.isTable()) {
+				// Komplexe Beschreibung
+				for (String aName : v.getTable().keySet()) {
+					System.err.println(aName);
+					VP_Tokenlist attributes = (VP_Tokenlist) v.getTable().get(
+							aName);
+					String a = aName.substring(aName.lastIndexOf(".") + 1);
+					System.err.println(aName + "(" + a + ") =" + attributes);
+					if (attributes.isTable()) {
+						// Tabelle
+						assert false;
+					} else {
+						// Einzelwerte
+						if (SGD_Cntrl.STATEATTRIBUTES.getAllCode().contains(
+								a.toUpperCase()))
+							switch (SGD_Cntrl.STATEATTRIBUTES.valueOf(a
+									.toUpperCase())) {
+							case ACTIVITY:
+								activity = (String) attributes.getValue();
+								break;
+							case INITIAL:
+								y0 = attributes.getValue();
+								break;
+							case NAME:
+								name = (String) attributes.getValue();
+								break;
+							case VALUES:
+								parameter[SGD_Cntrl.STATEATTRIBUTES.VALUES
+										.ordinal()] = new VP_ArrayTokenlist(y0);
+								assert false;
+								break;
+							default:
+								assert false;
+								break;
+							}
+					}
+
+				}
+			} else {
+				// Einfache Beschreibung
+				y0 = v.getValue();
+
+				activity = "Autogenerated " + l;
+
+				// // Ist Keyword in der Liste aller Codes
+				// if (stateKeyword.getAllCode().contains(l.toUpperCase())) {
+				// int index = stateKeyword.getAllCode().indexOf(
+				// l.toUpperCase());
+				// if (LOGGER)
+				// logger.trace("FOUND: " + l + LOGTAB + "Pos: " + index);
+
+				// if (LOGGER)
+				// logger.trace("ConstGuide bauen: " + LOGTAB + tempName
+				// + ": " + table.get(tempName));
+				//
+				// VP_Tokenlist content = (VP_Tokenlist) table.get(tempName);
+				// activity = "Auto-Generated: " + tempName;
+				// name = null;
+				// //
+				// // // typ = "CONST";
+				// // //
+				// // // if (tempName.startsWith("?")) {
+				// name = (String) content.getValue();
+				// // // typ="CONST";
+				// // // activity = "Auto-Generated: " + name;
+				// // // } else {
+				// // // name = tempName;
+				// // // try {
+				// // // if(LoadScript.isTable(table,tempName)){
+				// // // Table lTable =
+				// LoadScript.getTableValue(table,tempName);
+				// // //
+				// // // for (String lName : lTable.keySet()) {
+				// // // if(lName.startsWith("?"))
+				// // // typ = LoadScript.getStringValue(lTable,
+				// // lName).toUpperCase();
+				// // // else if(lName.startsWith("Activity"))
+				// // // activity = LoadScript.getStringValue(lTable, lName);
+				// // // else
+				// // // assert false;
+				// // // }
+				// // // }else{
+				// // // if(name.startsWith("Activity"))
+				// // // activity = LoadScript.getStringValue(table, name);
+				// // // else
+				// // // typ=LoadScript.getStringValue(table, name);
+				// // //
+				// // // }
+				// // // } catch (ArrayIndexOutOfBoundsException e) {
+				// // // // TODO Auto-generated catch block
+				// // // e.printStackTrace();
+				// // // } catch (NullPointerException e) {
+				// // // // TODO Auto-generated catch block
+				// // // e.printStackTrace();
+				// // // } catch (NoSuchFieldException e) {
+				// // // // TODO Auto-generated catch block
+				// // // e.printStackTrace();
+				// // // }
+				// // // }
+				// // //
+				// idx = dgl.numberOfStageGroupGuidelines();
+				// // // // FIXME Umbenennen in GuideStateGroupData
+				// // // StateGroupGuideline build = new
+				// StateGroupGuideline(dgl,
+				// // name,
+				// // // idx,
+				// // // typ, activity);
+				// // // // .... Mögliche Auswertung und Modifikation
+				// // // dgl.addStageGroupGuideline(build);
+				// // //
+				// // // if (LOGGER)
+				// // // logger.trace("Stategroup gebaut: [" + tempName +"]"+
+				// LFCR
+				// // +
+				// // // build);
+				// // //
+				// // // }
+				// // //
+				// // // return true;
+				// //
+				// // // if(tempName.equals("TERMIN"))
+				// // // continue;
+				// // // System.err.println(table);
+				// // // System.err.println("Name: "+tempName);
+				// // // idx = gtc.getNumberOfStates(sgg);
+				// // // if(LoadScript.isTable(table, tempName))
+				// // // idleTable = LoadScript.getTableValue(table, tempName);
+				// // // else
+				// // // assert false;
+				// // // activity = LoadScript.getStringValue(idleTable,
+				// // "Activity");
+				// // // superGuideData = sgg;
+				// // // y0 = (LoadScript.has(idleTable, "Y0") ?
+				// // // LoadScript.getObjectValue(
+				// // // idleTable, "Y0") : null);
+				// // //
+				//
+			}
+
+			if (isIdle)
+				idx = 0;
+			else
+				idx = sgg.ggl.size();
+
+			parameter = new VP_Tokenlist[SGD_Cntrl.STATEATTRIBUTES.values().length];
+			parameter[SGD_Cntrl.STATEATTRIBUTES.PARENT.ordinal()] = new VP_ArrayTokenlist(
+					sgg);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.ACTIVITY.ordinal()] = new VP_ArrayTokenlist(
+					activity);
+			// parameter[GuideData.stategroupKeyword.CONST.ordinal()] = new
+			// VP_ArrayTokenlist(
+			// true);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.NAME.ordinal()] = new VP_ArrayTokenlist(
+					name);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.IDX.ordinal()] = new VP_ArrayTokenlist(
+					new Integer(idx));
+			parameter[SGD_Cntrl.STATEATTRIBUTES.INITIAL.ordinal()] = new VP_ArrayTokenlist(
+					y0);
+
+			if (sgg.isNonDigit) {
+				build = new GuideConstData(sgg.dgl, parameter);
+				// assert false;
+				logger.info("[" + l + "] ist Const.");
+			} else if (sgg.isRadio) {
+				build = new GuideRadioData(sgg.dgl, parameter);
+				// assert false;
+				logger.info("[" + l + "] ist Radio.");
+			} else if (sgg.isDigit) {
+				assert false;
+				build = new GuideDigitData(sgg.dgl, parameter);
+				assert false;
+				logger.info("[" + l + "] ist Digit.");
+			} else
+				assert false;
+			sgg.ggl.put(l, build);
+			// // // // .... Mögliche Auswertung und Modifikation
+			// // // gtc.ggl_add(sgg, tempName, build);
+
+			// }
+		}
+
+		return true;
+	}
+
+
+
+	/**
+	 * Mit Idle!
+	 * 
+	 * @param sgg
+	 * @param table
+	 * @return
+	 * @throws ArrayIndexOutOfBoundsException
+	 * @throws NullPointerException
+	 * @throws NoSuchFieldException
+	 */
+	private final boolean buildDigitGuide(final DataGuidelineLevel dgl,
+			final StateGroupGuideline sgg, final String groupname,
+			final VP_Tokenlist statedata)
+	// final StateGroupGuideline sgg,
+	// final Table table) throws ArrayIndexOutOfBoundsException,
+	// NullPointerException, NoSuchFieldException
+	{
+		if (groupname.contains("."))
+			return false;
+		if (LOGGER)
+			logger.trace("[" + groupname + "] einsetzen:" + LOGTAB + statedata
+					+ LOGTAB + "Bestandteil von [" + sgg.name + "] in "
+					+ dgl.getDatenklasse().toString());
+
+		VP_Tokenlist[] parameter = new VP_Tokenlist[SGD_Cntrl.STATEATTRIBUTES
+				.values().length];
+		boolean isIdle = false;
+
+		// Baue ein Default-Idle
+		int idx = gtc.getNumberOfStates(sgg);
+		String name = "Idle";
+		// Table idleTable = LoadScript.getTableValue(table, name);
+		String activity = "Autogenerated " + name;
+		GuideData superGuideData = sgg;
+		Double y0 = new Double(-0.1);
+		Double minYValue = new Double(-5);
+		Double maxYValue = new Double(5);
+		Integer priority = new Integer(-1);
+
+		GeberParameter[] sollwertScript = null;
+		UEFT_Parameter[] strecke = null;
+		UEFT_Parameter[] regler = null;
+		_Geber[] sollwertGeber = null;
+		List<TriggerScript> triggerliste = null;
+
+		parameter[SGD_Cntrl.STATEATTRIBUTES.NAME.ordinal()] = new VP_ArrayTokenlist(
+				name);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.ACTIVITY.ordinal()] = new VP_ArrayTokenlist(
+				activity);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.PARENT.ordinal()] = new VP_ArrayTokenlist(
+				sgg);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.IDX.ordinal()] = new VP_ArrayTokenlist(
+				new Integer(idx));
+		parameter[SGD_Cntrl.STATEATTRIBUTES.INITIAL.ordinal()] = new VP_ArrayTokenlist(
+				y0);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.MINYVALUE.ordinal()] = new VP_ArrayTokenlist(
+				minYValue);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.MAXYVALUE.ordinal()] = new VP_ArrayTokenlist(
+				maxYValue);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.PRIORITY.ordinal()] = new VP_ArrayTokenlist(
+				priority);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.SOLLWERTSCRIPT.ordinal()] = new VP_ArrayTokenlist(
+				sollwertScript);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.REGLER.ordinal()] = new VP_ArrayTokenlist(
+				regler);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.STRECKE.ordinal()] = new VP_ArrayTokenlist(
+				strecke);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.TRIGGERLISTE.ordinal()] = new VP_ArrayTokenlist(
+				triggerliste);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.SOLLWERTGEBER.ordinal()] = new VP_ArrayTokenlist(
+				sollwertGeber);
+
+		GuideDigitData build = new GuideDigitData(sgg.dgl, parameter);
+		// name, idx, activity,
+		// superGuideData, y0, minYValue, maxYValue, priority,
+		// sollwertScript, strecke, regler, sollwertGeber, triggerliste);
+
+		// .... Mögliche Auswertung und Modifikation
+		gtc.ggl_add(sgg, name, build);
+
+		for (String statename : statedata.getTable().keySet()) {
+			// Parameter löschen
+			parameter = new VP_Tokenlist[SGD_Cntrl.STATEATTRIBUTES.values().length];
+			String l = statename.substring(statename.lastIndexOf(".") + 1);
+			name = l;
+
+			VP_Tokenlist v = (VP_Tokenlist) statedata.getTable().get(statename);
+			isIdle = false;
+			if (LOGGER)
+				logger.trace("Check: " + l + "= " + v);
+
+			if (SGD_Cntrl.STATEIDLE.getAllCode().contains(l.toUpperCase()))
+				switch (SGD_Cntrl.STATEIDLE.valueOf(l.toUpperCase())) {
+				case IDLE:
+					isIdle = true;
+					l = l.toUpperCase();
+					break;
+				default:
+					assert false;
+					break;
+				}
+
+			logger.info("[" + l + "] ist neuer State.");
+
+			if (v.isTable()) {
+
+				for (String a : v.getTable().keySet()) {
+					String attr = a.substring(a.lastIndexOf(".") + 1);
+					
+					VP_Tokenlist attrValue = (VP_Tokenlist) v.getTable().get(a);
+					
+					if (LOGGER)
+						logger.trace("Check: " + attr + "= " + attrValue);
+
+					switch (SGD_Cntrl.DIGITALATTRIBUTES.valueOf(attr.toUpperCase())) {
+					case NAME:
+						name = (String) attrValue.getValue();
+						break;
+					case ACTIVITY:
+						activity = (String) attrValue.getValue();
+						break;
+//					case INITIAL:
+//						activity = (String) attrValue.getValue();
+//						break;
+					default:
+						break;
+							
+					}
+
+					
+				}
+				// ACTIVITY, GD, IDX, INITIAL, MINYVALUE, MAXYVALUE, NAME, PARENT, PRIORITY, SOLLWERTSCRIPT, REGLER, STRECKE, SOLLWERTGEBER, TRIGGERLISTE, VALUES;
+			
+				//-- SollA = Zahl
+				//-- SollA = {Const, kp=Zahl
+				//-- SollA = {Delta, kp=Zahl, K=Zahl}
+				//-- SollA = {Ramp, kp=Zahl, K=Zahl}
+				//-- SollA = {Sinus, kp=5, K=25}
+				//-- SollA = {Euler, K=25, Y0=-5, kp=5}
+				//-- SollA = {Delta; kp=3; K=10; TV=10 }
+				//-- kp: Verstärkung (5,-5)
+				//-- K: Größe des Abtastwertespeicher, Frequenz
+				//-- K0: Verschiebung der Funktion (x/t-Achse)
+				//-- Y0: Verschiebung der Funktion (Nullachse, y-Achse)
+				//-- TV: Tastverhältnis
+				
+				// Komplexe Beschreibung
+				// for (String iglname : table.keySet()) {
+				// if (iglname.equals("TERMIN"))
+				// continue;
+				// if (iglname.equals(name))
+				// continue;
+				 idx = gtc.getNumberOfStates(sgg);
+				 idleTable = LoadScript.getTableValue(table, iglname);
+				 activity = LoadScript.getStringValue(idleTable, "Activity");
+				 superGuideData = sgg;
+				 y0 = 0;
+				 minYValue = -5.;
+				 maxYValue = 5.;
+				 priority = -1;
+				 sollwertScript = null;
+				 strecke = null;
+				 regler = null;
+				 sollwertGeber = null;
+				 triggerliste = null;
+				//
+				// build = new GuideDigitData(sgg.dgl, iglname, idx, activity,
+				// superGuideData, y0, minYValue, maxYValue, priority,
+				// sollwertScript, strecke, regler, sollwertGeber,
+				// triggerliste);
+				// // .... Mögliche Auswertung und Modifikation
+				// gtc.ggl_add(sgg, iglname, build);
+				// }
+				// return true;
+				// }
+				//
+				
+				
+				
+				
+				
+				
+				// // ---- Baue Sollwert-Geberscript
+				// -------------------------------------
+				// // Erstellen eines aktiven Geberbauplan
+				// // Entweder das Object oder null. Im letzten Fall wird ein
+				// Default-Geber
+				// // eingesetzt
+				// private final boolean buildDigitGuideGeber(final
+				// StateGroupGuideline
+				// sgg,
+				// final Table table) throws ArrayIndexOutOfBoundsException,
+				// NullPointerException, NoSuchFieldException {
+				//
+				// for (String name : gtc.gglAll(sgg)) {
+				// GuideDigitData gd = (GuideDigitData) gtc.ggl_get(sgg, name);
+				// Table igl = LoadScript.getTableValue(table, name);
+				//
+				// GeberParameter ga = BuildGeber.buildGeberScriptGuideline(igl,
+				// "SollA");
+				// GeberParameter gp = BuildGeber.buildGeberScriptGuideline(igl,
+				// "SollP");
+				//
+				// if (ga == null) {
+				// if (LOGGER)
+				// logger.info("Ein aktiver Sollwertgeber ist nicht festgelegt."
+				// + LOGTAB + "Setze Default=80% ein.");
+				// try {
+				// // § Der Defaultgeber (Aktiv): 80% (maxY-minY) + minY
+				// ga = BuildGeber.buildGeberScriptGuideline(
+				// new LoadScript(null, new String(
+				//
+				// "SollA = "
+				// + new Double(4.
+				// * (gdc.getMaxYValue(gd) - gdc
+				// .getMinYValue(gd)) / 5.
+				// + gdc.getMinYValue(gd))))
+				// .valueParsing(0).getTable(), "SollA");
+				//
+				// } catch (DateiNotFoundException e) {
+				// logger.fatal("Script [SollA] nicht gefunden: "
+				// + e.getMessage());
+				// System.exit(-2);
+				// } catch (FolderNotFoundException e) {
+				// logger.fatal("Ordner [-] nicht gefunden: " + e.getMessage());
+				// System.exit(-3);
+				// }
+				// }
+				//
+				// if (gp == null) {
+				// if (LOGGER)
+				// logger.info("Ein passiver Sollwertgeber ist nicht festgelegt."
+				// + LOGTAB + "Setze Default=20% ein.");
+				// try {
+				// // § Der Defaultgeber (Aktiv): 80% (maxY-minY) + minY
+				// ga = BuildGeber.buildGeberScriptGuideline(
+				// new LoadScript(null, new String(
+				//
+				// "SollP = "
+				// + new Double(1.
+				// * (gdc.getMaxYValue(gd) - gdc
+				// .getMinYValue(gd)) / 5.
+				// + gdc.getMinYValue(gd))))
+				// .valueParsing(0).getTable(), "SollP");
+				//
+				// } catch (DateiNotFoundException e) {
+				// logger.fatal("Script [SollP] nicht gefunden: "
+				// + e.getMessage());
+				// System.exit(-2);
+				// } catch (FolderNotFoundException e) {
+				// logger.fatal("Ordner [-] nicht gefunden: " + e.getMessage());
+				// System.exit(-3);
+				// }
+				//
+				// }
+				//
+				// gdc.setSollwertScript(gd, new GeberParameter[] { ga, gp });
+
+				assert false;
+			} else {
+				// Einfache Beschreibung
+				y0 = (Double) v.getValue();
+
+				activity = "Autogenerated " + l;
+			}
+
+			if (isIdle)
+				idx = 0;
+			else
+				idx = sgg.ggl.size();
+
+			parameter = new VP_Tokenlist[SGD_Cntrl.STATEATTRIBUTES.values().length];
+			parameter[SGD_Cntrl.STATEATTRIBUTES.NAME.ordinal()] = new VP_ArrayTokenlist(
+					name);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.ACTIVITY.ordinal()] = new VP_ArrayTokenlist(
+					activity);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.PARENT.ordinal()] = new VP_ArrayTokenlist(
+					sgg);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.IDX.ordinal()] = new VP_ArrayTokenlist(
+					new Integer(idx));
+			parameter[SGD_Cntrl.STATEATTRIBUTES.INITIAL.ordinal()] = new VP_ArrayTokenlist(
+					y0);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.MINYVALUE.ordinal()] = new VP_ArrayTokenlist(
+					minYValue);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.MAXYVALUE.ordinal()] = new VP_ArrayTokenlist(
+					maxYValue);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.PRIORITY.ordinal()] = new VP_ArrayTokenlist(
+					priority);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.SOLLWERTSCRIPT.ordinal()] = new VP_ArrayTokenlist(
+					sollwertScript);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.REGLER.ordinal()] = new VP_ArrayTokenlist(
+					regler);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.STRECKE.ordinal()] = new VP_ArrayTokenlist(
+					strecke);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.TRIGGERLISTE.ordinal()] = new VP_ArrayTokenlist(
+					triggerliste);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.SOLLWERTGEBER.ordinal()] = new VP_ArrayTokenlist(
+					sollwertGeber);
+
+			build = new GuideDigitData(sgg.dgl, parameter);
+			gtc.ggl_add(sgg, name, build);
+		}
+		return true;
+	}
+
+	// // --- Übertragungsfunktion ------------------------------------------
+	// // § Es gibt immer eine Übertragungsfunktion: Default: P-Regler mit
+	// // k=1.0
+	// // § Ist die Passive Funktion = null, dann ist es UFp = UF
+	// // § Regler haben eine Übertragungsfunktion, sonst sind es nur Steller
+	// // § Ist der Passive Regler = null, dann ist es RGp = RG
+	//
+	// private final boolean buildDigitGuideUef(final StateGroupGuideline sgg,
+	// final Table table) throws ArrayIndexOutOfBoundsException,
+	// NullPointerException, NoSuchFieldException {
+	// Table UF = null;
+	// UEFT_Parameter UFStreckeA = null;
+	// UEFT_Parameter UFStreckeP = null;
+	// UEFT_Parameter UFReglerA = null;
+	// UEFT_Parameter UFReglerP = null;
+	// for (String name : gtc.gglAll(sgg)) {
+	// GuideDigitData gd = (GuideDigitData) gtc.ggl_get(sgg, name);
+	// Table igl = LoadScript.getTableValue(table, name);
+	// UF = BuildUEF.setURP(igl, "UFA");
+	// UFStreckeA = BuildUEF.analyseUefkt(UF, gd);
+	//
+	// UF = BuildUEF.setURP(igl, "UFP");
+	// if (UF == null)
+	// UFStreckeP = null;
+	// else
+	// UFStreckeP = BuildUEF.analyseUefkt(UF, gd);
+	//
+	// if (UFStreckeP == null)
+	// // Ohne passive Strecke.
+	// // Dann ist passiver Strecke == aktiver Strecke.
+	// UFStreckeP = UFStreckeA;
+	//
+	// UF = BuildUEF.setURP(igl, "RGA");
+	// if (UF == null)
+	// UFReglerA = null;
+	// else
+	// UFReglerA = BuildUEF.analyseUefkt(UF, gd);
+	// if (UFReglerA == null)
+	// // Ohne Regler!
+	// UFReglerP = null;
+	// else {
+	// UF = BuildUEF.setURP(igl, "RGP");
+	// if (UF == null)
+	// // Ohne passiven Regler.
+	// // Dann ist passiver Regler == aktiver Regler.
+	// UFReglerP = UFReglerA;
+	// else
+	// UFReglerP = BuildUEF.analyseUefkt(UF, gd);
+	// }
+	//
+	// gdc.setStrecke(gd, new UEFT_Parameter[] { UFStreckeA, UFStreckeP });
+	// gdc.setRegler(gd, new UEFT_Parameter[] { UFReglerA, UFReglerP });
+	//
+	// }
+	//
+	// return true;
+	// }
+	//
+	// // --- Triggerfunktion ------------------------------------------------
+	//
+	// private final boolean buildDigitGuideTrigger(final StateGroupGuideline
+	// sgg,
+	// final Table table) throws ArrayIndexOutOfBoundsException,
+	// NullPointerException, NoSuchFieldException {
+	// for (String name : gtc.gglAll(sgg)) {
+	// GuideDigitData gd = (GuideDigitData) gtc.ggl_get(sgg, name);
+	// Table igl = LoadScript.getTableValue(table, name);
+	// if (LoadScript.has(igl, "Trigger")) {
+	// Table tlst = LoadScript.getTableValue(igl, "Trigger");
+	// for (String key : tlst.keySet()) {
+	// TriggerScript tri = new TriggerScript();
+	// tri.Adr = (PreAddress) LoadScript.getObjectValue(tlst, key);
+	// gdc.addTriggerliste(gd, tri);
+	// }
+	// }
+	// }
+	//
+	// return true;
+	// }
+	//
+
+	/** keywordsliste */
+	private final List<stategroupKeyword> sgKeywords = Arrays
+			.asList(stategroupKeyword.values());
+
+
+
+	/**
+	 * @param igltable
+	 * @param termintable
+	 * @return
+	 */
+	private final VP_Tokenlist[] setIGLTable(final VP_Tokenlist groupdata /* igltable */) {
+
+		// Table iglTable = new TableMap();
+
+		if (groupdata.isTable()) {
+			Table grouptable = groupdata.getTable();
+			if (LOGGER)
+				logger.trace("Valuetable: " + groupdata.getValue() + " / "
+						+ groupdata.getValue().getClass() + NTAB + grouptable
+						+ NTAB + grouptable.root() + NTAB
+						+ grouptable.superblock() + NTAB
+						+ grouptable.getBlockName());
+
+			// parameter = new VP_Tokenlist[this.keywordsliste.size()];
+			// parameter = new VP_Tokenlist[grouptable.size()];
+			for (String tableentry : grouptable.keySet()) {
+				String l = tableentry
+						.substring(tableentry.lastIndexOf(".") + 1);
+				logger.trace("Check: " + l + "= " + grouptable.get(tableentry)
+						+ NTAB + groupdata.getMarker());
+
+				//
+				// if (LoadScript.has(igltable, "IGL")) {
+				// try {
+				// rc = LoadScript.getTableValue(igltable, "IGL");
+				// } catch (NullPointerException e) {
+				// // Fehler ist schon abgefangen worden.
+				// // Sollte hier nicht mehr auftreten
+				// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+				// e.printStackTrace();
+				// System.exit(-1);
+				// } catch (NoSuchFieldException e) {
+				// // Fehler ist schon abgefangen worden.
+				// // Sollte hier nicht mehr auftreten
+				// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+				// e.printStackTrace();
+				// System.exit(-1);
+				// }
+				// } else {
+				// logger.warn("Der Eintrag [IGL] in " + igltable +
+				// " nicht gefunden!"
+				// + LOGTAB + "Setze default-IGL.");
+				// try {
+				// rc = new LoadScript(null, new String("IGL = { }"))
+				// .valueParsing(0).getTableValue("IGL");
+				// } catch (DateiNotFoundException e) {
+				// logger.fatal("Script [IGL] nicht gefunden: " +
+				// e.getMessage());
+				// System.exit(-2);
+				// } catch (FolderNotFoundException e) {
+				// logger.fatal("Ordner [IGL] nicht gefunden: " +
+				// e.getMessage());
+				// System.exit(-3);
+				// } catch (ParseException e) {
+				// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+				// e.printStackTrace();
+				// System.exit(-1);
+			}
+		} else {
+			assert false;
+		}
+
+		return null;
+	}
+
+	private boolean buildContextGuide(final DataGuidelineLevel dgl,
+			final StateGroupGuideline sgg, final String groupname,
+			final VP_Tokenlist statedata) {
+
+		GuideData build = null;
+		boolean isIdle = false;
+		String name = "IDLE";
+		String activity = null;
+
+		int idx = gtc.getNumberOfContexte(sgg);
+
+		VP_Tokenlist[] parameter = new VP_Tokenlist[SGD_Cntrl.STATEATTRIBUTES
+				.values().length];
+		parameter[SGD_Cntrl.STATEATTRIBUTES.PARENT.ordinal()] = new VP_ArrayTokenlist(
+				sgg);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.ACTIVITY.ordinal()] = new VP_ArrayTokenlist(
+				"AUTO-IDLE");
+		parameter[SGD_Cntrl.STATEATTRIBUTES.NAME.ordinal()] = new VP_ArrayTokenlist(
+				name);
+		parameter[SGD_Cntrl.STATEATTRIBUTES.IDX.ordinal()] = new VP_ArrayTokenlist(
+				new Integer(idx));
+
+		build = new ContextGuideline(sgg.dgl, parameter);
+		// .... Mögliche Auswertung und Modifikation
+		gtc.cgl_add(sgg, name, build);
+
+		// Alle Tabelleneinträge durchgehen und zuordnen.
+		for (String tableentry : statedata.getTable().keySet()) {
+
+			String cntrlctxname = tableentry.substring(tableentry
+					.lastIndexOf(".") + 1);
+
+			VP_Tokenlist v = (VP_Tokenlist) statedata.getTable().get(tableentry);
+
+			if (LOGGER)
+				logger.trace("Check: " + cntrlctxname + "= " + v);
+
+			if (SGD_Cntrl.CONTEXTIDLE.getAllCode().contains(
+					cntrlctxname.toUpperCase()))
+				switch (SGD_Cntrl.CONTEXTIDLE.valueOf(cntrlctxname
+						.toUpperCase())) {
+				case TERMIN:
+					if (v.isTable()) {
+						// Alle Termine durchgehen
+						for (String terminKey : v.getTable().keySet()) {
+							String wann = (String) ((VP_Tokenlist) v.getTable()
+									.get(terminKey)).getValue();
+							// Termin registrieren
+							this.gtc.setCTG_Terminevent(sgg, wann);
+						}
+						if (LOGGER)
+							logger.info("--- "
+									+ gtc.getAll_CTG_Terminevent(sgg).size()
+									+ " Context-Termine angelegt. ---");
+					} else
+						assert false;
+					continue;
+				case STATE:
+					logger.info("PreAddressen nicht implementiert!");
+					// if (v.isTable()) {
+					// // Alle Termine durchgehen
+					// for (String stateKey : v.getTable().keySet()) {
+					// PreAddress wer = (PreAddress) ((VP_Tokenlist)
+					// v.getTable()
+					// .get(stateKey)).getValue();
+					// // Termin registrieren
+					// this.gtc.setCTG_Stateevent(sgg, wer);
+					// }
+					// if (LOGGER)
+					// logger.info("--- "
+					// + gtc.getAll_CTG_Stateevent(sgg).size()
+					// + " Context-Stateevents angelegt. ---");
+					// } else
+					// assert false;
+					continue;
+				case DOSTATE:
+					logger.info("PreAddressen nicht implementiert!");
+					// if (v.isTable()) {
+					// // Alle Termine durchgehen
+					// for (String stateKey : v.getTable().keySet()) {
+					// PreAddress wer = (PreAddress) ((VP_Tokenlist)
+					// v.getTable()
+					// .get(stateKey)).getValue();
+					// // Termin registrieren
+					// this.gtc.setCTG_Stateevent(sgg, wer);
+					// }
+					// if (LOGGER)
+					// logger.info("--- "
+					// + gtc.getAll_CTG_Stateevent(sgg).size()
+					// + " Context-Stateevents angelegt. ---");
+					// } else
+					// assert false;
+					continue;
+				case IDLE:
+					isIdle = true;
+					cntrlctxname = cntrlctxname.toUpperCase();
+					break;
+				default:
+					logger.info(cntrlctxname + " nicht implementiert!");
+					assert false;
+					break;
+				}
+			else {
+				name = cntrlctxname;
+				logger.trace("Check: " + cntrlctxname.toUpperCase()
+						+ " unbekannt");
+			}
+			// // Default-Context generieren
+			// setContextDefault(apotable);
+			VP_Tokenlist vp_guard = null;
+			if (v.isTable()) {
+				// Komplexe Beschreibung
+				for (String aName : v.getTable().keySet()) {
+					VP_Tokenlist attributes = (VP_Tokenlist) v.getTable().get(
+							aName);
+					String a = aName.substring(aName.lastIndexOf(".") + 1);
+					if (attributes.isTable()) {
+						// Tabelle
+						if (SGD_Cntrl.STATEATTRIBUTES.getAllCode().contains(
+								a.toUpperCase()))
+							switch (SGD_Cntrl.STATEATTRIBUTES.valueOf(a
+									.toUpperCase())) {
+							case GD:
+								logger.info("GUARD " + attributes + LOGTAB + v);
+								vp_guard = attributes;
+								break;
+							default:
+								assert false;
+								break;
+							}
+						else
+							assert false;
+					} else {
+						// Einzelwerte
+						if (SGD_Cntrl.STATEATTRIBUTES.getAllCode().contains(
+								a.toUpperCase()))
+							switch (SGD_Cntrl.STATEATTRIBUTES.valueOf(a
+									.toUpperCase())) {
+							case ACTIVITY:
+								activity = (String) attributes.getValue();
+								break;
+							case NAME:
+								name = (String) attributes.getValue();
+								break;
+							default:
+								assert false;
+								break;
+							}
+					}
+
+				}
+			} else {
+				// Einfache Beschreibung
+				activity = "Autogenerated " + cntrlctxname;
+			}
+
+			if (isIdle)
+				idx = 0;
+			else
+				idx = gtc.getNumberOfContexte(sgg);
+
+			parameter = new VP_Tokenlist[SGD_Cntrl.STATEATTRIBUTES.values().length];
+			parameter[SGD_Cntrl.STATEATTRIBUTES.PARENT.ordinal()] = new VP_ArrayTokenlist(
+					sgg);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.ACTIVITY.ordinal()] = new VP_ArrayTokenlist(
+					activity);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.NAME.ordinal()] = new VP_ArrayTokenlist(
+					name);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.IDX.ordinal()] = new VP_ArrayTokenlist(
+					new Integer(idx));
+
+			build = new ContextGuideline(sgg.dgl, parameter);
+			// .... Mögliche Auswertung und Modifikation
+			gtc.cgl_add(sgg, name, build);
+
+			logger.info("[" + cntrlctxname + "/" + name
+					+ "] ist neuer Context.");
+
+			// // // Einstellen der Contexttransition(en)
+			// // this.buildContextTransitionGuide(gsgd);
+			//
+			// }
+			// for (String ctxname : gtc.cglAll(sgg)) {
+			parameter = new VP_Tokenlist[SGD_Cntrl.STATEATTRIBUTES.values().length];
+			parameter[SGD_Cntrl.STATEATTRIBUTES.PARENT.ordinal()] = new VP_ArrayTokenlist(
+					gtc.cgl_get(sgg, cntrlctxname));
+			parameter[SGD_Cntrl.STATEATTRIBUTES.ACTIVITY.ordinal()] = new VP_ArrayTokenlist(
+					gdc.getActivity(gtc.cgl_get(sgg, cntrlctxname)));
+			parameter[SGD_Cntrl.STATEATTRIBUTES.NAME.ordinal()] = new VP_ArrayTokenlist(
+					cntrlctxname);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.IDX.ordinal()] = new VP_ArrayTokenlist(
+					new Integer(gdc.getIDX(gtc.cgl_get(sgg, cntrlctxname))));
+
+			// build = new ContextGuideline(sgg.dgl, parameter);
+			// // .... Mögliche Auswertung und Modifikation
+			// gtc.cgl_add(sgg, name, build);
+
+			CTransitionGuideline ctg = new CTransitionGuideline(sgg.dgl,
+					parameter);
+
+			// Contexttransition registrieren
+			// gtc.setCTG((ContextGuideline) gtc.cgl_get(sgg, ctxname), ctg);
+			gtc.setCTG((ContextGuideline) build, ctg);
+
+			if (LOGGER)
+				logger.trace(gdc.getName(sgg) + LOGTAB
+						+ "ContextTransitionGuideline [" + cntrlctxname
+						+ "] eingestellt.");
+
+			// // Guards in Contexttransition(en) einsetzen
+			// this.insertContextTransitionGuards(gsgd, apotable);
+
+			/** Guard-APO-Tabelle der aktuellen Contexttransition */
+			Table guardlistTable = null;
+			logger.info(vp_guard);
+			// assert false;
+			// for (String ctxname : gtc.cglAll(sgg)) {
+
+			// CTransitionGuideline ctg = gtc.getCTG((ContextGuideline) gtc
+			// .cgl_get(sgg, ctxname));
+
+			// guardlistTable = makeGCTD(sgg, table, ctxname);
+
+			// guardlistTable ist definiert
+			// analyseGuardlistTable(ctg, guardlistTable);
+			analyseGuardlistTable(ctg, vp_guard);
+
+			// // TRANSITION
+			//
+			// for (String ctxname : gtc.cglAll(gsgd)) {
+			// ContextGuideline gcd = (ContextGuideline) gtc.cgl_get(gsgd,
+			// ctxname);
+			// Table transtable = null;
+			// try {
+			// transtable = LoadScript.getTableValue(
+			//
+			// LoadScript.getTableValue(apotable, ctxname), "TRANS");
+			// } catch (NoSuchFieldException e) {
+			// try {
+			// transtable = new LoadScript(null, new String(
+			// "aux={TRANS = {" + LFCR + "} }")).valueParsing(
+			// 0).getTableValue("aux");
+			// } catch (Exception e1) {
+			// // Sollte hier nicht mehr auftreten
+			// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+			// e.printStackTrace();
+			// System.exit(-1);
+			// }
+			// }
+			// // Auslöser V-Termin
+			// setTransitionTermin(gcd, transtable, gsgd);
+			// // Auslöser State
+			// setTransitionState(gcd, transtable);
+
+			// Einstellen der Vertextransition(en)
+			this.buildVertexTransitionGuide(build);
+
+			// // Guards in Vertextransition(en) einsetzen
+			// this.insertVertexTransitionGuards(gcd, transtable);
+			// }
+			// }
+
+			// }
+		}
+
+		System.err.println(sgg.toString());
+		assert false;
+		return true;
+	}
+
+	// private final void setIdle(final Table table) {
+	// // § Es gibt immer einen Vertex 'Idle'
+	// if (!LoadScript.has(table, "Idle")) {
+	//
+	// try {
+	// table.putAll(new LoadScript(null, new String(" aux = {"
+	// + "	Idle = {Activity = \"Auto-Idle\"}}")).valueParsing(
+	// 0).getTableValue("aux"));
+	// } catch (ParseException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// assert false;
+	// } catch (DateiNotFoundException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// assert false;
+	// } catch (FolderNotFoundException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// assert false;
+	// }
+	// }
+	// }
+	//
+	// private final void setIGLTermin(Table igltable, StateGroupGuideline sg) {
+	//
+	// Table termintable = null;
+	//
+	// if (LoadScript.has(igltable, "TERMIN")) {
+	// try {
+	// termintable = LoadScript.getTableValue(igltable, "TERMIN");
+	// } catch (NullPointerException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// } catch (NoSuchFieldException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	//
+	// }
+	//
+	// if (termintable == null || termintable.isEmpty()) {
+	// // FIXME if(LOGGER)
+	// // logger.info("Für die Zustände der StateGroup ["+gdc.getName(sg)
+	// // +
+	// // "." + gdc.getIDX(sg)+"]"+LOGTAB+
+	// // "sind keine Termine/Zeitsteuerung gesetzt.");
+	// return;
+	// }
+	// for (String terminKey : termintable.keySet()) {
+	// String wann = null;
+	// try {
+	// wann = LoadScript.getStringValue(termintable, terminKey);
+	// } catch (NoSuchFieldException e) {
+	// logger.fatal(e.getMessage());
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// assert false;
+	// System.exit(0);
+	// }
+	// if (LOGGER)
+	// logger.debug("...... Termin [" + terminKey + "= " + wann + "]");
+	// gtc.setIGL_Terminevent(sg, wann);
+	//
+	// }
+	// if (LOGGER)
+	// logger.trace(("Gruppen-Abtastfrequenz(en): " + gtc
+	// .getAll_IGL_Terminevent(sg)));
+	// if (LOGGER)
+	// logger.info("--- " + gtc.getAll_IGL_Terminevent(sg).size()
+	// + " IGuideline-Termine angelegt. ---");
+	// }
+	//
+	// // ---- CONTEXT
+	// -----------------------------------------------------------
+	//
+	// private final void setTransitionTermin(final ContextGuideline gcd,
+	// final Table table, final StateGroupGuideline gsdd) {
+	//
+	// Table termintable = null;
+	//
+	// // Lade Termintabelle, so vorhanden
+	// if (LoadScript.has(table, "TERMIN")) {
+	// try {
+	// termintable = LoadScript.getTableValue(table, "TERMIN");
+	// } catch (NullPointerException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// } catch (NoSuchFieldException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	// }
+	//
+	// // Es ist kein Termin gesetzt oder Tabelle ist leer
+	// if (termintable == null || termintable.isEmpty()) {
+	// return;
+	// }
+	//
+	// // Alle Termine durchgehen
+	// for (String terminKey : termintable.keySet()) {
+	// String wann = null;
+	// try {
+	// wann = LoadScript.getStringValue(termintable, terminKey);
+	// } catch (NoSuchFieldException e) {
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	// if (LOGGER)
+	// logger.debug("...... V-Termin [" + terminKey + "= " + wann
+	// + "]");
+	// // Termin registrieren
+	// gtc.setVTG_Terminevent(gcd, wann);
+	// }
+	//
+	// if (LOGGER)
+	// logger.trace(("Gruppen-Abtastfrequenz(en): " + gtc
+	// .getAll_VTG_Terminevent(gcd)));
+	// if (LOGGER)
+	// logger.info("--- " + gtc.getAll_VTG_Terminevent(gcd).size()
+	// + " IGuideline-Termine angelegt. ---");
+	// }
+	//
+	// /**
+	// * Transitionauslöser für Contexte durch State
+	// *
+	// * @since 27.02.2014
+	// * @param table
+	// * APO-Tabelle, eingestellt auf CONTEXT-State im Root!
+	// * @param gsdd
+	// * aktuelles GuideStateGroupData
+	// */
+	// private final void setTransitionState(final ContextGuideline gcd,
+	// final Table table) {
+	//
+	// Table statetable = null;
+	// // Lade Termintabelle, so vorhanden
+	// if (LoadScript.has(table, "STATE")) {
+	// try {
+	// statetable = LoadScript.getTableValue(table, "STATE");
+	// } catch (NullPointerException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// } catch (NoSuchFieldException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	// }
+	//
+	// // Es ist kein State eingetragen oder Tabelle ist leer
+	// if (statetable == null || statetable.isEmpty()) {
+	// return;
+	// }
+	//
+	// // Alle States durchgehen
+	// for (String stateKey : statetable.keySet()) {
+	// PreAddress wer = null;
+	// try {
+	// wer = (PreAddress) LoadScript.getObjectValue(statetable,
+	// stateKey);
+	// } catch (NoSuchFieldException e) {
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	// if (LOGGER)
+	// logger.debug("...... State [" + stateKey + "= " + wer + "]");
+	// // State registrieren
+	// gtc.setVTG_Stateevent(gcd, wer);
+	// }
+	//
+	// if (LOGGER)
+	// logger.trace(("Gruppen-State(s): " + gtc.getAll_VTG_Stateevent(gcd)));
+	// if (LOGGER)
+	// logger.info("--- " + gtc.getAll_VTG_Stateevent(gcd).size()
+	// + " Vertextransitionauslöser angelegt. ---");
+	// }
+	//
+	/**
+	 * Erstelle für jeden Vertex eine Transition (in jedem Context)
+	 * 
+	 * @since 01.03.2014
+	 * @param gsgd
+	 *            aktueller GuideStateGroupData
+	 */
+	private final void buildVertexTransitionGuide(final GuideData gcd) {
+		StateGroupGuideline sgg = (StateGroupGuideline) gcd.superGuideData;
+		for (String vtxname : gtc.gglAll(sgg)) {
+			GuideData gd = gtc.ggl_get(sgg, vtxname);
+			String activity = gdc.getActivity(gd);
+			int idx = gdc.getIDX(gd);
+			VP_Tokenlist[] parameter = new VP_Tokenlist[SGD_Cntrl.STATEATTRIBUTES
+					.values().length];
+			parameter[SGD_Cntrl.STATEATTRIBUTES.PARENT.ordinal()] = new VP_ArrayTokenlist(
+					sgg);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.ACTIVITY.ordinal()] = new VP_ArrayTokenlist(
+					activity);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.NAME.ordinal()] = new VP_ArrayTokenlist(
+					vtxname);
+			parameter[SGD_Cntrl.STATEATTRIBUTES.IDX.ordinal()] = new VP_ArrayTokenlist(
+					new Integer(idx));
+
+			VTransitionGuideline vtg = new VTransitionGuideline(sgg.dgl,
+					parameter);
+
+			// Contexttransition registrieren
+			gtc.setVTG((ContextGuideline) gcd, vtg);
+
+			if (LOGGER)
+				logger.trace(gdc.getName(sgg) + LOGTAB
+						+ "VertexTransitionGuideline [C:" + gdc.getName(gd)
+						+ ".V:" + vtxname + "] eingestellt.");
+		}
+	}
+
+	//
+	// /**
+	// * Guards in den Vertextransition eintragen
+	// *
+	// * <pre>
+	// * ....
+	// * GD[n] = { @Adr; _Guard = {Values[;Values] }
+	// * }
+	// * </pre>
+	// *
+	// * Liste der Guards:
+	// * <ul>
+	// * <li>IndexGT = value</li>
+	// * </ul>
+	// * Inhalt des Listeneintrags # 0: Klasse Gruppe Vertex 1: Gruppe Vertex 2:
+	// * Vertex
+	// *
+	// *
+	// * @param gsgd
+	// * aktuelle GuideStateGroupData
+	// * @param table
+	// * Vertex-Table im sgd*.apo-File
+	// * @throws NoSuchFieldException
+	// * @throws NullPointerException
+	// * @throws ArrayIndexOutOfBoundsException
+	// */
+	// private final void insertVertexTransitionGuards(final GuideData gd,
+	// final Table table) throws ArrayIndexOutOfBoundsException,
+	// NullPointerException, NoSuchFieldException {
+	//
+	// StateGroupGuideline gsgd = (StateGroupGuideline) gdc
+	// .getSuperGuideData(gd);
+	// /** Guard-APO-Tabelle der aktuellen Contexttransition */
+	// Table guardlistTable = null;
+	// for (GuideData vggd : gtc.getVTG((ContextGuideline) gd)) {
+	//
+	// VTransitionGuideline vtg = (VTransitionGuideline) vggd;
+	// Table trans = LoadScript.getTableValue(table, "TRANS");
+	//
+	// guardlistTable = makeGCTD(gsgd, trans, vtg.name);
+	//
+	// // guardlistTable ist definiert
+	// analyseGuardlistTable(vtg, guardlistTable);
+	//
+	// }
+	// }
+
+	// *** gelöscht private final Table setContextTable(final Table table) {
+
+	// /**
+	// * Default-Context einstellen.<br>
+	// * Kann überschrieben werden.
+	// *
+	// * @since 27.02.2014
+	// * @param table
+	// * APO-Tabelle, eingestellt auf CONTEXT-Idle im Root!
+	// */
+	// private final void setContextDefault(final Table table) {
+	// // § Es gibt immer einen Context 'Idle'
+	// if (!LoadScript.has(table, "Idle")) {
+	//
+	// try {
+	// table.putAll(new LoadScript(null, new String(" aux = {"
+	// + "	Idle = {Activity = \"Auto-Default-Context\"}}"))
+	// .valueParsing(0).getTableValue("aux"));
+	// } catch (ParseException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// } catch (DateiNotFoundException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// } catch (FolderNotFoundException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	// }
+	// }
+
+	// /**
+	// * Transitionauslöser für Contexte durch Termin
+	// *
+	// * @since 27.02.2014
+	// * @param table
+	// * APO-Tabelle, eingestellt auf CONTEXT-Terminen im Root!
+	// * @param gsdd
+	// * aktuelles GuideStateGroupData
+	// */
+	// private final void setContextTermin(final Table table,
+	// final StateGroupGuideline gsdd) {
+	//
+	// Table termintable = null;
+	//
+	// // Lade Termintabelle, so vorhanden
+	// if (LoadScript.has(table, "TERMIN")) {
+	// try {
+	// termintable = LoadScript.getTableValue(table, "TERMIN");
+	// } catch (NullPointerException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// } catch (NoSuchFieldException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	// }
+	//
+	// // Es ist kein Termin gesetzt oder Tabelle ist leer
+	// if (termintable == null || termintable.isEmpty()) {
+	// return;
+	// }
+	//
+	// // Alle Termine durchgehen
+	// for (String terminKey : termintable.keySet()) {
+	// String wann = null;
+	// try {
+	// wann = LoadScript.getStringValue(termintable, terminKey);
+	// } catch (NoSuchFieldException e) {
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	// if (LOGGER)
+	// logger.debug("...... Termin [" + terminKey + "= " + wann + "]");
+	// // Termin registrieren
+	// gtc.setCTG_Terminevent(gsdd, wann);
+	// }
+	//
+	// if (LOGGER)
+	// logger.trace(("Gruppen-Abtastfrequenz(en): " + gtc
+	// .getAll_CTG_Terminevent(gsdd)));
+	// if (LOGGER)
+	// logger.info("--- " + gtc.getAll_CTG_Terminevent(gsdd).size()
+	// + " IGuideline-Termine angelegt. ---");
+	// }
+	//
+	// /**
+	// * Transitionauslöser für Contexte durch State
+	// *
+	// * @since 27.02.2014
+	// * @param table
+	// * APO-Tabelle, eingestellt auf CONTEXT-State im Root!
+	// * @param gsdd
+	// * aktuelles GuideStateGroupData
+	// */
+	// private final void setContextState(final Table table,
+	// final StateGroupGuideline gsdd) {
+	//
+	// Table statetable = null;
+	//
+	// // Lade Termintabelle, so vorhanden
+	// if (LoadScript.has(table, "STATE")) {
+	// try {
+	// statetable = LoadScript.getTableValue(table, "STATE");
+	// } catch (NullPointerException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// } catch (NoSuchFieldException e) {
+	// // Fehler ist schon abgefangen worden.
+	// // Sollte hier nicht mehr auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	// }
+	//
+	// // Es ist kein State eingetragen oder Tabelle ist leer
+	// if (statetable == null || statetable.isEmpty()) {
+	// return;
+	// }
+	//
+	// // Alle States durchgehen
+	// for (String stateKey : statetable.keySet()) {
+	// PreAddress wer = null;
+	// try {
+	// wer = (PreAddress) LoadScript.getObjectValue(statetable,
+	// stateKey);
+	// } catch (NoSuchFieldException e) {
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	// if (LOGGER)
+	// logger.debug("...... State [" + stateKey + "= " + wer + "]");
+	// // State registrieren
+	// gtc.setCTG_Stateevent(gsdd, wer);
+	// }
+	//
+	// if (LOGGER)
+	// logger.trace(("Gruppen-State(s): " + gtc
+	// .getAll_CTG_Stateevent(gsdd)));
+	// if (LOGGER)
+	// logger.info("--- " + gtc.getAll_CTG_Stateevent(gsdd).size()
+	// + " Contexttransitionauslöser angelegt. ---");
+	// }
+
+	// /**
+	// * Instanzierung eines GuideContextData-Object.
+	// *
+	// * @since 27.02.2014
+	// * @param gsgd
+	// * aktueller GuideStateGroupData
+	// * @param ctxtable
+	// * APO-Tabelle mit Contexteinträgen
+	// * @throws ArrayIndexOutOfBoundsException
+	// * @throws NullPointerException
+	// * @throws NoSuchFieldException
+	// */
+	// private final void buildContextGuide(final StateGroupGuideline gsgd,
+	// final Table ctxtable) throws ArrayIndexOutOfBoundsException,
+	// NullPointerException, NoSuchFieldException {
+	//
+	// // Zuerst ein Idle-Object mit idx=0 anlegen ...
+	// String name = "Idle";
+	// int ctxidx = gtc.getNumberOfContexte(gsgd);
+	// Table elementTable = LoadScript.getTableValue(ctxtable, name);
+	// String activity = null;
+	// try {
+	// activity = LoadScript.getStringValue(elementTable, "Activity");
+	// } catch (java.lang.NoSuchFieldException e) {
+	// activity = "Auto-Generated " + name;
+	// }
+	// GuideData superGuideData = gsgd;
+	//
+	// ContextGuideline build = new ContextGuideline(gsgd.dgl, name, ctxidx,
+	// activity, superGuideData);
+	// // .... Mögliche Auswertung und Modifikation
+	// gtc.cgl_add(gsgd, name, build);
+	//
+	// // ... dann alle anderen
+	// for (String ctxname : ctxtable.keySet()) {
+	// if (ctxname.equals("TERMIN"))
+	// continue;
+	// if (ctxname.equals("STATE"))
+	// continue;
+	// if (ctxname.equals(name))
+	// continue;
+	//
+	// ctxidx = gtc.getNumberOfContexte(gsgd);
+	// elementTable = LoadScript.getTableValue(ctxtable, name);
+	// try {
+	// activity = LoadScript.getStringValue(elementTable, "Activity");
+	// } catch (java.lang.NoSuchFieldException e) {
+	// activity = "Auto-Generated " + ctxname;
+	// }
+	// superGuideData = gsgd;
+	//
+	// build = new ContextGuideline(gsgd.dgl, ctxname, ctxidx, activity,
+	// superGuideData);
+	// // .... Mögliche Auswertung und Modifikation
+	// gtc.cgl_add(gsgd, ctxname, build);
+	// }
+	// }
+	//
+
+	// // ---- CONTEXT-Transition(en)
+	// --------------------------------------------
+	//
+	// /**
+	// * Erstelle für jeden CONTEXT eine Transition
+	// *
+	// * @since 01.03.2014
+	// * @param gsgd
+	// * aktueller GuideStateGroupData
+	// */
+	// private final void buildContextTransitionGuide(
+	// final StateGroupGuideline gsgd) {
+	//
+	// for (String ctxname : gtc.cglAll(gsgd)) {
+	//
+	// CTransitionGuideline ctg = new CTransitionGuideline(gsgd, ctxname,
+	// gdc.getIDX(gtc.cgl_get(gsgd, ctxname)), gdc.getActivity(gtc
+	// .cgl_get(gsgd, ctxname)),
+	// gtc.cgl_get(gsgd, ctxname));
+	//
+	// // Contexttransition registrieren
+	// gtc.setCTG((ContextGuideline) gtc.cgl_get(gsgd, ctxname), ctg);
+	//
+	// if (LOGGER)
+	// logger.trace(gdc.getName(gsgd) + LOGTAB
+	// + "ContextTransitionGuideline [" + ctxname
+	// + "] eingestellt.");
+	//
+	// }
+	// }
+	//
+	// /**
+	// * Guards in den Contextransition eintragen
+	// *
+	// * <pre>
+	// * ....
+	// * GD[n] = { @Adr; _Guard = {Values[;Values] }
+	// * }
+	// * </pre>
+	// *
+	// * Liste der Guards:
+	// * <ul>
+	// * <li>IndexGT = value</li>
+	// * </ul>
+	// * Inhalt des Listeneintrags # 0: Klasse Gruppe Vertex 1: Gruppe Vertex 2:
+	// * Vertex
+	// *
+	// *
+	// * @param gsgd
+	// * aktuelle GuideStateGroupData
+	// * @param table
+	// * CONTEXT-Table im sgd*.apo-File
+	// * @throws NoSuchFieldException
+	// * @throws NullPointerException
+	// * @throws ArrayIndexOutOfBoundsException
+	// */
+	// private final void insertContextTransitionGuards(
+	// final StateGroupGuideline gsgd, final Table table)
+	// throws ArrayIndexOutOfBoundsException, NullPointerException,
+	// NoSuchFieldException {
+	//
+	// /** Guard-APO-Tabelle der aktuellen Contexttransition */
+	// Table guardlistTable = null;
+	//
+	// for (String ctxname : gtc.cglAll(gsgd)) {
+	//
+	// CTransitionGuideline ctg = gtc.getCTG((ContextGuideline) gtc
+	// .cgl_get(gsgd, ctxname));
+	//
+	// guardlistTable = makeGCTD(gsgd, table, ctxname);
+	//
+	// // guardlistTable ist definiert
+	// analyseGuardlistTable(ctg, guardlistTable);
+	//
+	// }
+	// }
+	//
+	/**
+	 * Stellt die Table auf die Guards ein.<br>
+	 * Erzeugt selbst einen Tableguard, wenn keiner vorliegt.
+	 * 
+	 * @param gsgd
+	 *            der aktuelle GuideStateGroupData
+	 * @param table
+	 *            die Ausgangstable, worin die Guards liegen (sollen)
+	 * @param ctxname
+	 *            der Name des aktuellen Contexts
+	 * @return die Table auf die Guards
+	 */
+	// private final Table makeGCTD(final StateGroupGuideline gsgd,
+	// final Table table, final String ctxname) {
+	//
+	// Table actContext = null;
+	// Table guardlistTable = null;
+	//
+	// // Die Table auf den aktuellen Context stellen
+	// try {
+	// actContext = LoadScript.getTableValue(table, ctxname);
+	//
+	// // Die Tabelle der Guards in aktuellen Context
+	// guardlistTable = LoadScript.getTableValue(actContext, "GD");
+	//
+	// } catch (NoSuchFieldException e1) {
+	// // Kann nur Guardliste betreffen, Context ist schon abgefangen
+	// logger.warn("......... " + e1.getMessage() + LOGTAB
+	// + "Richte Default-GD[0] = {IndexGT = 1.} ein!");
+	// try {
+	// // Stelle einfaches Guard vom Typ 'nimmer' ein
+	// guardlistTable = new LoadScript(null, new String(
+	// "GD[0] = {IndexGT = 1.}")).valueParsing(0)
+	// .getTableValue("GD");
+	// } catch (Exception e2) {
+	// // Sollte hier nicht auftreten
+	// logger.fatal("Programmfehler." + LFCR + e2.getMessage());
+	// e2.printStackTrace();
+	// System.exit(-1);
+	// }
+	// } catch (Exception e) {
+	// // Sollte hier nicht auftreten
+	// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	// return guardlistTable;
+	// }
+
+	/**
+	 * Erzeugt für jeden Guard eine PreAddress-Instanz.<br>
+	 * Bei Bedarf wird eine default-Guard eingestellt.<br>
+	 * FIXME Ist nicht mit allen Guard-Typen getestet!
+	 * 
+	 * @param ctg
+	 *            die aktuelle GuideContextTransitionData
+	 * @param guardlistTable
+	 *            die aktuelle APO-Table mit den Guards
+	 */
+	private final void analyseGuardlistTable(final TransGuard ctg,
+			VP_Tokenlist guardliste /* final Table guardlistTable */) {
+		logger.info(guardliste);
+		// assert ctg != null;
+		// assert guardlistTable != null;
+		// for (String nr : guardlistTable.keySet()) {
+		for (String entry : guardliste.getTable().keySet()) {
+			// Guardlisteninformation aus APOTable
+			GuardList to = new GuardList();
+
+			// Nummer des Guards
+			to.nr = Integer
+					.parseInt(entry.substring(entry.lastIndexOf(".") + 1));
+
+			// $ Ältere Guardnummer wird überschrieben
+			for (GuardList gl : gtc.getGuard(ctg)) {
+				if (gl.nr == to.nr) {
+					gtc.delGuard(ctg, gl);
+					break;
+				}
+			}
+
+			VP_Tokenlist guardtable = (VP_Tokenlist) guardliste.getTable().get(
+					entry);
+
+			//
+			// // Einlesen des Guards 'nr'
+			// Table guardtable = null;
+			// try {
+			// guardtable = LoadScript.getTableValue(guardlistTable, nr);
+			// } catch (Exception e) {
+			// // Sollte hier nicht auftreten
+			// logger.fatal("Programmfehler." + LFCR + e.getMessage());
+			// System.exit(-1);
+			// }
+			//
+			PreAddress adresse = null;
+			// // try {
+			// // adresse = (PreAddress) LoadScript.getObjectValue(guardtable,
+			// // "?0");
+			// // } catch (java.lang.NoSuchFieldException e) {
+			// // // Keine Addresse, dann der aktuelle DGL, aktuelle GSGD,
+			// // // IDLE, Y0
+			// // try {
+			// // Table addressTable = new LoadScript(null, new String(
+			// // "aux={?0=@..Idle}")).valueParsing(0).getTableValue(
+			// // "aux");
+			// // adresse = (PreAddress) LoadScript.getObjectValue(
+			// // addressTable, "?0");
+			// // } catch (Exception e1) {
+			// // // Sollte hier nicht auftreten
+			// // logger.fatal("Programmfehler." + LFCR + e1.getMessage());
+			// // System.exit(-1);
+			// // }
+			// // }
+			//
+			// // // Eine default-Guard einstellen
+			// // if (guardtable.isEmpty()) {
+			// // try {
+			// // guardtable = new LoadScript(null, new String(
+			// // "aux = {IndexGT = 1.}")).valueParsing(0)
+			// // .getTableValue("aux");
+			// // } catch (Exception e) {
+			// // // Sollte hier nicht auftreten
+			// // logger.fatal("Programmfehler." + LFCR + e.getMessage());
+			// // System.exit(-1);
+			// // }
+			// // }
+			//
+			logger.trace(entry + LOGTAB + guardtable);
+			for (String guardtype : guardtable.getTable().keySet()) {
+
+				VP_Tokenlist gattr = (VP_Tokenlist) guardtable.getTable().get(
+						guardtype);
+
+				guardtype = guardtype.substring(guardtype.lastIndexOf(".") + 1);
+
+				// // Ist Adresse
+				// if (guardtype.equals("?0"))
+				// continue;
+				try {
+					_Guard _g = null;
+
+					@SuppressWarnings("unchecked")
+					Class<_Guard> afkt = (Class<_Guard>) Class
+							.forName(_Guard.class.getPackage().getName() + "."
+									+ guardtype + "_");
+					// Class<_Guard> afkt = (Class<_Guard>) Class
+					// .forName("tfossi.apolge.common.state.guard.IndexGT_");
+
+					if (guardtype.equals("Post") || guardtype.equals("Pre")
+							|| guardtype.equals("PreHT")) {
+						// // // assert vts != null;
+						// // // Constructor<?> constructor = afkt
+						// // // .getConstructor(VertexGuideline.class);
+						// // // igl =
+						// // vts.searchEntry((LoadScript.getStringValue(
+						// // // guardtable, key)).trim());
+						// // // to.guards.add((_Guard)
+						// // constructor.newInstance(igl));
+						// // // }else if(key.equals("IndexGH20")){
+						// // // Constructor<?> constructor =
+						// // // afkt.getConstructor(Object.class);
+						assert false : "NI";
+					} else {
+
+						Constructor<?> constructor = afkt.getConstructor(
+								PreAddress.class, Object.class);
+						// if (LoadScript.isTable(guardtable, guardtype)) {
+
+						if (gattr.isTable()) {
+
+							assert false : gattr;
+							// // Parameter einlesen
+							//
+							// int entries =
+							// LoadScript.getTableValue(guardtable,
+							// guardtype).size();
+							// Table t2 = LoadScript.getTableValue(guardtable,
+							// guardtype);
+							// Double[] oa = new Double[entries];
+							//
+							// for (int i = 0; i < entries; i++) {
+							// oa[i] = new Double(LoadScript.getDoubleValue(
+							// t2, "?" + String.valueOf(i)));
+							// }
+							// _g = (_Guard) constructor.newInstance(adresse,
+							// oa);
+							//
+						} else {
+							// Funktion mit einem Parameter instanzieren
+							_g = (_Guard) constructor.newInstance(adresse,
+									gattr.getValue());
+						}
+						to.guards.add(_g);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					assert false;
+					System.exit(-1);
+				}
+			}
+			// Hinzufügen des neuen Guards zur Liste
+			gtc.addGuard(ctg, to);
+		}
+	}
+
+	//
+	// private final String recur(Table table, int ebene, String keys, String
+	// out) {
+	// for (String key : table.keySet()) {
+	//
+	// VP_Tokenlist vpt = (VP_Tokenlist) table.get(key);
+	// if (vpt.isTable()) {
+	// // if(((List<?>)table.get(key)).get(0) instanceof Table){
+	// // System.err.print("Key: "+key+TAB);
+	// for (Object st : (List<?>) table.get(key))
+	// recur((Table) st, ebene + 1, keys + "." + key, out);
+	// }
+	// // else
+	// out += "Key ("
+	// + vpt.getCreateMarker()
+	// + ":"
+	// + vpt.getAddressMarker()
+	// + "): "
+	// + key
+	// + "/"
+	// + table.get(key).getClass().getSimpleName()
+	// + "/"
+	// + ((VP_ArrayTokenlist) (table.get(key))).get(0).getClass()
+	// .getSimpleName() + TAB + TAB + table.get(key)
+	// + LFCR;
+	//
+	// }
+	// return out;
+	// }
+	/**
+	 * Formatierte Ausgabe der Patternscripte
+	 * <ul>
+	 * <li>structureScript</li>
+	 * <li>listenScript</li>
+	 * <li>detailScript</li>
+	 * </ul>
+	 */
+	@Override
+	public final String toString() {
+		String out = new String("GUIDE: ");
+
+		out += NTAB + "STRUCTURE:" + LFCR;
+		out += this.structureScripttoString();
+		out += NTAB + "LISTEN:" + LFCR;
+		out += this.listenScripttoString();
+		out += NTAB + "DETAILS:" + LFCR;
+		out += this.detailScripttoString();
+		out += LOGTAB + "END OF GUIDE";
+		return out;
+	}

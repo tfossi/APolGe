@@ -91,7 +91,7 @@ public class CreditView extends AView {
 	 */
 	@Override
 	public List<Widget> buildCWidget(Group basegrp) {
-		List<Widget> listOfWidgets = new ArrayList<>();
+		List<Widget> listOfWidgets = new ArrayList<Widget>();
 		if(LOGGER) logger.debug("GUI::" + this.toString() + "\tNeue View-Widgetinstanz auf [" + basegrp
 				+ "] anlegen");
 		Browser browser = new Browser(basegrp, SWT.NONE);

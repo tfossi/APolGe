@@ -16,7 +16,6 @@ import org.apache.log4j.Logger;
 
 import tfossi.apolge.ces.AApplication;
 import tfossi.apolge.ces.server.hci.ServerMenu;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.hci.IState;
 import tfossi.apolge.common.hci.IStateContext;
 import tfossi.apolge.common.system.Environment;
@@ -65,8 +64,8 @@ public class Server extends AApplication {
 			this.pL.join();
 			if(LOGGER) logger.trace("Es geht weiter...");
 		} catch (InterruptedException e) {
-			ErrApp.THREADBEAK.erraufruf(
-					"Der Preload-Thread ist unterbrochen!");
+			assert false; //		ErrApp.THREADBEAK.erraufruf(
+//					"Der Preload-Thread ist unterbrochen!");
 		}
 
 		// Stelle als ersten State ServerMenu ein

@@ -22,8 +22,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 
-import tfossi.apolge.common.error.ErrApp;
-
 /**
  * Optionen bei Programmaufruf <code>java apolge [Option]</code> auswerten.<br>
  * <code>-g, -game NAME: Name des Games [default: LESSION]</code><br>
@@ -176,8 +174,8 @@ public class Environment {
 			}
 
 			if (key == null){
-				ErrApp.ENVIRONMENT.erraufruf("Schalter key unbekannt\nARG: " + arg + LFCR
-						+ helptext);
+				assert false; //ErrApp.ENVIRONMENT.erraufruf("Schalter key unbekannt\nARG: " + arg + LFCR
+//						+ helptext);
 				return false;
 			}
 			if (key.equals("game")) {
@@ -232,8 +230,8 @@ public class Environment {
 					continue;
 				}
 				
-				ErrApp.ENVIRONMENT.erraufruf("Argument \"" + arg + "\" unbekannt\n"
-						+ helptext);
+				assert false; //	ErrApp.ENVIRONMENT.erraufruf("Argument \"" + arg + "\" unbekannt\n"
+//						+ helptext);
 				return false;
 			}
 
@@ -248,13 +246,13 @@ public class Environment {
 					key = null;
 					continue;
 				}
-				ErrApp.ENVIRONMENT.erraufruf("Argument \"" + arg + "\" unbekannt\n"
-						+ helptext);
+//				ErrApp.ENVIRONMENT.erraufruf("Argument \"" + arg + "\" unbekannt\n"
+//						+ helptext);
 				return false;
 			}
 
-			ErrApp.ENVIRONMENT.erraufruf("Argument \"" + arg + "\" unbekannt\n"
-					+ helptext);
+//			ErrApp.ENVIRONMENT.erraufruf("Argument \"" + arg + "\" unbekannt\n"
+//					+ helptext);
 			return false;
 		}
 		return true;

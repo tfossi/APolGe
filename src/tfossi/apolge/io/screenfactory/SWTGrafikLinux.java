@@ -52,7 +52,7 @@ public class SWTGrafikLinux {
 	private Shell shell;
 
 	/** Nimmt die Basegroups mit den Layouts auf */
-	private final Map<Screen, Group> baseGroups = new HashMap<>();
+	private final Map<Screen, Group> baseGroups = new HashMap<Screen, Group>();
 
 	/**
 	 * @param scr

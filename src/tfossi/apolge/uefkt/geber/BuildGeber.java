@@ -11,7 +11,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import tfossi.apolge.common.scripting.VP_Tokenlist;
+import tfossi.apolge.common.scripting.vp.VP_ArrayTokenlist;
+import tfossi.apolge.common.scripting.vp.VP_Tokenlist;
 import tfossi.apolge.data.guide.SGD_Cntrl;
 
 /**
@@ -52,7 +53,7 @@ public class BuildGeber {
 	 * Hinweis: Unbedingt LinkedHashMap, da die Reihenfolge der Parameter NICHT
 	 * egal ist!
 	 */
-	static Map<String, Object> sollwertParameterStructure = new LinkedHashMap<>();
+	static Map<String, Object> sollwertParameterStructure = new LinkedHashMap<String, Object>();
 
 	// Sollwertparameter initieren
 	static {
@@ -83,7 +84,7 @@ public class BuildGeber {
 	 * @return Parameter des Sollwertgebers
 	 */
 	public static final GeberParameter buildGeberScriptGuideline(
-			VP_Tokenlist solldata, SGD_Cntrl.STATEGROUPATTRIBUTES code) {
+			VP_ArrayTokenlist<?> solldata, SGD_Cntrl.STATEGROUPATTRIBUTES code) {
 //		if (LOGGER)
 //			logger.trace(solldata);
 

@@ -97,4 +97,10 @@ public interface VP_Tokenlist <T> extends List<T> {
 	 */
 	public Table getTable();
 
+	/**
+	 * TODO Comment
+	 * @return ????
+	 * @modified 8.12.2014 / BuildGuideline 
+	 */
+	public Object getValue();
 }

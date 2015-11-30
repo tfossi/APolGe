@@ -12,7 +12,6 @@ import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
 
 import org.apache.log4j.Logger;
 
-import tfossi.apolge.common.error.ErrApp;
 
 
 
@@ -171,7 +170,7 @@ public class Help{
 	 */
 	public Help(){
 		if(LOGGER) logger.info("Nicht implementiert!");
-		ErrApp.NI_W.erraufruf("");
+//		ErrApp.NI_W.erraufruf("");
 		
 	}
 }

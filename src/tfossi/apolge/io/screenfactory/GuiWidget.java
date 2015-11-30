@@ -7,24 +7,24 @@
  */
 package tfossi.apolge.io.screenfactory;
 
-import static tfossi.apolge.common.constants.ConstValue.LFCR;
+import static tfossi.apolge.common.constants.ConstMethod.getScreens;
 import static tfossi.apolge.common.constants.ConstValue.LOGGER;
 import static tfossi.apolge.common.constants.ConstValue.NTAB;
-import static tfossi.apolge.common.constants.ConstValueExtension.*;
-import static tfossi.apolge.common.constants.ConstMethod.*;
-
+import static tfossi.apolge.common.constants.ConstValueExtension.APPLICATIONSCREENS;
+import static tfossi.apolge.common.constants.ConstValueExtension.MENUSCREENS;
+import static tfossi.apolge.common.constants.ConstValueExtension.PARAMETERSCREENS;
+import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
+import static tfossi.apolge.common.constants.ConstValueExtension.VIEWSCREENS;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Widget;
 
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.hci.IMenu;
 import tfossi.apolge.common.hci.IModel;
 import tfossi.apolge.common.hci.IView;
@@ -47,7 +47,7 @@ import tfossi.apolge.io.Screen;
 public class GuiWidget extends AWidget {
 
 	/** widget */
-	private final Map<Screen, Map<Class<?>, Map<String, Widget>>> widget = new HashMap<>();
+	private final Map<Screen, Map<Class<?>, Map<String, Widget>>> widget = new HashMap<Screen, Map<Class<?>, Map<String, Widget>>>();
 
 	/** Nimmt die Fassade auf */
 	private final Cntr facade;
@@ -369,7 +369,7 @@ public class GuiWidget extends AWidget {
 				"["+(scr!=null?scr:null)+"]");
 		if (!(view == null ^ menu == null) && view!=menu ) {
 			assert false;
-			ErrApp.STORECLAZZ.erraufruf(LFCR+"view: " + view + LFCR + "menu: " + menu);
+			assert false; //ErrApp.STORECLAZZ.erraufruf(LFCR+"view: " + view + LFCR + "menu: " + menu);
 			return false;
 		}
 

@@ -57,7 +57,7 @@ public class ServerViewGamelist extends AView {
 	/* @SuppressWarnings("unused") IModel model, */Group basegrp
 	/* , Widget widget */) {
 		// this.statecontext.getCntr().disposedViewScreen();
-		List<Widget> listOfWidgets = new ArrayList<>();
+		List<Widget> listOfWidgets = new ArrayList<Widget>();
 
 
 		// List rc = new List(basegrp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL |

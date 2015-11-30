@@ -366,15 +366,15 @@ public class PPiT implements Cloneable {
 //	// // tmp=null;
 //	// // }
 //	//
-//	/**
-//	 * @param mode
-//	 *            NULL, DATE, TIME, DOW. SHIFT
-//	 * @return the datetime
-//	 */
-//	public final String getDatetime(int mode) {
-//		return Date2String(this, mode);
-//	}
-//
+	/**
+	 * @param mode
+	 *            NULL, DATE, TIME, DOW. SHIFT
+	 * @return the datetime
+	 */
+	public final String getDatetime(int mode) {
+		return Date2String(this, mode);
+	}
+
 	/**
 	 * Stellt Zeit und Datum ein. Periodische Zeiten(UNDEF/'*') werden mit '-1' belegt.
 	 * 

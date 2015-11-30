@@ -17,7 +17,7 @@ public class GuardList {
 	/** nr */
 	public int nr;
 	/** guards */
-	public final List<_Guard> guards = new ArrayList<>();
+	public final List<_Guard> guards = new ArrayList<_Guard>();
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

@@ -15,7 +15,6 @@ import static tfossi.apolge.common.constants.ConstValue.LOGTAB;
 import org.apache.log4j.Logger;
 
 import tfossi.apolge.common.cmd.cmds.ChgUserState;
-import tfossi.apolge.common.error.ErrApp;
 
 
 /**
@@ -76,17 +75,17 @@ public enum UserState implements IUserState {
 		
 			Object[] o = u.verifyPassportUs(daten, value);
 
-			if( o.getClass().equals(ErrApp[].class)){
-				this.error++;
-				u.setUs(INIT, this.error);
-				// TODO Rekursion beseitigen!
-				u.send(ChgUserState.class.getSimpleName(), o);
-				INIT.chgUserState(u, daten, value);
-			}else{				
+//			if( o.getClass().equals(ErrApp[].class)){
+//				this.error++;
+//				u.setUs(INIT, this.error);
+//				// TODO Rekursion beseitigen!
+//				u.send(ChgUserState.class.getSimpleName(), o);
+//				INIT.chgUserState(u, daten, value);
+//			}else{				
 				if(LOGGER) logger.trace(u.getCaller().getSimpleName() + " INIT --> CONNECTED");
 				u.send(ChgUserState.class.getSimpleName(), o);
 				u.setUs(ONLINE);
-			}
+//			}
 		}
 	},
 	// if(LOGGER) logger.trace(u.getCaller().getSimpleName() + "  State: " + this
@@ -152,21 +151,21 @@ public enum UserState implements IUserState {
 
 			Object[] o = u.verifyPassportUs(daten, value);
 
-			if( o.getClass().equals(ErrApp[].class)){
-				if(LOGGER) logger.trace(u.getCaller().getSimpleName() + " STATERESET!"
-						+ LOGTAB + "PASSWORT --> ERROR(" + (this.error + 1)
-						+ ")" + LOGTAB + "Daten: " + o[0] + LOGTAB + "Value: "
-						+ value);
-					this.error++;
-					u.setUs(CONNECTED, this.error);
-			} else {				
+//			if( o.getClass().equals(ErrApp[].class)){
+//				if(LOGGER) logger.trace(u.getCaller().getSimpleName() + " STATERESET!"
+//						+ LOGTAB + "PASSWORT --> ERROR(" + (this.error + 1)
+//						+ ")" + LOGTAB + "Daten: " + o[0] + LOGTAB + "Value: "
+//						+ value);
+//					this.error++;
+//					u.setUs(CONNECTED, this.error);
+//			} else {				
 				if(LOGGER) logger.trace(u.getCaller().getSimpleName() + LOGTAB
 						+ (o.length == 1 ? o[0].getClass() : "") + " RESET"
 						+ LOGTAB + " PASSWORT --> ONLINE" + LOGTAB + "Daten: "
 						+ daten + LOGTAB + "Value: " + value);
 				u.setUs(ONLINE);
 				u.openServer(daten, value);
-			}
+//			}
 		}
 	},
 	/**

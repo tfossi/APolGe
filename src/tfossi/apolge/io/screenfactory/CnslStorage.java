@@ -129,7 +129,7 @@ public class CnslStorage extends AStorage {
 
 	/** Speicher für Screen.VI Zeileneinträge */
 	private final Map<Screen, Map<Class<?>, List<String>>> content = 
-			new HashMap<>();
+			new HashMap<Screen, Map<Class<?>, List<String>>>();
 
 	
 	/* (non-Javadoc)

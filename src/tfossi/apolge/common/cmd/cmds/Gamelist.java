@@ -24,7 +24,6 @@ import tfossi.apolge.common.cmd.ACmd;
 import tfossi.apolge.common.cmd.Command;
 import tfossi.apolge.common.cmd.ICmd;
 import tfossi.apolge.common.cmd.IUnvisible;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.hci.AMenu;
 import tfossi.apolge.common.net.INetReceiver;
 import tfossi.apolge.io.ContentString;
@@ -214,8 +213,8 @@ public class Gamelist extends ACmd implements IUnvisible {
 		@SuppressWarnings({ "static-method" })
 		public void call(ICmd cmd, String... value)
 				throws InvalidClassException, SocketException, IOException {
-			ErrApp.NI_X
-					.erraufruf("[public void call(ICmd cmd, String ...value)]");
+			assert false; //	ErrApp.NI_X
+//					.erraufruf("[public void call(ICmd cmd, String ...value)]");
 		}
 
 		/** @return bei <code>true</code> anzeigen, sonst nicht. */

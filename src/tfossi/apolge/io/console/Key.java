@@ -10,7 +10,7 @@ package tfossi.apolge.io.console;
 import static tfossi.apolge.common.constants.ConstValue.LFCR;
 import static tfossi.apolge.common.constants.ConstValue.LOGGER;
 import static tfossi.apolge.common.constants.ConstValue.NTAB;
-import static tfossi.apolge.common.constants.ConstValueExtension.*;
+import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,7 +21,6 @@ import org.apache.log4j.Logger;
 import tfossi.apolge.common.cmd.ACmd;
 import tfossi.apolge.common.cmd.CommandList;
 import tfossi.apolge.common.cmd.ICmd;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.error.UnknownOrderException;
 import tfossi.apolge.common.macrorecorder.IRecorder;
 
@@ -85,7 +84,7 @@ public class Key {
 	 */
 	public final static ICmd eingabe(final CommandList cmds, final String menu) {		
 		if (cmds == null) {
-			ErrApp.CMDLISTNULLX.erraufruf("Menü: " + menu);
+			assert false; //ErrApp.CMDLISTNULLX.erraufruf("Menü: " + menu);
 			return null;
 		}
 		if(LOGGER) logger.debug("Kandidaten zur Eingabe sind:" + NTAB + cmds);
@@ -139,7 +138,7 @@ public class Key {
 						+ "Bitte einen gültigen Befehl eingeben.");
 			}
 		} catch (IOException e) {
-			ErrApp.IOERROR.erraufruf("");
+			assert false; //ErrApp.IOERROR.erraufruf("");
 		} catch (UnknownOrderException e) {
 			if(LOGGER) logger.info(":" + LFCR + "Den Befehl " + e.getMessage() + " gibt es nicht!" + LFCR
 					+ "Die möglichen Befehle können mit \"?\" angezeigt werden." + LFCR

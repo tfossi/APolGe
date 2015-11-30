@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import tfossi.apolge.common.scripting.VP_Tokenlist;
+import tfossi.apolge.common.scripting.vp.VP_Tokenlist;
 import tfossi.apolge.data.guide.GuideDigitData;
 import tfossi.apolge.uefkt.glieder._Glied;
 
@@ -32,7 +32,7 @@ import tfossi.apolge.uefkt.glieder._Glied;
 public class BuildUEF {
 	
 	/** uefParameterStructure */
-	static Map<String, List<String>> uefParameterStructure = new LinkedHashMap<>();
+	static Map<String, List<String>> uefParameterStructure = new LinkedHashMap<String, List<String>>();
 
 	static {
 		uefParameterStructure.put("P", Arrays.asList(new String[] { "Kp" }));

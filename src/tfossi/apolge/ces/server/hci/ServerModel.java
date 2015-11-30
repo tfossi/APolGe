@@ -36,7 +36,7 @@ import tfossi.apolge.common.hci.AModel;
  */
 public class ServerModel extends AModel {
 	/** users */
-	private final Map<Long, DataUser> users = new HashMap<>();
+	private final Map<Long, DataUser> users = new HashMap<Long, DataUser>();
 
 	/**
 	 * User hinzufügen

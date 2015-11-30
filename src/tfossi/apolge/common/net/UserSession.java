@@ -7,8 +7,11 @@
  */
 package tfossi.apolge.common.net;
 
-import static tfossi.apolge.common.constants.ConstValue.*;
-import static tfossi.apolge.common.constants.ConstValueExtension.*;
+import static tfossi.apolge.common.constants.ConstValue.LFCR;
+import static tfossi.apolge.common.constants.ConstValue.LOGGER;
+import static tfossi.apolge.common.constants.ConstValue.LOGTAB;
+import static tfossi.apolge.common.constants.ConstValue.TAB;
+import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -18,7 +21,6 @@ import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Arrays;
-
 
 import org.apache.log4j.Logger;
 
@@ -31,7 +33,6 @@ import tfossi.apolge.common.cmd.CommandArray;
 import tfossi.apolge.common.cmd.CommandList;
 import tfossi.apolge.common.cmd.ICmd;
 import tfossi.apolge.common.cmd.cmds.Gamelist;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.error.UnknownOrderException;
 import tfossi.apolge.common.hci.AMenu;
 import tfossi.apolge.common.hci.menu.IReceiver;
@@ -89,37 +90,37 @@ public class UserSession extends Transmission implements Runnable,
 			try {
 				to = this.auskunft();
 			} catch (ClassNotFoundException e) {
-				ErrApp.NETERROR.erraufruf("Class of a serialized object cannot be found." + LFCR
-								+ e.getMessage());
+				assert false; //	ErrApp.NETERROR.erraufruf("Class of a serialized object cannot be found." + LFCR
+//								+ e.getMessage());
 			} catch (InvalidClassException e) {
-				ErrApp.NETERROR.erraufruf("Something is wrong with a class used by serialization."
-								+ LFCR + e.getMessage());
+				assert false; //	ErrApp.NETERROR.erraufruf("Something is wrong with a class used by serialization."
+//								+ LFCR + e.getMessage());
 			} catch (StreamCorruptedException e) {
-				ErrApp.NETERROR.erraufruf("Control information in the stream is inconsistent."
-								+ LFCR + e.getMessage());
+				assert false; //		ErrApp.NETERROR.erraufruf("Control information in the stream is inconsistent."
+//								+ LFCR + e.getMessage());
 
 			} catch (OptionalDataException e) {
-				ErrApp.NETERROR.erraufruf(	"Primitive data was found in the stream instead of objects."
-								+ LFCR + e.getMessage());
+				assert false; //		ErrApp.NETERROR.erraufruf(	"Primitive data was found in the stream instead of objects."
+//								+ LFCR + e.getMessage());
 			} catch (EOFException e) {
-				ErrApp.NETERROR.erraufruf("If end of file is reached."
-						+ LFCR + e.getMessage());
+				assert false; //		ErrApp.NETERROR.erraufruf("If end of file is reached."
+//						+ LFCR + e.getMessage());
 				try {
 					this.closeConnections();
 				} catch (IOException e1) {
-					ErrApp.NETERROR.erraufruf("IOException - If other I/O error has occurred during closing Connection."
-									+ LFCR + e1.getMessage());
+					assert false; //			ErrApp.NETERROR.erraufruf("IOException - If other I/O error has occurred during closing Connection."
+//									+ LFCR + e1.getMessage());
 				}
 			} catch (IOException e) {
-				ErrApp.NETERROR.erraufruf(
-						"IOException - If other I/O error has occurred." + LFCR
-								+ e.getMessage());
+				assert false; //		ErrApp.NETERROR.erraufruf(
+//						"IOException - If other I/O error has occurred." + LFCR
+//								+ e.getMessage());
 				try {
 					this.closeConnections();
 				} catch (IOException e1) {
-					ErrApp.NETERROR.erraufruf(
-							"IOException - If other I/O error has occurred during closing Connection."
-									+ LFCR + e1.getMessage());
+					assert false; //				ErrApp.NETERROR.erraufruf(
+//							"IOException - If other I/O error has occurred during closing Connection."
+//									+ LFCR + e1.getMessage());
 				}
 			}
 			if (to == null)
@@ -134,15 +135,15 @@ public class UserSession extends Transmission implements Runnable,
 					cmd.command();
 				}
 			} catch (UnknownOrderException e) {
-				ErrApp.WRONGCOMMANDKEY.erraufruf(e.getMessage());
+				assert false; //		ErrApp.WRONGCOMMANDKEY.erraufruf(e.getMessage());
 			}
 		}
 		try {
 			this.closeConnections();
 		} catch (IOException e) {
-			ErrApp.NETERROR.erraufruf(
-					"IOException - If other I/O error has occurred during closing Connection."
-							+ LFCR + e.getMessage());
+			assert false; //		ErrApp.NETERROR.erraufruf(
+//					"IOException - If other I/O error has occurred during closing Connection."
+//							+ LFCR + e.getMessage());
 		}
 	}
 
@@ -214,9 +215,9 @@ public class UserSession extends Transmission implements Runnable,
 			try {
 				this.closeConnections();
 			} catch (IOException e1) {
-				ErrApp.NETERROR.erraufruf(
-						"IOException - If other I/O error has occurred during closing Connection."
-								+ LFCR + e1.getMessage());
+				assert false; //ErrApp.NETERROR.erraufruf(
+//						"IOException - If other I/O error has occurred during closing Connection."
+//								+ LFCR + e1.getMessage());
 			}
 		}
 		if(LOGGER) logger.info("from " + this.us + " to " + u);
@@ -258,9 +259,9 @@ public class UserSession extends Transmission implements Runnable,
 			try {
 				this.closeConnections();
 			} catch (IOException e1) {
-				ErrApp.NETERROR.erraufruf(
-						"IOException - If other I/O error has occurred during closing Connection."
-								+ LFCR + e1.getMessage());
+				assert false; ////				ErrApp.NETERROR.erraufruf(
+//						"IOException - If other I/O error has occurred during closing Connection."
+//								+ LFCR + e1.getMessage());
 			}
 		}
 		if(LOGGER) logger.info("from " + this.gs + " to " + g);
@@ -276,13 +277,13 @@ public class UserSession extends Transmission implements Runnable,
 		try {
 			this.statement(cmd, data);
 		} catch (InvalidClassException e1) {
-			ErrApp.NETEXCEPTION.erraufruf(e1.getMessage());
+			assert false; //		ErrApp.NETEXCEPTION.erraufruf(e1.getMessage());
 			return;
 		} catch (SocketException e1) {
-			ErrApp.NETEXCEPTION.erraufruf(e1.getMessage());
+			assert false; //		ErrApp.NETEXCEPTION.erraufruf(e1.getMessage());
 			return;
 		} catch (IOException e1) {
-			ErrApp.NETEXCEPTION.erraufruf(e1.getMessage());
+			assert false; //		ErrApp.NETEXCEPTION.erraufruf(e1.getMessage());
 			return;
 		}
 	}

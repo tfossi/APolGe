@@ -53,7 +53,7 @@ public class UEFT_Parameter implements Cloneable {
 	public static final Class<? extends Number>[] getClasslist(
 			final UEFT_Parameter para) {
 		
-		List<Class<?>> lc = new ArrayList<>();
+		List<Class<?>> lc = new ArrayList<Class<?>>();
 
 		if (!Double.isNaN(para.Kp))
 			lc.add(Double.class);
@@ -90,7 +90,7 @@ public class UEFT_Parameter implements Cloneable {
 	 */
 	public final Object[] getList(final UEFT_Parameter p,
 			final GuideDigitData vertex) {
-		List<Object> lc = new ArrayList<>();
+		List<Object> lc = new ArrayList<Object>();
 
 		if (!Double.isNaN(this.Kp))
 			lc.add(new Double(this.Kp));

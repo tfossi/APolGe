@@ -23,12 +23,11 @@ import org.apache.log4j.Logger;
 
 import tfossi.apolge.common.cmd.CommandList;
 import tfossi.apolge.common.cmd.ICmd;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.hci.IMenu;
 import tfossi.apolge.common.hci.IView;
+import tfossi.apolge.common.macrorecorder.IRecorder;
 import tfossi.apolge.io.Screen;
 import tfossi.apolge.io.console.Key;
-import tfossi.apolge.common.macrorecorder.IRecorder;
 
 /**
  * Programmsteuerung für GUI
@@ -149,7 +148,7 @@ public class GuiLoop extends ALoop {
 			if(LOGGER) logger.trace("Der Befehl [" + cmd + "] ist ausgeführt.");
 			GuiLoop.console = false;
 		} catch (NullPointerException e) {
-			ErrApp.NDEF.erraufruf("Controller: " + menu + NTAB + "Cmd       : " + cmd);
+			assert false; //ErrApp.NDEF.erraufruf("Controller: " + menu + NTAB + "Cmd       : " + cmd);
 		}
 	}
 
@@ -172,7 +171,7 @@ public class GuiLoop extends ALoop {
 		} catch (NullPointerException e) {
 			if(LOGGER) logger.debug("ABBRUCH");
 		} catch (Exception e) {
-			ErrApp.NDEF.erraufruf("");
+			assert false; //ErrApp.NDEF.erraufruf("");
 		}
 		return cmd;
 	}

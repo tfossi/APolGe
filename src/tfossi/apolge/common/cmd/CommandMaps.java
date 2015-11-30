@@ -8,10 +8,8 @@
 package tfossi.apolge.common.cmd;
 
 
-import static tfossi.apolge.common.constants.ConstValue.LFCR;
 import static tfossi.apolge.common.constants.ConstValue.LOGGER;
 import static tfossi.apolge.common.constants.ConstValue.LOGTAB;
-import static tfossi.apolge.common.constants.ConstValueExtension.CONFIG_SCRIPT;
 import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
 
 import java.lang.reflect.Constructor;
@@ -19,10 +17,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
 
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.scripting.LoadScript;
-import tfossi.apolge.common.scripting.ParseException;
-import tfossi.apolge.common.scripting.Table;
+import tfossi.apolge.common.scripting.t.Table;
 
 /**
  * Enthält alle Befehle vom Typ {@link ACmd} in Maps.
@@ -66,7 +62,7 @@ public class CommandMaps {
 			// zusammen!
 			for (String key : wanted) {
 				if (!cmds.containsKey(key))
-					ErrApp.WRONGCOMMANDKEY.erraufruf("Key=" + key);
+					assert false; //	ErrApp.WRONGCOMMANDKEY.erraufruf("Key=" + key);
 				// Wichtig: Clone, da sonst die Receiver im
 				// Command
 				// überschrieben werden!
@@ -94,7 +90,7 @@ public class CommandMaps {
 		if (wanted != null) {
 			// Suche den Befehl
 			if (!cmds.containsKey(wanted))
-				ErrApp.WRONGCOMMANDKEY.erraufruf("Key=" + wanted + LFCR + cmds.keySet());
+				assert false; //	ErrApp.WRONGCOMMANDKEY.erraufruf("Key=" + wanted + LFCR + cmds.keySet());
 			// Wichtig: Clone, da sonst die Receiver im
 			// Command
 			// überschrieben werden!

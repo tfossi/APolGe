@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head><Titel>APolGe: Technical Referenz</Titel></head>
+<hr>
+<body bgcolor="white">
+<br><br>
+<b>APolGe</b> starts with:<br><br>
+<pre>
+<code>java apolge SERVER|CLIENT|EDITOR [Option]<br><br>
+Optionen:<br>
+SERVER -g -p [-l]               Server für ein Game
+CLIENT -url -p [-g] [-l] [-s]   Client
+EDITOR -g -l -s                 Editor
+-?, -Help                       Initiale Hilfe zum Starten von APolGe
+-g, -game NAME                  Name des Games [default: LESSION]
+-url HOST                       URL des Servers [default: localhost]
+-p, -port PORT                  Port des Sockets [default: 3544]
+-l, -logger LEVEL               Loggingstufen (ALL | TRACE | DEBUG | INFO | WARN | FATAL | OFF) [default: INFO]
+-s, -screen SCREEN              SWT-Gui oder Konsole einschalten (GUI | CON)
+</code>  </pre> 
+
+<!-- <a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a> -->
+
+<h2>Specification h2</h2>
+
+
+<!--
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+-->
+<h2>Related Documentation h2</h2>
+
+<h3>Packages<h3>
+
+<h3>How To Comment: A Style Guide</h3>
+
+The following are useful tips and conventions for writing descriptions in doc comments.<p>
+<ul>
+<li><b>Use &lt;code&gt;-style for keywords and names.</b><br>
+Keywords and names are offset by &lt;code&gt...&lt;/code&gt when mentioned in a description. This includes:<ul>
+    <li>    Java keywords</li>
+   <li>     package names</li>
+    <li>    class names</li>
+   <li>     method names</li>
+   <li>     interface names</li>
+    <li>    field names</li>
+    <li>    argument names</li>
+    <li>    code examples</li>
+</ul></li>
+<li><b>Use in-line links economically</b><br>
+    You are encouraged to add links for API names (listed immediately above) using the {@link} tag. 
+    It is not necessary to add links for all API names in a doc comment. 
+    Because links call attention to themselves (by their color and underline in HTML, and by their length
+    in source code doc comments), it can make the comments more difficult to read if used profusely. 
+    We therefore recommend adding a link to an API name if:<ul>
+    <li>The user might actually want to click on it for more information (in your judgment), and</li>
+    <li>Only for the first occurrence of each API name in the doc comment (don't bother repeating a link)</li>
+	</ul>
+    Our audience is advanced (not novice) programmers, so it is generally not necessary to link to API in the java.lang package (such as String), or other API you feel would be well-known.
+</li>
+<li><b>Omit parentheses for the general form of methods and constructors</b><br>
+    When referring to a method or constructor that has multiple forms, and you mean to refer to a specific form, 
+    use parentheses and argument types. For example, ArrayList has two add methods: add(Object) and add(int, Object):<p>
+
+    The add(int, Object) method adds an item at a specified position in this arraylist.<p>
+
+    However, if referring to both forms of the method, omit the parentheses altogether. It is misleading to include empty parentheses, because that would imply a particular form of the method. The intent here is to distinguish the general method from any of its particular forms. Include the word "method" to distinguish it as a method and not a field.
+<p>
+    The add method enables you to insert items. (preferred)<p>
+
+    The add() method enables you to insert items. (avoid when you mean "all forms" of the add method)
+</li>
+<li><b>OK to use phrases instead of complete sentences, in the interests of brevity.</b><br>
+    This holds especially in the initial summary and in @param tag descriptions.
+</li>
+
+<li><b>Use 3rd person (descriptive) not 2nd person (prescriptive).</b><br>
+    The description is in 3rd person declarative rather than 2nd person imperative.<p>
+
+    Gets the label. (preferred)<p>
+
+    Get the label. (avoid)
+</li>
+
+ <li><b>Method descriptions begin with a verb phrase.</b><br>
+    A method implements an operation, so it usually starts with a verb phrase:<p>
+    
+
+    Gets the label of this button. (preferred)<p>
+    
+
+    This method gets the label of this button.
+</li>
+
+  <li><b>Class/interface/field descriptions can omit the subject and simply state the object.</b><br>
+    These API often describe things rather than actions or behaviors:<p>
+
+    A button label. (preferred)<p>
+
+    This field is a button label. (avoid)
+</li>
+
+<li><b>Use "this" instead of "the" when referring to an object created from the current class.</b><br>
+    For example, the description of the getToolkit method should read as follows:<p>
+
+    Gets the toolkit for this component. (preferred)<p>
+
+    Gets the toolkit for the component. (avoid)
+
+<li><b>Add description beyond the API name.</b><br>
+    The best API names are "self-documenting", meaning they tell you basically what the API does. If the doc comment merely repeats the API name in sentence form, it is not providing more information. For example, if method description uses only the words that appear in the method name, then it is adding nothing at all to what you could infer. The ideal comment goes beyond those words and should always reward you with some bit of information that was not immediately obvious from the API name.
+<p>
+    <b>Avoid</b> - The description below says nothing beyond what you know from reading the method name. The words "set", "tool", "tip", and "text" are simply repeated in a sentence.
+	<pre>
+    /**
+     * Sets the tool tip text.
+     *
+     * @param text  the text of the tool tip
+     */
+    public void setToolTipText(String text) {
+	</pre>
+    <b>Preferred</b> - This description more completely defines what a tool tip is, in the larger context of registering and being displayed in response to the cursor.
+	<pre>
+    /**
+     * Registers the text to display in a tool tip.   The text 
+     * displays when the cursor lingers over the component.
+     *
+     * @param text  the string to display.  If the text is null, 
+     *              the tool tip is turned off for this component.
+     */
+    public void setToolTipText(String text) {
+	</pre>
+</li>
+ <li><b>Be clear when using the term "field".</b><br>
+    Be aware that the word "field" has two meanings:<ul>
+     <li>   static field, which is another term for "class variable"
+</li>
+     <li>   text field, as in the TextField class. Note that this kind of field might be restricted to holding dates, numbers or any text. Alternate names might be "date field" or "number field", as appropriate.
+</li>
+</ul>
+<li><b>Avoid Latin</b><br>
+    use "also known as" instead of "aka", use "that is" or "to be specific" instead of "i.e.", use "for example" instead of "e.g.", and use "in other words" or "namely" instead of "viz."
+</li>
+</ul>
+<h3>todo-Check</h3>
+<ul>
+<li>"final"-Check</li>
+<li>Field, Constructor und Method-Kommentare</li>
+<li>ConstValue raus</li>
+<li>logger
+	<ul>
+	<li><b>TRACE:</b><p>Feine Systemzustandsbeschreibung<br>
+						ausführlicheres Debugging (seit Version 1.2.12), Kommentare<br>
+						Für Softwareentwickler</li>
+	<li><b>DEBUG:</b><p>Mittlere Systemzustandsbeschreibung<br>
+						allgemeines Debugging (Methode DiesUndDas wurde mit Parameter SoUndSo aufgerufen …)<br>
+						Für Softwareentwickler</li>
+	<li><b>INFO:</b><p>Grobe Systemzustandsbeschreibung<br>
+						allgemeine Informationen (Programm gestartet, Programm beendet, Verbindung zu Host Foo aufgebaut, Verarbeitung dauerte SoUndSoviel Sekunden …)</li>
+	<li><b>WARN:</b><p>Potenzielle Störung.<br>
+						Auftreten einer unerwarteten Situation</li>
+	<li><b>ERROR:</b><p>Schwere Störung. Das Programm kann aber noch weiterlaufen.<br>
+						Fehler (Ausnahme wurde abgefangen. Bearbeitung wurde alternativ fortgesetzt)</li>
+	<li><b>FATAL:</b><p>Sehr schwere Störung. Das Programm wird abgebrochen.<br>
+						Kritischer Fehler, Programmabbruch</li>
+	</ul>
+</li>
+
+<li>Taglets</li>
+<li>Nutzen</li>
+
+<li>Compilerfehler</li>
+<li>Text-Formatierung</li>
+<li>LFCR (\n)</li>
+<li>Kommentare</li>
+<li>Package.html</li>
+<li>Overview.html</li>
+<li></li>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+
+
+</body>
+</html>

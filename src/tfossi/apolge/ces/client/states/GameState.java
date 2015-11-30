@@ -16,8 +16,6 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 
 import tfossi.apolge.common.cmd.cmds.ChgGameState;
-import tfossi.apolge.common.cmd.cmds.ChgUserState;
-import tfossi.apolge.common.error.ErrApp;
 
 /**
  * TODO Comment
@@ -83,20 +81,20 @@ public enum GameState implements IGameState {
 
 			Object[] o = g.verifyAnswerGs(daten, value);
 
-			if (o.getClass().equals(ErrApp[].class)) {
-				this.error++;
-				g.setGs(REQUEST, this.error);
-				// FIXME Rekursion beseitigen!
-				// Der Aufruf kann theoretisch x-Mal erfolgen, dabei wird
-				// jedesmal eine Instanz erzeugt
-				g.send(ChgUserState.class.getSimpleName(), o);
-				REQUEST.chgGameState(g, daten, value);
-			} else {
+//			if (o.getClass().equals(ErrApp[].class)) {
+//				this.error++;
+//				g.setGs(REQUEST, this.error);
+//				// FIXME Rekursion beseitigen!
+//				// Der Aufruf kann theoretisch x-Mal erfolgen, dabei wird
+//				// jedesmal eine Instanz erzeugt
+//				g.send(ChgUserState.class.getSimpleName(), o);
+//				REQUEST.chgGameState(g, daten, value);
+//			} else {
 				if(LOGGER) logger.trace(g.getCaller().getSimpleName()
 						+ " REQUEST --> ANSWER");
 				g.send(ChgGameState.class.getSimpleName(), o);
 				g.setGs(ONLINE);
-			}
+//			}
 		}
 	},
 	/**

@@ -7,7 +7,10 @@
  */
 package tfossi.apolge.common.net;
 
-import static tfossi.apolge.common.constants.ConstValueExtension.*;
+import static tfossi.apolge.common.constants.ConstValue.LOGGER;
+import static tfossi.apolge.common.constants.ConstValueExtension.PORT_NETWORK;
+import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
+
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.BindException;
@@ -18,12 +21,10 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 import org.apache.log4j.Logger;
 
 import tfossi.apolge.ces.AApplication;
 import tfossi.apolge.ces.server.hci.ServerMenu;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.system.PreLoad;
 import tfossi.apolge.io.Screen;
 
@@ -79,8 +80,8 @@ public class LoginServer extends Thread {
 		try {
 			this.server = new ServerSocket(PORT_NETWORK);
 		} catch (BindException e) {
-			ErrApp.NETEXCEPTION.erraufruf(
-					"Port ist belegt! Anderen Port versuchen!!");
+			assert false; //ErrApp.NETEXCEPTION.erraufruf(
+//					"Port ist belegt! Anderen Port versuchen!!");
 			e.printStackTrace();
 		}
 	}

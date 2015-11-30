@@ -58,7 +58,7 @@ public class ClientView extends AView {
 	 * @modified - 
 	 */
 	public Map<String, Widget> buildSWTWidget(IModel model, Group basegrp, Widget widget) {
-		final Map<String, Widget> widgets = new HashMap<>();
+		final Map<String, Widget> widgets = new HashMap<String, Widget>();
 		
 		if (widget == null || widget.isDisposed()) {
 			if(LOGGER) logger.debug("SWT::" + this.toString()

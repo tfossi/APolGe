@@ -3,7 +3,7 @@
  */
 package tfossi.apolge.common.state.guard;
 
-import static tfossi.apolge.common.constants.ConstCPPit.*;
+import static tfossi.apolge.time.pit.ConstCPPit.*;
 import tfossi.apolge.common.scripting.PreAddress;
 import tfossi.apolge.data.core.ICoreData;
 import tfossi.apolge.data.guide.IGuideData;

@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Widget;
 import tfossi.apolge.common.cmd.ACmd;
 import tfossi.apolge.common.cmd.Command;
 import tfossi.apolge.common.cmd.ICmd;
-import tfossi.apolge.common.error.ErrApp;
 import tfossi.apolge.common.hci.AMenu;
 import tfossi.apolge.common.hci.IMenu;
 import tfossi.apolge.common.hci.IModel;
@@ -374,7 +373,7 @@ public class CGRecorder extends ACmd {
 		 */
 		@SuppressWarnings("static-method")
 		public IContent getParameter() {
-			ErrApp.NI_X.erraufruf("[public IContent getParameter()]");
+			assert false; //ErrApp.NI_X.erraufruf("[public IContent getParameter()]");
 			return new ContentString(new String[] {});
 		}
 
@@ -386,7 +385,7 @@ public class CGRecorder extends ACmd {
 		 */
 		@SuppressWarnings("static-method")
 		public void call(ICmd cmd, String... value) {
-			ErrApp.NI_X.erraufruf("[public void call(ICmd cmd, String... value)]");
+			assert false; //ErrApp.NI_X.erraufruf("[public void call(ICmd cmd, String... value)]");
 		}
 
 		/** @return bei <code>true</code> anzeigen, sonst nicht. */
@@ -555,7 +554,7 @@ public class CGRecorder extends ACmd {
 			}
 			return null;
 		} catch (Exception e) {
-			ErrApp.NDEF.erraufruf("Unerwartete Exception");
+			assert false; //ErrApp.NDEF.erraufruf("Unerwartete Exception");
 		}
 		return parameter;
 	}
@@ -575,8 +574,8 @@ public class CGRecorder extends ACmd {
 					return c.parameterMax;
 				}
 			}
-			ErrApp.NDEF.erraufruf("Falscher Parameter \'" + parameter
-					+ "\'");
+			assert false; //ErrApp.NDEF.erraufruf("Falscher Parameter \'" + parameter
+//					+ "\'");
 		}
 		return 0;
 	}

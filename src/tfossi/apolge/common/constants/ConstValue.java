@@ -169,4 +169,11 @@ public class ConstValue {
 	/** 'S'-Zeichen */
 	public static final char S = 's';
 
+	
+
+
+	/** AKTIV */
+	public static final int AKTIV = 0;
+	/** PASSIV */
+	public static final int PASSIV = 1;
 }

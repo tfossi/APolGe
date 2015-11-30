@@ -79,7 +79,7 @@ public enum Screen {
 				IModel model, Group basegrp) {
 			if(LOGGER) logger.debug("SWT::" + this.toString() + "\tNeue Widgetinstanz auf [" + basegrp
 					+ "] anlegen");
-			return new java.util.ArrayList<>();
+			return new java.util.ArrayList<Widget>();
 		}
 	},
 	/** Screenbereich ApplicationCommandMenu */
@@ -163,7 +163,7 @@ public enum Screen {
 		@Override
 		public final java.util.List<Widget> buildWidget(IView view,
 				IModel model, Group basegrp) {
-			java.util.List<Widget> listOfWidgets = new java.util.ArrayList<>();
+			java.util.List<Widget> listOfWidgets = new java.util.ArrayList<Widget>();
 			if(LOGGER) logger.debug("SWT::" + this.toString() + "\tNeue Widgetinstanz auf [" + basegrp
 					+ "] anlegen");
 			List rc = new List(basegrp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -205,7 +205,7 @@ public enum Screen {
 		@Override
 		public final java.util.List<Widget> buildWidget(IView view,
 				IModel model, Group basegrp) {
-			java.util.List<Widget> listOfWidgets = new java.util.ArrayList<>();
+			java.util.List<Widget> listOfWidgets = new java.util.ArrayList<Widget>();
 			listOfWidgets.add(view.buildVIWidget(basegrp));			
 			return listOfWidgets;
 		}
@@ -235,7 +235,7 @@ public enum Screen {
 		@Override
 		public final java.util.List<Widget> buildWidget(IView view,
 				IModel model, Group basegrp) {
-			java.util.List<Widget> listOfWidgets = new java.util.ArrayList<>();
+			java.util.List<Widget> listOfWidgets = new java.util.ArrayList<Widget>();
 			if(LOGGER) logger.debug("SWT::" + this.toString() + " \tNeue Widgetinstanz auf [" + basegrp
 					+ "] anlegen");
 			List rc = new List(basegrp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);

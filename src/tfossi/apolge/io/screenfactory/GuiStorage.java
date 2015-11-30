@@ -43,7 +43,7 @@ public class GuiStorage extends AStorage {
 
 	/** Speicher für Screen.VI Zeileneinträge */
 	private final Map<Screen, Map<Class<?>, IContent>> content = 
-			new HashMap<>();
+			new HashMap<Screen, Map<Class<?>, IContent>>();
 	
 //	private final Map<Class<? extends IView>, IContent> contentTITEL = new HashMap<Class<? extends IView>, IContent>();
 //	private final Map<Class<? extends IView>, IContent> contentVCM = new HashMap<Class<? extends IView>, IContent>();

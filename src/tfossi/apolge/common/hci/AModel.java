@@ -54,7 +54,7 @@ public abstract class AModel extends Observable implements IModel {
 	}
 
 	/** Titel des Menus */
-	private final java.util.List<String> contentTitle = new ArrayList<>(1);
+	private final java.util.List<String> contentTitle = new ArrayList<String>(1);
 
 	/** General Menu */
 	private final CommandList applcmdlist;
