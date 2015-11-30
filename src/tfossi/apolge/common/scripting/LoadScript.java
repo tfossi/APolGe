@@ -536,7 +536,7 @@ public class LoadScript {
 		// Es wird die Roottabelle 'rootKey' erzeugt. Es werden ggfs. daraus
 		// weitere Tables untergehängt.
 		this.roottable.put(LoadScript.rootKey,
-				new MakeTable(this.tokenline).makeTable());
+				new MakeTable(this.tokenline).makeTable(this.quotes));
 		if (LOGGER)
 			logger.debug(this.tokenline);
 

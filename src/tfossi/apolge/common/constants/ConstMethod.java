@@ -65,7 +65,29 @@ public class ConstMethod extends ConstValue {
 	 */
 	public static int ident() {
 		return 1;
+	}	
+	/**
+	 * Testmethode Element-ID
+	 * 
+	 * @return ID
+	 * @modified -
+	 */
+	public static Integer WENN(Boolean a, Integer b, Integer c) {
+		return (a?b:c);
 	}
+	public static Long WENN(Boolean a, Long b, Long c) {
+		return (a?b:c);
+	}
+	public static Float WENN(Boolean a, Float b, Float c) {
+		return (a?b:c);
+	}
+	public static Double WENN(Boolean a, Double b, Double c) {
+		return (a?b:c);
+	}
+	public static String WENN(Boolean a, String b, String c) {
+		return (a?b:c);
+	}
+
 
 	/**
 	 * Testvariante Script-Adressen

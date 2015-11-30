@@ -54,9 +54,9 @@ public class PMAlgebraOp {
 				if (a instanceof Integer)
 					return calculate((Integer) a, (Integer) b);
 				if (a instanceof Boolean)
-					return calculate(a, b);
-				if (a instanceof String)
-					return calculate(a, b);
+					return calculate((Boolean)a, (Boolean)b);
+				if (a instanceof String && b instanceof String)
+					return calculate((String)a, (String)b);
 				if (a instanceof Matrix)
 					return calculate((Matrix) a, (Matrix) b);
 				if (a instanceof Matrix)
@@ -143,6 +143,11 @@ public class PMAlgebraOp {
 			}
 
 			@Override
+			public final String calculate(String a, String b) {
+				return new String(a+"^"+b);
+			}
+			
+			@Override
 			public String toString() {
 				return "\\^";
 			}
@@ -178,9 +183,9 @@ public class PMAlgebraOp {
 					return calculate((Short) a, (Short) b);
 				}
 				if (a instanceof Boolean)
-					return calculate(a, b);
-				if (a instanceof String)
-					return calculate(a, b);
+					return calculate((Boolean)a, (Boolean)b);
+				if (a instanceof String && b instanceof String)
+					return calculate((String)a, (String)b);
 				if (a instanceof Matrix)
 					return calculate((Matrix) a, (Matrix) b);
 				if (a instanceof Matrix)
@@ -263,6 +268,11 @@ public class PMAlgebraOp {
 			}
 
 			@Override
+			public final String calculate(String a, String b) {
+				return new String(a+b);
+			}
+			
+			@Override
 			public String toString() {
 				return "\\+";
 			}
@@ -292,9 +302,9 @@ public class PMAlgebraOp {
 				if (a instanceof Integer)
 					return calculate((Integer) a, (Integer) b);
 				if (a instanceof Boolean)
-					return calculate(a, b);
-				if (a instanceof String)
-					return calculate(a, b);
+					return calculate((Boolean)a, (Boolean)b);
+				if (a instanceof String && b instanceof String)
+					return calculate((String)a, (String)b);
 				if (a instanceof PPiT)
 					return calculate(a, b);
 				if (a instanceof Matrix)
@@ -378,6 +388,11 @@ public class PMAlgebraOp {
 				return null;
 			}
 
+			@Override
+			public final String calculate(String a, String b) {
+				return new String(a+"-"+b);
+			}
+			
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -413,9 +428,9 @@ public class PMAlgebraOp {
 				if (a instanceof Integer)
 					return calculate((Integer) a, (Integer) b);
 				if (a instanceof Boolean)
-					return calculate(a, b);
-				if (a instanceof String)
-					return calculate(a, b);
+					return calculate((Boolean)a, (Boolean)b);
+				if (a instanceof String && b instanceof String)
+					return calculate((String)a, (String)b);
 				if (a instanceof Matrix && b instanceof Matrix)
 					return calculate((Matrix) a, (Matrix) b);
 				if (b instanceof Matrix)
@@ -498,6 +513,11 @@ public class PMAlgebraOp {
 			}
 
 			@Override
+			public final String calculate(String a, String b) {
+				return new String(a+" "+b);
+			}
+			
+			@Override
 			public String toString() {
 				return "\\*";
 			}
@@ -528,9 +548,9 @@ public class PMAlgebraOp {
 				if (a instanceof Integer)
 					return calculate((Integer) a, (Integer) b);
 				if (a instanceof Boolean)
-					return calculate(a, b);
-				if (a instanceof String)
-					return calculate(a, b);
+					return calculate((Boolean)a, (Boolean)b);
+				if (a instanceof String && b instanceof String)
+					return calculate((String)a, (String)b);
 				if (a instanceof Matrix)
 					return calculate((Matrix) a, (Matrix) b);
 				if (a instanceof Matrix)
@@ -612,6 +632,10 @@ public class PMAlgebraOp {
 				return null;
 			}
 
+			@Override
+			public final String calculate(String a, String b) {
+				return new String(a+", "+b);
+			}
 			/*
 			 * (non-Javadoc)
 			 * 

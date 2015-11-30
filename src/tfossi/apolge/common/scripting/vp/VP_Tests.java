@@ -403,6 +403,23 @@ final class VP_Tests {
 
 			assert false;
 			return false;
+		} else if (tkpre instanceof String) {
+			// Ist das vorheriges Zeichen ein String, ist das Operabel
+
+			String fOP = "\\";
+			if( tk.toString().length()==2){
+				fOP+= tk.toString().charAt(0)+"\\"+tk.toString().charAt(1);
+			}else
+				fOP+= tk;
+			
+			tokenliste.remove(ndx);
+			tokenliste.add(ndx, PatternMaps.finalOperations.get(fOP)); //"\\" + tk));
+			
+				if (LOGGER)
+					logger.trace("Tausche ["+tk+"] gegen OPERATION "+fOP);
+				
+				
+			return true;
 		} else if (tkpre instanceof Operation) {
 			// Ist das vorherige Zeichen eine Operation, dann ist es
 			// nicht Operabel, sondern Funktion

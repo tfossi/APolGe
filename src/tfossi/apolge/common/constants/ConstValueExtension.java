@@ -85,9 +85,9 @@ public class ConstValueExtension extends ConstValue {
 	 * Zum Scripttesten mit Loadscript ist eine fixe VERSIONS-Nummer zu
 	 * verwenden!
 	 */
-	// public final static long VERSION = -1L;
-	public final static long VERSION = LoadScript.getLongValue(CONFIG_SCRIPT,
-			"VERSION");
+	 public final static long VERSION = -1L;
+//	public final static long VERSION = LoadScript.getLongValue(CONFIG_SCRIPT,
+//			"VERSION");
 
 	/**
 	 * Versionsnummer als String vom Type x.yy.zzz. Nur für Versionsanzeige im

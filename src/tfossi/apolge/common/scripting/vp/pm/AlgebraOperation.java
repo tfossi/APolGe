@@ -144,4 +144,20 @@ public interface AlgebraOperation extends Operation{
 	 * @modified - 
 	 */
 	Matrix calculate(Number a, Matrix b);
+	
+	/**
+	 * Berechne zwei String
+	 * 
+	 * @author tfossi
+	 * @version 01.08.2014
+	 * @modified -
+	 * @since Java 1.6
+	 * 
+	 * @param a
+	 *            String A
+	 * @param b
+	 *            String B
+	 * @return Ergebnis String oder <code>null</code> bei Fehler/Nicht möglich
+	 */
+	String calculate(String a, String b);
 }

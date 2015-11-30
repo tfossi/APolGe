@@ -407,7 +407,7 @@ public class PMCompareOp {
 				if (a instanceof Boolean)
 					return new Boolean(false);
 				if (a instanceof String)
-					return new Boolean(false);
+					return new Boolean(!a.equals(b));
 				if (a instanceof Matrix)
 					return calculate((Matrix) a, (Matrix) b);
 				if (a instanceof Matrix)
@@ -485,7 +485,7 @@ public class PMCompareOp {
 				if (a instanceof Boolean)
 					return new Boolean(false);
 				if (a instanceof String)
-					return new Boolean(false);
+					return new Boolean(a.equals(b));
 				if (a instanceof Matrix)
 					return calculate((Matrix) a, (Matrix) b);
 				if (a instanceof Matrix)

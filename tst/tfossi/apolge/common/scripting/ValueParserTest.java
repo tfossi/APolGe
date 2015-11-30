@@ -49,11 +49,16 @@ final ValueParser vp = new ValueParser();
 	String[][] simpleTestdaten = new String[][] {
 //			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
 //			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
-			{ "Test Integer", "A Simple" + FS + "03 Simple Integer",
-				"{g=[false], plus=[3], klg=[true], minus=[-1], ug=[true], grg=[false], durch=[2], gr=[false], mal=[30], kl=[true], h=[64]}" },
+//			{ "Test Integer", "A Simple" + FS + "03 Simple Integer",
+//				"{g=[false], plus=[3], klg=[true], minus=[-1], ug=[true], grg=[false], durch=[2], gr=[false], mal=[30], kl=[true], h=[64]}" },
 //			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
 //			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
 //			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
+			{ "Test String", "A Simple" + FS + "07 Simple String",
+				"Elementname: Test String"+LFCR+
+				"g: g/false/Boolean"+LFCR+
+				"plus: plus/AB/String"+LFCR+
+				"ug: ug/true/Boolean"+LFCR } 
 			};
 
 	/** Einfache Funktionen */
@@ -61,10 +66,17 @@ final ValueParser vp = new ValueParser();
 //			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
 //			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
 			{ "Test Pass0 Integer", "B Simple" + FS + "01 Simple Math",
-				"{a=[2]}" },
+				"Elementname: Test Pass0 Integer"+LFCR+
+				"a: a/2/Integer"+LFCR 
+			},
 //			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
 //			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
 //			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
+			{ "Test Condition", "B Simple" + FS + "08 Condition",
+				"Elementname: Test Condition"+LFCR+
+				"b: b/1/Integer"+LFCR+
+				"a: a/8/Integer"+LFCR 
+			} 
 			};
 
 	/** Pass2 Funktionen */
@@ -105,7 +117,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-//	@Test
+	@Test
 	public final void testASimple() {
 
 		for (int row = 0; row < this.simpleTestdaten.length; row++) {
@@ -159,7 +171,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-//	@Test
+	@Test
 	public final void testBFunction() {
 		for (int row = 0; row < this.simpleFunctions.length; row++) {
 			System.out.println("Post2String: "
@@ -322,7 +334,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testConfig() {
 		for (int row = 0; row < this.configFunctions.length; row++) {
 			System.out.println("Post2String: "

@@ -1,0 +1,5 @@
+/*
+Einfache Mathefunktionen
+*/
+a = 8 
+b = IF a>2 THEN 1 ELSE 127 

@@ -56,7 +56,7 @@ public class MakeTable {
 	 * 			Fehlerexception
 	 * @modified - 
 	 */
-	public Table makeTable() throws TableException {
+	public Table makeTable(List<String>quotes) throws TableException {
 		/** Aktuelle Table */
 		final Table blocktable = new TableMap(null, null, null);
 
@@ -65,12 +65,12 @@ public class MakeTable {
 			if (LOGGER)
 				logger.debug("Erzeuge aus Tokenliste eine Blocktable.");
 			blocktable.putAll(makeTable(this.tokenline, new TableMap(null, null,
-					null), 0, ""));
+					null), 0, "",quotes));
 
 		} else {
 			logger.warn("Script leer!");
 		}
-		return this.makeTable(this.tokenline, blocktable, 0, null);
+		return this.makeTable(this.tokenline, blocktable, 0, null, quotes);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class MakeTable {
 	 * @return Ergebnis der Tokenline in Table Operation
 	 */
 	private final Table makeTable(List<String> tokenLine, Table blocktable,
-			int offset, String preKey) {
+			int offset, String preKey, List<String>quotes) {
 
 		int begin = offset;
 		String key = null; // preKey;
@@ -110,6 +110,7 @@ public class MakeTable {
 				if (key != null) {
 					if (LOGGER)
 						logger.trace("INSERT(}) " + key + ": " + value);
+					quotesEinsetzen(value,0,value.size()-1, quotes);
 					blocktable.put(key, value);
 				}else{
 					if (LOGGER)
@@ -128,6 +129,7 @@ public class MakeTable {
 					if (LOGGER)
 						logger.trace("Set(;) " + key + ": " + value+ LFCR
 						+ tokenLine);
+					quotesEinsetzen(value,0,value.size()-1, quotes);
 					blocktable.put(key, value);
 				}else{
 					if (LOGGER)
@@ -157,7 +159,7 @@ public class MakeTable {
 				VP_Tokenlist<Table> block = new VP_ArrayTokenlist<Table>();
 				block.add(makeTable(tokenLine, new TableMap(blocktable.root(),
 						blocktable, key + "."), begin, key
-						+ (key == "" ? "" : ".")));
+						+ (key == "" ? "" : "."), quotes));
 				if (LOGGER)
 					logger.trace("RETBLOCK({) >"+ tokenLine.get(begin) + "< >"
 							+ (tokenLine.size()>begin+1? tokenLine.get(begin + 1):"")+"<"+LOGTAB+"Key  : "+key+LOGTAB+"Value: "+value+ LFCR
@@ -176,10 +178,12 @@ public class MakeTable {
 				} else if (value.getTable()!=null && !value.getTable().isEmpty()) {
 					if (LOGGER)
 						logger.trace("NewKey INSERT " + key + ": " + value);
+					quotesEinsetzen(value,0,value.size()-1, quotes);
 					blocktable.put(key, value);
 					assert false;
 				} else{
 
+//					quotesEinsetzen(block,0,block.size(), quotes);
 					blocktable.put(key, block);
 				}
 				key = null;
@@ -220,9 +224,11 @@ public class MakeTable {
 			if (LOGGER)
 				logger.trace("Last INSERT " + key + ": " + value);
 			assert value.get(0) != null : key + " " + value;
+			
+			quotesEinsetzen(value,0,value.size()-1, quotes);
 			blocktable.put(key, value);
 		}
-
+	
 		return blocktable;
 	}
 	
@@ -240,7 +246,7 @@ public class MakeTable {
 	@SuppressWarnings("unchecked")
 	private final Table insertKnownKey(String key, VP_Tokenlist<String> value,
 			Table known) {
-
+assert false;
 		if (LOGGER)
 			logger.trace("KnownKey INSERT " + key + LOGTAB + "New Line: "
 					+ value + LOGTAB + "in Bestand-Table " + known);
@@ -273,7 +279,41 @@ public class MakeTable {
 		}
 		return known;
 	}
-	
+	/**
+	 * Quotes wieder einsetzen
+	 * 
+	 * @param valuetokens
+	 *            Tokenliste
+	 * @param firstElement
+	 *            ????
+	 * @param lastElement
+	 *            ????
+	 * @param quotes
+	 *            Liste der Quotes
+	 * @modified -
+	 */
+	private static final void quotesEinsetzen(VP_Tokenlist<String> valuetokens,
+			final int firstElement, final int lastElement, List<String> quotes) {
+
+		for (int ndx = firstElement; ndx <= lastElement; ndx++) {
+			Object actToken = valuetokens.get(ndx);
+
+			if (actToken instanceof String) {
+
+				String aT = (String) actToken;
+				if (aT.startsWith("$") && aT.endsWith("$")) {
+					int varStart = 1;
+					int varEnd = aT.length() - 1;
+					int nr = Integer.valueOf(aT.substring(varStart, varEnd))
+							.intValue();
+
+					valuetokens.remove(ndx);
+					valuetokens.add(ndx, quotes.get(nr));
+					
+				}
+			}
+		}
+	}
 	
 	// ---- Selbstverwaltung --------------------------------------------------
 

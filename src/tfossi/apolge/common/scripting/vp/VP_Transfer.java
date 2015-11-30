@@ -471,6 +471,7 @@ public class VP_Transfer {
 			if (fpt.parameterType.length == 0 && aufrufparameter.size() > 0)
 				continue;
 
+
 			// Achtung: Der letzte Parameter kann Array sein. Dadurch
 			// ist es möglich, dass aufrufparameter > als fpt.parameter
 			// ist! Ein Vergleich mit == ist also nicht richtig!
@@ -479,7 +480,9 @@ public class VP_Transfer {
 
 			if (fpt.parameterType.length > aufrufparameter.size())
 				continue;
-
+			if (LOGGER) {
+				logger.trace(NTAB + "Länge könnte passen! "+fpt.parameterType.length+"<="+aufrufparameter.size());
+			}
 			// Ein mehr an Parametern als Object[]-Array zusammenfassen
 			// und anhängen
 
@@ -543,7 +546,7 @@ public class VP_Transfer {
 			}
 
 			if (LOGGER)
-				logger.trace("Erg: " + valuetokens);
+				logger.trace(NTAB+"Erg: " + valuetokens);
 
 			if (checkParameter(fpt, aufrufparameter, mode)) {
 				try {
@@ -707,7 +710,7 @@ public class VP_Transfer {
 								+ t.getSimpleName());
 
 					thisisit = true;
-					break;
+					continue;
 				} catch (java.lang.ClassCastException e) {
 					if (t.isArray()) {
 

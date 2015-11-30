@@ -76,10 +76,10 @@ public class PMApo {
 							logger.trace("Methode  : " + method.getName());
 						if (LOGGER)
 							logger.trace("Parameterclassen: " + Arrays.asList(method.getParameterTypes()));
-						if (LOGGER)
-							logger.trace("Aufrufclassen: " + (values!=null?((Object[])values[0]).getClass():"keine"));
-						if (LOGGER)
-							logger.trace("Aufrufparameter: " + (values!=null?Arrays.asList(((Object[])values[0])):"keine"));
+//						if (LOGGER)
+//							logger.trace("Aufrufclassen: " + (values!=null?((Object[])values[0]).getClass():"keine"));
+//						if (LOGGER)
+//							logger.trace("Aufrufparameter: " + (values!=null?Arrays.asList(((Object[])values[0])):"keine"));
 						Object rc = method.invoke(null, values);
 
 						return rc;

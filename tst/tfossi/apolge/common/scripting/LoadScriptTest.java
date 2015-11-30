@@ -89,7 +89,7 @@ public class LoadScriptTest {
 			{ "Test Char", "C Typenzuordnung" + FS + "11 char.apo", ";a='A';",
 					"[;, a, =, A, ;]", "{_={a=[A]}}" },
 			{ "Test String", "C Typenzuordnung" + FS + "12 string.apo",
-					";a=$0$;", "[;, a, =, $0$, ;]", "{_={a=[$0$]}}" },
+					";a=$0$;", "[;, a, =, $0$, ;]", "{_={a=[Dies ist "+LFCR+"ein "+LFCR+"String]}}" },
 
 	};
 
@@ -218,7 +218,7 @@ public class LoadScriptTest {
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testAFileSystem() {
 
 		for (int row = 0; row < this.filesystemTestdaten.length; row++) {
@@ -278,7 +278,7 @@ public class LoadScriptTest {
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testBBasis() {
 
 		for (int row = 0; row < this.basisTestdaten.length; row++) {
@@ -394,7 +394,7 @@ public class LoadScriptTest {
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testDBlockIndexListe() {
 
 		for (int row = 0; row < this.blockIndexListeTestdaten.length; row++) {
@@ -456,7 +456,7 @@ public class LoadScriptTest {
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testEFunktionengruppe() {
 
 		for (int row = 0; row < this.funktionengruppeTestdaten.length; row++) {
@@ -518,7 +518,7 @@ public class LoadScriptTest {
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testFBasisrechnungen() {
 
 		for (int row = 0; row < this.basisrechnungenTestdaten.length; row++) {

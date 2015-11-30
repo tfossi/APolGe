@@ -68,7 +68,6 @@ public class ValueParser {
 		if (LOGGER && logger!=null) {
 			logger.debug("Parse Values:" + LFCR + root);
 		}
-
 		transferValuetokenlines(root, root, quotes, "", mode);
 	}
 
@@ -122,7 +121,7 @@ public class ValueParser {
 			if (LOGGER && logger!=null)
 				logger.debug("parse-Ergebnis: " + NTAB + key + "="
 						+ valuetokens + " (" + ")");
-
+			
 			// Geht in die Berechnung.
 			this.vp_transfer.transfer(key, block, valuetokens, quotes, mode);
 
@@ -134,6 +133,45 @@ public class ValueParser {
 		}
 	}
 
+	/**
+	 * Quotes wieder einsetzen
+	 * 
+	 * @param valuetokens
+	 *            Tokenliste
+	 * @param firstElement
+	 *            ????
+	 * @param lastElement
+	 *            ????
+	 * @param quotes
+	 *            Liste der Quotes
+	 * @modified -
+	 */
+	private static final void quotesEinsetzen(VP_Tokenlist<Object> valuetokens,
+			final int firstElement, final int lastElement, List<String> quotes) {
+
+		quotesEinsetzen(valuetokens,0,valuetokens.size(), quotes);
+		
+		System.err.println(valuetokens.toString());
+		for (int ndx = firstElement; ndx <= lastElement; ndx++) {
+			Object actToken = valuetokens.get(ndx);
+
+			System.err.println(actToken);
+			if (actToken instanceof String) {
+
+				String aT = (String) actToken;
+				if (aT.startsWith("$") && aT.endsWith("$")) {
+					int varStart = 1;
+					int varEnd = aT.length() - 1;
+					int nr = Integer.valueOf(aT.substring(varStart, varEnd))
+							.intValue();
+					System.err.println(valuetokens.get(ndx));
+					valuetokens.remove(ndx);
+					valuetokens.add(ndx, quotes.get(nr));
+					System.err.println(valuetokens.get(ndx));
+				}
+			}
+		}
+	}
 	// ---- Selbstverwaltung --------------------------------------------------
 
 	/** serialVersionUID */

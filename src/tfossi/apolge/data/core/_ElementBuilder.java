@@ -230,6 +230,10 @@ public class _ElementBuilder {
 				this.atypeRegister.put(attrName,
 						new N_AType<Double>(attrName, (Double) o));
 				
+			} else if (clzzname.equals("Boolean")) {
+				this.atypeRegister.put(attrName,
+						new B_AType<Boolean>(attrName, (Boolean) o));
+				
 			} else if (clzzname.equals("String")) {
 				this.atypeRegister.put(attrName,
 						new T_AType<String>(attrName, (String) o));
