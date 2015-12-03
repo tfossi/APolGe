@@ -22,7 +22,9 @@ import tfossi.apolge.common.scripting.LoadScriptException;
 import tfossi.apolge.common.scripting.p.ParseException;
 import tfossi.apolge.common.scripting.t.TableMap;
 import tfossi.apolge.common.scripting.vp.ValueParser;
+import tfossi.apolge.data.core.Element;
 import tfossi.apolge.data.core._ElementBuilder;
+import tfossi.apolge.data.core._ElementBuilderDirector;
 
 /**
  * Testet die Funktionalität der Scriptverarbeitung.<br>
@@ -102,8 +104,8 @@ final ValueParser vp = new ValueParser();
 //			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
 			};
 
-	/** id */
-	public int id = 0; 
+//	/** id */
+//	public int id = 0; 
 	/**
 	 * Testen der elemmentaren Rechenfunktionen
 	 * 
@@ -111,7 +113,10 @@ final ValueParser vp = new ValueParser();
 	 */
 	@Test
 	public final void testASimple() {
-
+		
+		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
+		
+		
 		for (int row = 0; row < this.createElements.length; row++) {
 			System.out.println(LFCR+LFCR+"-------------------------------------------------------------------------"+
 		LFCR+LFCR+LFCR+"Post2String: "
@@ -125,8 +130,10 @@ final ValueParser vp = new ValueParser();
 				
 				_ElementBuilder eb = new _ElementBuilder(name, (TableMap)null, parent, ls.getTable(), TESTPATH);
 				
+				System.out.println(eb.toString());
 				
-				eb.create(null,eb);
+				Element e = new Element();
+				eb.createRoot(e);
 				
 				assertEquals(this.createElements[row][0], this.createElements[row][2], eb.toString());
 

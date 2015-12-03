@@ -8,6 +8,7 @@ CHILDS = {
 }
 
 a = 1
+k= 2
 //	name: a
 //	nameDescription: Important 
 //	init: 1
@@ -19,4 +20,4 @@ a = 1
 
 
 b = 1.
-c = "ccc"
+c = "ccc4ever"

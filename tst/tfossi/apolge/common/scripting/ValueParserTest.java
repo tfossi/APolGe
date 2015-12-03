@@ -21,6 +21,7 @@ import tfossi.apolge.common.scripting.p.ParseException;
 import tfossi.apolge.common.scripting.t.TableException;
 import tfossi.apolge.common.scripting.vp.ValueParser;
 import tfossi.apolge.data.core._ElementBuilder;
+import tfossi.apolge.data.core._ElementBuilderDirector;
 
 /**
  * Testet die Funktionalität der Scriptverarbeitung.<br>
@@ -120,6 +121,8 @@ final ValueParser vp = new ValueParser();
 	@Test
 	public final void testASimple() {
 
+		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
+		
 		for (int row = 0; row < this.simpleTestdaten.length; row++) {
 			System.out.println("Post2String: "
 					+ this.simpleTestdaten[row][0] + LFCR
@@ -173,6 +176,7 @@ final ValueParser vp = new ValueParser();
 	 */
 	@Test
 	public final void testBFunction() {
+		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
 		for (int row = 0; row < this.simpleFunctions.length; row++) {
 			System.out.println("Post2String: "
 					+ this.simpleFunctions[row][0] + LFCR
@@ -226,6 +230,7 @@ final ValueParser vp = new ValueParser();
 	 */
 //	@Test
 	public final void testCPass2() {
+		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
 		for (int row = 0; row < this.pass2Functions.length; row++) {
 			System.out.println("Post2String: "
 					+ this.pass2Functions[row][0] + LFCR
@@ -280,6 +285,7 @@ final ValueParser vp = new ValueParser();
 	 */
 //	@Test
 	public final void testDPass3() {
+		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
 		for (int row = 0; row < this.pass3Functions.length; row++) {
 			System.out.println("Post2String: "
 					+ this.pass3Functions[row][0] + LFCR

@@ -5,7 +5,8 @@
  * tfossi-team
  * licence GPLv3   
  */
-package tfossi.apolge.data.core;
+package tfossi.apolge.data.core.attribute;
+
 
 /**
  * Eigenschaft eines Elements

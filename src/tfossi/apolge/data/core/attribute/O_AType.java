@@ -1,4 +1,5 @@
-package tfossi.apolge.data.core;
+package tfossi.apolge.data.core.attribute;
+
 
 
 
@@ -11,14 +12,14 @@ package tfossi.apolge.data.core;
  * @modified -
  * @since Java 1.6
  */
-public class A_AType <T> extends _AType<T> {
+public class O_AType <T> extends _AType<T> {
 	/**
 	 * TODO Comment
 	 * @param name TODO
 	 * @param value TODO
 	 * @modified -
 	 */
-	public A_AType(
+	public O_AType(
 			final String name 
 //			final String nameDescription,
 			,final T value
@@ -27,6 +28,7 @@ public class A_AType <T> extends _AType<T> {
 //			final Map<String, _
 //			AType<?>> atypeRegister, 
 //			final Map<Number,Element> elementRegister
+			, final int ordinal
 			) {
 		super(
 				name
@@ -36,6 +38,7 @@ public class A_AType <T> extends _AType<T> {
 //				keyValue, 
 //				atypeRegister, 
 //				elementRegister
+				,ordinal
 		);
 	}
 }

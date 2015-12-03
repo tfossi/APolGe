@@ -1,4 +1,5 @@
-package tfossi.apolge.data.core;
+package tfossi.apolge.data.core.attribute;
+
 
 /**
  * TODO Comment

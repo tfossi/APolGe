@@ -5,7 +5,8 @@
  * tfossi-team
  * licence GPLv3   
  */
-package tfossi.apolge.data.core;
+package tfossi.apolge.data.core.attribute;
+
 
 
 /**
@@ -27,11 +28,11 @@ public abstract class _AType<T> {
 //	"Sub", "SubElemente", "Wert", "Bemerkung", null,
 //	 atypeRegister, elementRegister
 	/** name */
-	final protected String name;
+	public final String name;
 //	/** nameDescription */
 //	final protected String nameDescription;
 	/** value */
-	final protected T value;
+	public final T value;
 //	/** key */
 //	final protected String key;
 //	/** atypeRegister */
@@ -39,6 +40,7 @@ public abstract class _AType<T> {
 //	/** keyValue */
 //	final protected String[][] keyValue;
 //
+	public final int ordinal;
 //	// Erzeuge Atom
 //	/**
 //	 * Erzeuge ein Default-Atom
@@ -173,6 +175,7 @@ public abstract class _AType<T> {
 //			, final String[][] keyValue
 //			, final Map<String, _AType<?>> atypeRegister
 //			, Map<Number,Element> elementRegister
+			, final int ordinal
 			) {
 //		"Sub", "SubElemente", "Wert", "Bemerkung", null,
 //		 atypeRegister, elementRegister
@@ -183,6 +186,7 @@ public abstract class _AType<T> {
 //		this.atypeRegister = atypeRegister;
 //		this.elementRegister = elementRegister;
 //		this.keyValue = keyValue;
+		this.ordinal = ordinal;
 	}
 //	/**
 //	 * TODO Comment
