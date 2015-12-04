@@ -7,6 +7,11 @@
  */
 package tfossi.apolge.data.core;
 
+import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
+
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,10 +77,13 @@ public class Element {
 	// }
 	// }
 
+
 	// Einfache Daten
+	// []1: ElementID
+	// []1: uvwy
 	// []0: ObjectID
-	// []1: ElementID 
-	// []2: xArrID
+	// []2: ATypeID
+	
 	int[][][] intArr;
 	double[][][] doubleArr;  //+[uvwy]
 	boolean[][] boolArr;
@@ -92,12 +100,25 @@ public class Element {
 	 * @return Object Nummer
 	 * @modified - 
 	 */
-	public int createAttribute(final int elementID, final int typeID, final int objectID, final Integer value){
-		return createAttribute(elementID, typeID, objectID, value.intValue());
+	public int createAttribute(final int elementID, final int typeID, final Integer value){
+		int objectID = checkInt(elementID, typeID);		
+		createAttribute(elementID, typeID, objectID, value.intValue());
+		return objectID;
 	}
-	public int createAttribute(final int elementID, final int typeID, final int objectID, final int value){
+	
+	private final int checkInt(final int elementID, final int typeID ){
+		if(this.intArr==null) return 0;
+		if(this.intArr.length<= elementID) return 0;
+		if(this.intArr[elementID]== null) return 0;
+		if(this.intArr[elementID].length<= typeID) return 0;
 		
-		int id = objectID;  
+		for(int objectID=0; objectID<this.intArr[elementID].length;objectID++){
+			if(this.intArr[elementID][objectID]== null) return objectID;
+		}	
+		return this.intArr[elementID].length;
+	}
+	public void createAttribute(final int elementID, final int typeID, final int objectID, final int value){
+		
 		// Erste Dimension um die Elemente auf nötige Anzahl + Reserve bringen 
 		if(this.intArr == null){
 			this.intArr = new int[elementID+11][][];	
@@ -105,26 +126,41 @@ public class Element {
 			this.intArr = Arrays.copyOf(this.intArr, elementID+1);		
 		}
 		
-		// Die zweite Dimension der ATypen auf nötige Anzahl + Reserve bringen
+		// Die zweite Dimension der Objects, die angelegt werden sollen
 		if(this.intArr[elementID] == null){
-			this.intArr[elementID] = new int[typeID+3][];
-		}else if(this.intArr[elementID].length<typeID+1){
-			this.intArr[elementID] = Arrays.copyOf(this.intArr[elementID], typeID+1);	
+			this.intArr[elementID] = new int[objectID+1][];
+		}else if(this.intArr[elementID].length<objectID+1){
+			this.intArr[elementID] = Arrays.copyOf(this.intArr[elementID], objectID+1);	
 		}
 		
-		// Die dritte Dimension der Objects, die angelegt werden sollen
-		if(this.intArr[elementID][typeID] == null){
-			this.intArr[elementID][typeID] = new int[1];	
-			id = 0;
-		}else if(this.intArr[elementID][typeID].length<objectID+1){
-			this.intArr[elementID][typeID] = Arrays.copyOf(this.intArr[elementID][typeID], objectID+1);	
+		// Die dritte Dimension der ATypen auf nötige Anzahl + Reserve bringen
+		if(this.intArr[elementID][objectID] == null){
+			this.intArr[elementID][objectID] = new int[typeID+3];	
+		}else if(this.intArr[elementID][objectID].length<typeID+3){
+			this.intArr[elementID][objectID] = Arrays.copyOf(this.intArr[elementID][objectID], typeID+3);	
 		}
-		this.intArr[elementID][typeID][id] = value;
-		return id;
+		this.intArr[elementID][objectID][typeID] = value;
+		return;
 	}
-	public int createAttribute(final int elementID, final int typeID, final int objectID, final Double value){
-		return createAttribute(elementID, typeID, objectID, value.doubleValue());
+	
+	public int createAttribute(final int elementID, final int typeID, final Double value){
+		int objectID = checkDbl(elementID, typeID);		
+		createAttribute(elementID, typeID, objectID, value.doubleValue());
+		return objectID;		
 	}
+
+	private final int checkDbl(final int elementID, final int typeID ){
+		if(this.doubleArr==null) return 0;
+		if(this.doubleArr.length<= elementID) return 0;
+		if(this.doubleArr[elementID]== null) return 0;
+		if(this.doubleArr[elementID].length<= typeID) return 0;
+		
+		for(int objectID=0; objectID<this.doubleArr[elementID].length;objectID++){
+			if(this.doubleArr[elementID][objectID]== null) return objectID;
+		}	
+		return this.doubleArr[elementID].length;
+	}
+	
 	public int createAttribute(final int elementID, final int typeID, final int objectID, final double value){
 		
 		int id = objectID;  
@@ -152,7 +188,10 @@ public class Element {
 		this.doubleArr[elementID][typeID][id] = value;
 		return id;
 	}
-	public int createAttribute(final int elementID, final int typeID, final int objectID, final String value){
+	
+	public int createAttribute(final int elementID, final int typeID, final String value){
+		
+		int objectID = checkInt(elementID, typeID);		
 		
 		int id = objectID;  
 		// Erste Dimension um die Elemente auf nötige Anzahl + Reserve bringen 
@@ -176,10 +215,31 @@ public class Element {
 		}else if(this.strArr[elementID][typeID].length<objectID+1){
 			this.strArr[elementID][typeID] = Arrays.copyOf(this.strArr[elementID][typeID], objectID+1);	
 		}
+		try{
 		this.strArr[elementID][typeID][id] = value;
+		}catch(ArrayIndexOutOfBoundsException e){
+
+			logger.trace("Adresse: "+elementID+"."+typeID+"."+id+"= " + value+"  "+objectID);
+			assert false;
+		}
 		return id;
 	}
-public int createAttribute(final int elementID, final int typeID, final int objectID, final Object value){
+
+	private final int checkStr(final int elementID, final int typeID ){
+		if(this.strArr==null) return 0;
+		if(this.strArr.length<= elementID) return 0;
+		if(this.strArr[elementID]== null) return 0;
+		if(this.strArr[elementID].length<= typeID) return 0;
+		
+		for(int objectID=0; objectID<this.strArr[elementID].length;objectID++){
+			if(this.strArr[elementID][objectID]== null) return objectID;
+		}	
+		return this.strArr[elementID].length;
+	}
+	
+	
+public int createAttribute(final int elementID, final int typeID, final Object value){
+	int objectID = checkO(elementID, typeID);	
 		
 		int id = objectID;  
 		// Erste Dimension um die Elemente auf nötige Anzahl + Reserve bringen 
@@ -206,6 +266,18 @@ public int createAttribute(final int elementID, final int typeID, final int obje
 		this.oArr[elementID][typeID][id] = value;
 		return id;
 	}
+
+private final int checkO(final int elementID, final int typeID ){
+	if(this.oArr==null) return 0;
+	if(this.oArr.length<= elementID) return 0;
+	if(this.oArr[elementID]== null) return 0;
+	if(this.oArr[elementID].length<= typeID) return 0;
+	
+	for(int objectID=0; objectID<this.oArr[elementID].length;objectID++){
+		if(this.oArr[elementID][objectID]== null) return objectID;
+	}	
+	return this.oArr[elementID].length;
+}
 	//
 	// // ---- ActiveFlag: Datenfelder
 	// -------------------------------------------
@@ -345,5 +417,15 @@ public int createAttribute(final int elementID, final int typeID, final int obje
 	//
 	// return rc;
 	// }
+// ---- Selbstverwaltung --------------------------------------------------
+/** serialVersionUID */
+@SuppressWarnings("unused")
+private final static long serialVersionUID = VERSION;
+
+/** logger */
+private final static Logger logger = Logger.getLogger(Element.class
+		.getPackage().getName() + ".Element");
+
+
 
 }

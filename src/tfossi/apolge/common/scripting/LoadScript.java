@@ -38,6 +38,7 @@ import tfossi.apolge.common.scripting.t.MakeTable;
 import tfossi.apolge.common.scripting.t.Table;
 import tfossi.apolge.common.scripting.t.TableException;
 import tfossi.apolge.common.scripting.t.TableMap;
+import tfossi.apolge.common.scripting.vp.VP_Tokenlist;
 import tfossi.apolge.common.scripting.vp.ValueParser;
 
 /**
@@ -313,7 +314,40 @@ public class LoadScript {
 		return (Table) LoadScript.getObject(table, name);
 
 	}
+	/**
+	 * Liefert ein Objekt eines Eintrags [name] in der Tabelle [table]
+	 * @param <T>
+	 * 			Typ der Liste
+	 * @param table
+	 *            die Tabelle
+	 * @param name
+	 *            der Eintrag
+	 * @return der Wert oder Fehlerausgabe. Name des Object existiert nicht
+	 * @throws NullPointerException
+	 *             Object existiert nicht
+	 * @throws ArrayIndexOutOfBoundsException
+	 *             Es gibt für name keine Einträge in der Liste
+	 */
+	@SuppressWarnings("unchecked")
+	public final synchronized static <T> VP_Tokenlist<T> getVP_List(Table table, String name) {
 
+		try {
+			return (VP_Tokenlist<T>) table.get(name);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-3);		
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + name+": "+e.getMessage());
+			System.exit(-3);
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-3);
+		}
+		return null;
+	}
 	/** @return die Roottable */
 	public synchronized final Table getTable() {
 		return (Table) this.roottable.get(LoadScript.rootKey);
