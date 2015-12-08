@@ -1,0 +1,7 @@
+/*
+Einfache Mathefunktionen
+*/
+a = rint(100.)
+// k = @"1"."2"."3"."4" 
+b = a
+c = 2*b

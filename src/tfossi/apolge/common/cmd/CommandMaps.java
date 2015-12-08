@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
 
+import tfossi.apolge.common.scripting.ArrayIndexInnerBoundsException;
 import tfossi.apolge.common.scripting.LoadScript;
 import tfossi.apolge.common.scripting.t.Table;
 
@@ -121,7 +122,7 @@ public class CommandMaps {
 	 * @.post Die Map mit den Befehlen ist angelegt
 	 * @see ACmd
 	 */
-	@SuppressWarnings("null")
+	@SuppressWarnings({ "null", "unused" })
 	public CommandMaps() {
 
 		if (cmds.size() == 0) { // Immutable: Einmal anlegen
@@ -181,6 +182,16 @@ public class CommandMaps {
 					e.printStackTrace();
 				} catch (NoSuchFieldException e) {
 					logger.fatal(e.getMessage());
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					assert false;
+					System.exit(0);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					assert false;
+					System.exit(0);
+				} catch (ArrayIndexInnerBoundsException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					assert false;

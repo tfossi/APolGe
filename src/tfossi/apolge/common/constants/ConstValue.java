@@ -137,7 +137,7 @@ public class ConstValue {
 
 	/** Methoden, die zur Elementerstellung ausgeführt werden */
 	public static final String[] twoPass = new String[] { "random", "rint","nextInt",
-			"ident", "ADR" };
+			"ident", "ADR", "ADR2" };
 
 	/** Methoden, die zur Laufzeit der Elemente ausgeführt werden werden */
 	public static final String[] threePass = new String[] { "ADR" };

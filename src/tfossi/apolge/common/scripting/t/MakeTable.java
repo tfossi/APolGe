@@ -51,6 +51,7 @@ public class MakeTable {
 
 	/**
 	 * Kernmethode zur Umwandlung der tokenline in Tables
+	 * @param quotes TODO
 	 * @return entwickelte Table
 	 * @throws TableException
 	 * 			Fehlerexception
@@ -84,6 +85,7 @@ public class MakeTable {
 	 *            Ebene der Table
 	 * @param preKey
 	 *            ???
+	 * @param quotes TODO
 	 * @return Ergebnis der Tokenline in Table Operation
 	 */
 	private final Table makeTable(List<String> tokenLine, Table blocktable,

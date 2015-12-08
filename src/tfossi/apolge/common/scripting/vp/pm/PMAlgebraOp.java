@@ -43,6 +43,7 @@ public class PMAlgebraOp {
 			 * tfossi.apolge.common.scripting.Operation#calculate(java.lang.
 			 * Object, java.lang.Object)
 			 */
+			@SuppressWarnings("cast")
 			@Override
 			public final Object calculate(Object a, Object b) {
 				if (a instanceof Double)
@@ -166,6 +167,7 @@ public class PMAlgebraOp {
 			 * tfossi.apolge.common.scripting.Operation#calculate(java.lang.
 			 * Object, java.lang.Object)
 			 */
+			@SuppressWarnings("cast")
 			@Override
 			public final Object calculate(Object a, Object b) {
 				if (a instanceof Double)
@@ -291,6 +293,7 @@ public class PMAlgebraOp {
 			 * tfossi.apolge.common.scripting.Operation#calculate(java.lang.
 			 * Object, java.lang.Object)
 			 */
+			@SuppressWarnings("cast")
 			@Override
 			public final Object calculate(Object a, Object b) {
 				if (a instanceof Double)
@@ -417,6 +420,7 @@ public class PMAlgebraOp {
 			 * tfossi.apolge.common.scripting.Operation#calculate(java.lang.
 			 * Object, java.lang.Object)
 			 */
+			@SuppressWarnings("cast")
 			@Override
 			public final Object calculate(Object a, Object b) {
 				if (a instanceof Double)
@@ -536,6 +540,7 @@ public class PMAlgebraOp {
 			 * tfossi.apolge.common.scripting.Operation#calculate(java.lang.
 			 * Object, java.lang.Object)
 			 */
+			@SuppressWarnings("cast")
 			@Override
 			public final Object calculate(Object a, Object b) {
 

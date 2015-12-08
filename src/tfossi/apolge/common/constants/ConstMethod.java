@@ -39,11 +39,9 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Button;
 
 import tfossi.apolge.common.constants.ConstValueExtension.Sigma;
-import tfossi.apolge.common.scripting.LoadScript;
-import tfossi.apolge.common.scripting.LoadScriptException;
-import tfossi.apolge.common.scripting.ScriptException;
 import tfossi.apolge.common.scripting.p.ParseException;
 import tfossi.apolge.common.scripting.vp.pm.PatternMaps;
+import tfossi.apolge.data.core.Element;
 import tfossi.apolge.io.Screen;
 import Jama.Matrix;
 
@@ -68,40 +66,134 @@ public class ConstMethod extends ConstValue {
 	}	
 	/**
 	 * Testmethode Element-ID
+	 * @param a TODO
+	 * @param b TODO
+	 * @param c TODO
 	 * 
 	 * @return ID
 	 * @modified -
 	 */
 	public static Integer WENN(Boolean a, Integer b, Integer c) {
-		return (a?b:c);
+		return (a.booleanValue()?b:c);
 	}
+	/**
+	 * TODO Comment
+	 * @param a TODO
+	 * @param b TODO
+	 * @param c TODO
+	 * @return TODO
+	 * @modified - 
+	 */
 	public static Long WENN(Boolean a, Long b, Long c) {
-		return (a?b:c);
+		return (a.booleanValue()?b:c);
 	}
+	/**
+	 * TODO Comment
+	 * @param a TODO
+	 * @param b TODO
+	 * @param c TODO
+	 * @return TODO
+	 * @modified - 
+	 */
 	public static Float WENN(Boolean a, Float b, Float c) {
-		return (a?b:c);
+		return (a.booleanValue()?b:c);
 	}
+	/**
+	 * TODO Comment
+	 * @param a TODO
+	 * @param b TODO
+	 * @param c TODO
+	 * @return TODO
+	 * @modified - 
+	 */
 	public static Double WENN(Boolean a, Double b, Double c) {
-		return (a?b:c);
+		return (a.booleanValue()?b:c);
 	}
+	/**
+	 * TODO Comment
+	 * @param a TODO
+	 * @param b TODO
+	 * @param c TODO
+	 * @return TODO
+	 * @modified - 
+	 */
 	public static String WENN(Boolean a, String b, String c) {
-		return (a?b:c);
+		return (a.booleanValue()?b:c);
 	}
 
 
 	/**
-	 * Testvariante Script-Adressen
+	 * Addressenzugriff: Auf Attribut des Elements zugreifen
 	 * 
-	 * @param str
-	 *            Addressenstring
-	 * @return Datenzugriff
+	 * @param element
+	 * 			das Element
+	 * @param attribut
+	 *            Attribut im aktuellen Element
+	 * @return Attributvalue
 	 * @modified -
 	 */
-	public static Object ADR(String... str) {
-		for (String s : str)
-			System.err.println("CM:ADR=" + s);
+	public static Object ADR2(Element element, String attribut) {
 		return new Long(5);
 	}
+	
+	/**
+	 * Addressenzugriff: Auf Attribut eines übergeordneten Elements des gleichen Zweigs zugreifen
+	 * 
+	 * @param e
+	 * 			das Element 
+	 * @param elementBuilder
+	 * 			das übergeordnete Element
+	 * @param attribute
+	 *            Attribut im aktuellen Element
+	 * @return Attributvalue
+	 * @modified -
+	 */
+	public static Object ADR2(Element e, String elementBuilder, String attribute ) {
+//		for (String s : str)
+//			System.err.println("CM:ADR=" + s);
+		return new Long(5);
+	}
+	/**
+	 * Addressenzugriff: Auf Attribut eines übergeordneten Elements des gleichen Zweigs zugreifen
+	 * 
+	 * @param e
+	 * 			das Element 
+	 * @param elementBuilder
+	 * 			das über- / untergeordnete Element
+	 * @param element  TODO
+	 * @param attribute
+	 *            Attribut im aktuellen Element
+	 * @return Attributvalue
+	 * @modified -
+	 */
+	public static Object ADR2(Element e, String elementBuilder, String element, String attribute ) {
+//		for (String s : str)
+//			System.err.println("CM:ADR=" + s);
+		return new Long(5);
+	}
+	/**
+	 * Addressenzugriff: Auf Attribut eines nebengeordneten Elements eines anderen Zweigs zugreifen
+	 * 
+	 * @param e
+	 * 			das Element 
+	 * @param eBuilder  TODO
+	 * @param element  TODO
+	 * @param subelement  TODO
+	 * @param attribute  TODO
+	 * @return Attributvalue
+	 * @modified -
+	 */
+	public static Object ADR2(Element e, String eBuilder, String element, String subelement, String attribute ) {
+//		for (String s : str)
+//			System.err.println("CM:ADR=" + s);
+		return new Long(5);
+	}
+
+//	public static Object ADR2(Element e, String SameEbene, String attribute ) {
+////		for (String s : str)
+////			System.err.println("CM:ADR=" + s);
+//		return new Long(5);
+//	}
 
 	/** rand */
 	public final static Random rand = new Random();
@@ -236,7 +328,7 @@ public class ConstMethod extends ConstValue {
 	 */
 	public final static List<Object> filter(final List<?> orgListe,
 			final String feldname, final Object[] pattern) {
-		@SuppressWarnings("unused")
+
 		List<Object> rc = new ArrayList<Object>(orgListe.size());
 		if (orgListe.size() == 0)
 			// Abbruch, wenn die Arbeitsliste leer ist.
@@ -1059,6 +1151,7 @@ public class ConstMethod extends ConstValue {
 	 *             -
 	 * @modified -
 	 */
+	@SuppressWarnings({ "null", "unused" })
 	public static Object[] LoadListe(final String name) throws ParseException {
 		// DEVELOP_PATH = System.getProperty("user.dir") + FS;
 		// INSTALLATION_PATH = DEVELOP_PATH;
@@ -1143,6 +1236,13 @@ public class ConstMethod extends ConstValue {
 		return arr[arr.length - 1];
 	}
 
+	/**
+	 * TODO Comment
+	 * @param numbers  TODO
+	 * @return TODO
+	 * @modified - 
+	 */
+	@SuppressWarnings("cast")
 	public static final Double[] darr(final Number... numbers) {
 		Double[] arr = new Double[numbers.length];
 		for (int m = 0; m < numbers.length; m++) {
@@ -1151,22 +1251,28 @@ public class ConstMethod extends ConstValue {
 		return arr;
 	}
 
-	/**
-	 * Matrix(double[][] A) Construct a matrix from a 2-D array.
-	 * Matrix(double[][] A, int m, int n) Construct a matrix quickly without
-	 * checking arguments. Matrix(double[] vals, int m) Construct a matrix from
-	 * a one-dimensional packed array Matrix(int m, int n) Construct an m-by-n
-	 * matrix of zeros. Matrix(int m, int n, double s) Construct an m-by-n
-	 * constant matrix.
-	 * 
-	 * @param arr
-	 * @return
-	 */
+//	/**
+//	 * Matrix(double[][] A) Construct a matrix from a 2-D array.
+//	 * Matrix(double[][] A, int m, int n) Construct a matrix quickly without
+//	 * checking arguments. Matrix(double[] vals, int m) Construct a matrix from
+//	 * a one-dimensional packed array Matrix(int m, int n) Construct an m-by-n
+//	 * matrix of zeros. Matrix(int m, int n, double s) Construct an m-by-n
+//	 * constant matrix.
+//	 * 
+//	 * @param arr
+//	 * @return
+//	 */
 	// public static Matrix MATRIX(final Double[] ...numbers){ // final
 	// double[][] arr) {
 	// assert false:"Stop";
 	// return null;
 	// }
+	/**
+	 * TODO Comment
+	 * @param numbers TODO
+	 * @return TODO
+	 * @modified - 
+	 */
 	public static Matrix MATRIX(final Double[]... numbers) { // final double[][]
 																// arr) {
 		double[][] arr = new double[numbers.length][];
@@ -1185,6 +1291,12 @@ public class ConstMethod extends ConstValue {
 	// assert false:"Stop";
 	// return null;
 	// }
+	/**
+	 * TODO Comment
+	 * @param o TODO
+	 * @return TODO
+	 * @modified - 
+	 */
 	public static Matrix MATRIX(final Double... o) { // final double[][] arr) {
 		assert false : "Stop";
 
@@ -1229,6 +1341,12 @@ public class ConstMethod extends ConstValue {
 	 * @return
 	 * @modified -
 	 */
+	/**
+	 * TODO Comment
+	 * @param numbers TODO
+	 * @return TODO
+	 * @modified - 
+	 */
 	public static Matrix MATRIXT(final Double[]... numbers) { // final
 																// double[][]
 																// arr) {
@@ -1242,6 +1360,12 @@ public class ConstMethod extends ConstValue {
 		return new Matrix(arr).transpose();
 	}
 
+	/**
+	 * TODO Comment
+	 * @param numbers  TODO
+	 * @return TODO
+	 * @modified - 
+	 */
 	public static Matrix MATRIXT(final Double... numbers) { // final double[][]
 															// arr) {
 		double[][] arr = new double[1][];
@@ -1257,7 +1381,6 @@ public class ConstMethod extends ConstValue {
 	@SuppressWarnings("unused")
 	private final static long serialVersionUID = VERSION;
 	/** logger */
-	@SuppressWarnings("unused")
 	private final static Logger logger = Logger.getLogger(ConstMethod.class
 			.getPackage().getName() + ".ConstMethod");
 

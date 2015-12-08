@@ -16,6 +16,7 @@ import static tfossi.apolge.common.constants.ConstValue.OPEN;
 import static tfossi.apolge.common.constants.ConstValue.extractWissDigittoken;
 import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,7 @@ import org.apache.log4j.Logger;
 
 import tfossi.apolge.common.scripting.vp.pm.Operation;
 import tfossi.apolge.common.scripting.vp.pm.PatternMaps;
+import tfossi.apolge.data.core.Element;
 
 /**
  * Übersetze Stringtoken und berechenbare Größe oder Steuerzeichen
@@ -33,11 +35,11 @@ import tfossi.apolge.common.scripting.vp.pm.PatternMaps;
  * @since Java 1.6
  */
 final class VP_Tests {
-	{
-		if (LOGGER)
-			System.out.println(this.getClass().getSimpleName() + " V"
-					+ serialVersionUID);
-	}
+//	{
+//		if (LOGGER)
+//			System.out.println(this.getClass().getSimpleName() + " V"
+//					+ serialVersionUID);
+//	}
 
 	/** seperatorValue */
 	private static final Pattern seperatorValue = Pattern.compile(",");
@@ -308,7 +310,7 @@ final class VP_Tests {
 	 *            -
 	 * @param ndx
 	 *            -
-	 * @param tk
+	 * @param token
 	 *            -
 	 * @param tkpre
 	 *            -
@@ -316,11 +318,21 @@ final class VP_Tests {
 	 * @modified -
 	 */
 	static final boolean testFunktional(ValueParser vp,
-			VP_Tokenlist<Object> tokenliste, int ndx, Object tk, Object tkpre) {
+			VP_Tokenlist<Object> tokenliste, int ndx, Object token, Object tkpre) {
 
+		Object tk = token;
 		if (!(tk instanceof CharSequence))
 			return false;
-		
+		// Sonderregel Adresse
+				if(((CharSequence) tk).equals("ADR")){
+					// Adresse ADR in ADR2 ändern
+					tokenliste.remove(ndx);
+					tokenliste.remove(ndx);
+					tokenliste.addAll(ndx,Arrays.asList(new Object[]{
+					"ADR2","(",new Element(),"," }
+							));
+					tk = tokenliste.get(ndx);
+				}
 		Matcher m = PatternMaps.finalFunctionPattern.matcher((CharSequence) tk);
 		
 		if (m.matches()) {
@@ -543,6 +555,7 @@ final class VP_Tests {
 
 	// ---- Selbstverwaltung --------------------------------------------------
 	/** serialVersionUID */
+	@SuppressWarnings("unused")
 	private final static long serialVersionUID = VERSION;
 
 	/** logger */

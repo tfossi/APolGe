@@ -25,9 +25,11 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import tfossi.apolge.common.scripting.ScriptException;
 import tfossi.apolge.common.scripting.t.Table;
 import tfossi.apolge.common.scripting.vp.pm.FuncPType;
 import tfossi.apolge.common.scripting.vp.pm.Operation;
+import tfossi.apolge.data.core.Element;
 
 /**
  * Übersetzt Anweisungen des _ElementtBuilder<br>
@@ -90,7 +92,7 @@ public class VP_Transfer {
 	 *            Aktuelle Tokenliste
 	 * @param firstElement
 	 *            erstes Element
-	 * @param lastElement
+	 * @param lE
 	 *            letztes Element
 	 * @param quotes
 	 *            Quotenliste
@@ -100,8 +102,9 @@ public class VP_Transfer {
 	 */
 	public void parseVariable(String atomname, Table block,
 			VP_Tokenlist<Object> valuetokens, final int firstElement,
-			int lastElement, List<String> quotes, final int mode) {
+			int lE, List<String> quotes, final int mode) {
 
+		int lastElement = lE;
 		if (valuetokens == null)
 			return;
 
@@ -119,20 +122,51 @@ public class VP_Transfer {
 		// Gehe jeden Listen-Eintrag durch und checke, ob es eine Variable ist.
 		// wenn ja, Ersetze den Eintrag durch die Variable
 		for (int ndx = firstElement; ndx <= lastElement; ndx++) {
-
+			
+			Object var = valuetokens.get(ndx);
+			
 			if (LOGGER)
-				logger.trace("Check Variable  : " + valuetokens.get(ndx));
+				logger.trace("Check Variable  : " + var);
+
 
 			// FIXME: Was ist, wenn Variable KEINE Zahl ist? Adresse? ....Was
 			// sonst
 
-			if (block.containsKey(valuetokens.get(ndx))) {
-				Object var = valuetokens.get(ndx);
-				valuetokens.remove(ndx);
-				valuetokens.addAll(ndx, (VP_Tokenlist<?>) block.get(var));
+			if (block.containsKey(var)) {
+				VP_Tokenlist<?> vtl = (VP_Tokenlist<?>) block.get(var);
+				
+				if(vtl.isTwoPass() || vtl.isThreePass()){
+					logger.trace("Ist "+(vtl.isTwoPass()?"2-Pass ":"") +(vtl.isThreePass()?"3-Pass ":""));
+					var = Arrays.asList(new Object[]{
+					"ADR2","(",new Element(),",","a",")"		
+					});
+										
+					logger.trace("Einordnen:"+NTAB+var);
+					
+					// Lösche alten Eintrag
+					valuetokens.remove(ndx);
+					// Trage modfizierten Eintrag ein. 
+					valuetokens.addAll(ndx, (List<?>)var);
+					
+					// Nachparsen des neuen Eintrags
+					try {
+//						VP_Tokenlist<Object> erg = 
+							VP_Parse.parse(null, block, block, valuetokens, null, null, (byte) mode);
+					} catch (ScriptException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					// Grenzen neu setzen
+					ndx += ((List<?>)var).size()-1;
+					lastElement += ((List<?>)var).size()-1;
+				}else{					
 
-				if (LOGGER)
-					logger.trace("NEW: " + block.get(valuetokens.get(ndx)));
+					logger.trace("Ist direkt einsetzbar");
+					// Plattes austauschen. Keine Mätzchen
+					valuetokens.remove(ndx);			
+					valuetokens.addAll(ndx, vtl);
+				}
 			}
 		}
 		if (LOGGER)
@@ -494,9 +528,17 @@ public class VP_Transfer {
 
 				arrlen++;
 				Class<?> fptclazz = (Class<?>) fpt.parameterType[fpt.parameterType.length - 1];
+			
+
+				// Prüfung: Ist das letzte fpt.parameterType ein Array? Vom gleichem Typ wie aufrufparametersize?
+
+				if(fptclazz.getComponentType()==null)
+					continue;
+				
 				if (LOGGER) {
 
-					logger.trace("Fasse " + arrlen
+					logger.trace(NTAB
+							+ "Fasse " + arrlen
 							+ " typengleiche Parameter zusammen." + NTAB
 							+ "Anzahl der Parameter lt. FTP   : "
 							+ fpt.parameterType.length + NTAB

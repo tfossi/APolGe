@@ -110,10 +110,11 @@ public class LoadScript {
 	 *             Es gibt für name keine Einträge in der Liste
 	 * @throws NullPointerException
 	 *             Die Tabelle ist nicht initiiert [<code>null</code>]!
+	 * @throws ArrayIndexInnerBoundsException TODO
 	 */
 	private final static Object getObject(final Table table, final String name)
 			throws NoSuchFieldException, ArrayIndexOutOfBoundsException,
-			NullPointerException {
+			NullPointerException, ArrayIndexInnerBoundsException {
 		return getObject(table, name, 0);
 	}
 
@@ -132,10 +133,11 @@ public class LoadScript {
 	 *             Die Tabelle ist nicht initiiert [<code>null</code>]!
 	 * @throws ArrayIndexOutOfBoundsException
 	 *             Es gibt für name keine Einträge in der Liste
+	 * @throws ArrayIndexInnerBoundsException TODO 
 	 */
 	private final static Object getObject(final Table table, final String name,
 			final int index) throws NoSuchFieldException, NullPointerException,
-			ArrayIndexOutOfBoundsException {
+			ArrayIndexOutOfBoundsException, ArrayIndexInnerBoundsException {
 		if (table == null)
 			throw new NoSuchFieldException("Table-Value ist nicht initiiert!");
 
@@ -153,6 +155,11 @@ public class LoadScript {
 				if (liste.size() <= index)
 					throw new ArrayIndexOutOfBoundsException("Es gibt für ["
 							+ name + "] keine [" + index + "/"
+							+ (liste.size() - 1)
+							+ "] Valueinträge in der Tabelle!");
+				if (liste.size() > index+1)
+					throw new ArrayIndexInnerBoundsException("Es gibt für ["
+							+ name + "] mehr als [" + (index+1) + " statt "
 							+ (liste.size() - 1)
 							+ "] Valueinträge in der Tabelle!");
 				return liste.get(index);
@@ -178,10 +185,11 @@ public class LoadScript {
 	 *             Object existiert nicht
 	 * @throws ArrayIndexOutOfBoundsException
 	 *             Es gibt für name keine Einträge in der Liste
+	 * @throws ArrayIndexInnerBoundsException TODO 
 	 */
 	public final synchronized static Object getObjectValue(Table table,
 			String name) throws NullPointerException,
-			ArrayIndexOutOfBoundsException, NoSuchFieldException {
+			ArrayIndexOutOfBoundsException, NoSuchFieldException, ArrayIndexInnerBoundsException {
 
 		return LoadScript.getObject(table, name);
 
@@ -239,6 +247,10 @@ public class LoadScript {
 			e.printStackTrace();
 			System.err.println("Abbruch: " + e.getMessage());
 			System.exit(-3);
+		} catch (ArrayIndexInnerBoundsException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-3);
 		}
 		return Integer.MIN_VALUE;
 	}
@@ -288,6 +300,10 @@ public class LoadScript {
 			e.printStackTrace();
 			System.err.println("Abbruch: " + e.getMessage());
 			System.exit(-3);
+		} catch (ArrayIndexInnerBoundsException e) {
+			e.printStackTrace();
+			System.err.println("Abbruch: " + e.getMessage());
+			System.exit(-3);
 		}
 		return Long.MIN_VALUE;
 	}
@@ -306,10 +322,11 @@ public class LoadScript {
 	 *             Object existiert nicht
 	 * @throws ArrayIndexOutOfBoundsException
 	 *             Es gibt für name keine Einträge in der Liste
+	 * @throws ArrayIndexInnerBoundsException TODO 
 	 */
 	public final synchronized static Table getTableValue(final Table table,
 			final String name) throws NullPointerException,
-			ArrayIndexOutOfBoundsException, NoSuchFieldException {
+			ArrayIndexOutOfBoundsException, NoSuchFieldException, ArrayIndexInnerBoundsException {
 
 		return (Table) LoadScript.getObject(table, name);
 
@@ -427,13 +444,14 @@ public class LoadScript {
 	 * @throws ParseException
 	 *             ParseException Fehlerexception beim Parsen mit Hinweis zum
 	 *             Grund der Exception
+	 * @throws ScriptException Fehler im Script
 	 * @modified -
 	 */
 	@SuppressWarnings("unused")
 	private synchronized final void generatePostscript(
 			@SuppressWarnings("hiding") final BufferedReader din, final StringBuffer in1,
 			@SuppressWarnings("hiding") final List<String> quotes)
-			throws ParseException {
+			throws ParseException, ScriptException {
 
 		/** Entfernt die Kommentare, stellt Logger ein. */
 		new NoComment(this.din, in1, this.postscript);
@@ -605,9 +623,10 @@ public class LoadScript {
 	 * @throws ParseException
 	 *             Fehlerexception beim Parsen mit Hinweis zum Grund der
 	 *             Exception
+	 * @throws ScriptException Fehler im Script
 	 */
 	public LoadScript(final String fileName, final String doString, boolean test)
-			throws LoadScriptException, ParseException {
+			throws LoadScriptException, ParseException, ScriptException {
 		this(fileName, doString);
 		try {
 			this.generateTokenlist();
@@ -647,9 +666,10 @@ public class LoadScript {
 	 * @throws ParseException
 	 *             Fehlerexception beim Parsen mit Hinweis zum Grund der
 	 *             Exception
+	 * @throws ScriptException Fehler im Script
 	 */
 	public LoadScript(final String fileName, final String doString)
-			throws LoadScriptException, ParseException {
+			throws LoadScriptException, ParseException, ScriptException {
 
 		if (fileName != null && doString == null) {
 			logger.info((System.currentTimeMillis() - ConstValue.applicationstarttime)

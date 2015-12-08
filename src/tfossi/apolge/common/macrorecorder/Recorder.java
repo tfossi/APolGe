@@ -475,7 +475,7 @@ class Recorder implements IRecorder {
 	private final void save() {
 		String filename = MACRO_PATH + "macrostest.ser.xml";
 		if(LOGGER) logger.trace("Makros speichern. File: " + NTAB + filename);
-		@SuppressWarnings("resource")
+
 		XMLEncoder enc = null;
 		try {
 			enc = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(
@@ -520,7 +520,7 @@ class Recorder implements IRecorder {
 			this.save();
 		}
 		if(LOGGER) logger.trace("Makros einlesen." + NTAB + "File: " + filename);
-		@SuppressWarnings("resource")
+
 		XMLDecoder dec = null;
 		try {
 			dec = new XMLDecoder(new BufferedInputStream(new FileInputStream(

@@ -30,11 +30,11 @@ import tfossi.apolge.common.scripting.t.Table;
  * @since Java 1.6
  */
 public class VP_Parse {
-	{
-		 if (LOGGER)
-		 System.out.println(this.getClass().getSimpleName() + " V"
-		 + serialVersionUID);
-	}
+//	{
+//		 if (LOGGER)
+//		 System.out.println(this.getClass().getSimpleName() + " V"
+//		 + serialVersionUID);
+//	}
 
 	/**
 	 * Parse der Value-Token-Liste.
@@ -161,6 +161,7 @@ public class VP_Parse {
 
 	// ---- Selbstverwaltung --------------------------------------------------
 	/** serialVersionUID */
+	@SuppressWarnings("unused")
 	private final static long serialVersionUID = VERSION;
 
 	/** logger */
