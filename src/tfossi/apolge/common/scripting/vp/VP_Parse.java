@@ -152,7 +152,7 @@ public class VP_Parse {
 			 continue;
 			 }
 
-			logger.warn("KEINE ÜBERSETZUNG VON: [" + tk+"]. Variable?");			
+			logger.info("KEINE ÜBERSETZUNG VON: [" + tk+"]. Variable?");			
 		}
 
 		logger.trace("RETURN: " + valuetokens);
@@ -161,7 +161,6 @@ public class VP_Parse {
 
 	// ---- Selbstverwaltung --------------------------------------------------
 	/** serialVersionUID */
-	@SuppressWarnings("unused")
 	private final static long serialVersionUID = VERSION;
 
 	/** logger */

@@ -92,7 +92,7 @@ public class VP_Transfer {
 	 *            Aktuelle Tokenliste
 	 * @param firstElement
 	 *            erstes Element
-	 * @param lE
+	 * @param lastElement
 	 *            letztes Element
 	 * @param quotes
 	 *            Quotenliste
@@ -102,9 +102,8 @@ public class VP_Transfer {
 	 */
 	public void parseVariable(String atomname, Table block,
 			VP_Tokenlist<Object> valuetokens, final int firstElement,
-			int lE, List<String> quotes, final int mode) {
+			int lastElement, List<String> quotes, final int mode) {
 
-		int lastElement = lE;
 		if (valuetokens == null)
 			return;
 
@@ -126,7 +125,7 @@ public class VP_Transfer {
 			Object var = valuetokens.get(ndx);
 			
 			if (LOGGER)
-				logger.trace("Check Variable  : " + var);
+				logger.trace("Check Variable  : " + var+LFCR+block);
 
 
 			// FIXME: Was ist, wenn Variable KEINE Zahl ist? Adresse? ....Was
@@ -137,8 +136,9 @@ public class VP_Transfer {
 				
 				if(vtl.isTwoPass() || vtl.isThreePass()){
 					logger.trace("Ist "+(vtl.isTwoPass()?"2-Pass ":"") +(vtl.isThreePass()?"3-Pass ":""));
+										
 					var = Arrays.asList(new Object[]{
-					"ADR2","(",new Element(),",","a",")"		
+					"ADR2","(",new Element(),",",(String)var,")"		
 					});
 										
 					logger.trace("Einordnen:"+NTAB+var);

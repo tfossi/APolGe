@@ -90,7 +90,6 @@ public class ClientView extends AView {
 	 * @param content -
 	 * @modified - 
 	 */
-	@SuppressWarnings("static-method")
 	public void activateC_Widget(Map<String, Widget> map, Object content) {
 		if(LOGGER) logger.info(map);
 //		FIXME 13.01.2015

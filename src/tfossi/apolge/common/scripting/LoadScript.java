@@ -110,7 +110,7 @@ public class LoadScript {
 	 *             Es gibt für name keine Einträge in der Liste
 	 * @throws NullPointerException
 	 *             Die Tabelle ist nicht initiiert [<code>null</code>]!
-	 * @throws ArrayIndexInnerBoundsException TODO
+	 * @throws ArrayIndexInnerBoundsException 
 	 */
 	private final static Object getObject(final Table table, final String name)
 			throws NoSuchFieldException, ArrayIndexOutOfBoundsException,
@@ -133,7 +133,7 @@ public class LoadScript {
 	 *             Die Tabelle ist nicht initiiert [<code>null</code>]!
 	 * @throws ArrayIndexOutOfBoundsException
 	 *             Es gibt für name keine Einträge in der Liste
-	 * @throws ArrayIndexInnerBoundsException TODO 
+	 * @throws ArrayIndexInnerBoundsException 
 	 */
 	private final static Object getObject(final Table table, final String name,
 			final int index) throws NoSuchFieldException, NullPointerException,
@@ -185,7 +185,7 @@ public class LoadScript {
 	 *             Object existiert nicht
 	 * @throws ArrayIndexOutOfBoundsException
 	 *             Es gibt für name keine Einträge in der Liste
-	 * @throws ArrayIndexInnerBoundsException TODO 
+	 * @throws ArrayIndexInnerBoundsException 
 	 */
 	public final synchronized static Object getObjectValue(Table table,
 			String name) throws NullPointerException,
@@ -322,7 +322,7 @@ public class LoadScript {
 	 *             Object existiert nicht
 	 * @throws ArrayIndexOutOfBoundsException
 	 *             Es gibt für name keine Einträge in der Liste
-	 * @throws ArrayIndexInnerBoundsException TODO 
+	 * @throws ArrayIndexInnerBoundsException 
 	 */
 	public final synchronized static Table getTableValue(final Table table,
 			final String name) throws NullPointerException,
@@ -444,14 +444,13 @@ public class LoadScript {
 	 * @throws ParseException
 	 *             ParseException Fehlerexception beim Parsen mit Hinweis zum
 	 *             Grund der Exception
-	 * @throws ScriptException Fehler im Script
 	 * @modified -
 	 */
 	@SuppressWarnings("unused")
 	private synchronized final void generatePostscript(
 			@SuppressWarnings("hiding") final BufferedReader din, final StringBuffer in1,
 			@SuppressWarnings("hiding") final List<String> quotes)
-			throws ParseException, ScriptException {
+			throws ParseException {
 
 		/** Entfernt die Kommentare, stellt Logger ein. */
 		new NoComment(this.din, in1, this.postscript);
@@ -623,10 +622,9 @@ public class LoadScript {
 	 * @throws ParseException
 	 *             Fehlerexception beim Parsen mit Hinweis zum Grund der
 	 *             Exception
-	 * @throws ScriptException Fehler im Script
 	 */
 	public LoadScript(final String fileName, final String doString, boolean test)
-			throws LoadScriptException, ParseException, ScriptException {
+			throws LoadScriptException, ParseException {
 		this(fileName, doString);
 		try {
 			this.generateTokenlist();
@@ -666,10 +664,9 @@ public class LoadScript {
 	 * @throws ParseException
 	 *             Fehlerexception beim Parsen mit Hinweis zum Grund der
 	 *             Exception
-	 * @throws ScriptException Fehler im Script
 	 */
 	public LoadScript(final String fileName, final String doString)
-			throws LoadScriptException, ParseException, ScriptException {
+			throws LoadScriptException, ParseException {
 
 		if (fileName != null && doString == null) {
 			logger.info((System.currentTimeMillis() - ConstValue.applicationstarttime)

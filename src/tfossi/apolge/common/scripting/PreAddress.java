@@ -130,6 +130,6 @@ public class PreAddress {
 	private final static long serialVersionUID = VERSION;
 		/** logger */
 	private final static Logger logger = Logger.getLogger(PreAddress.class
-			.getPackage().getName() + ".PreAddress");
+			.getPackage().getName() + ".PreAddress.class");
 
 }

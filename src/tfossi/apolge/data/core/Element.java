@@ -12,6 +12,7 @@ import static tfossi.apolge.common.constants.ConstValue.LFCR;
 
 import org.apache.log4j.Logger;
 
+import tfossi.apolge.common.scripting.ArrayIndexInnerBoundsException;
 import tfossi.apolge.common.scripting.vp.VP_Tokenlist;
 
 import java.util.ArrayList;
@@ -162,33 +163,33 @@ public class Element {
 	 if (this.parent != null)
 	 rc += "Parent: "+this.parent.toString() + LFCR;
 	 else
-	 rc += "Rootelement" + LFCR;
+	 rc += (this.elementBuilder==null?"Element":this.elementBuilder.toString());
 //	 rc += "ID: " + this.id + LFCR;
 //	 rc += "Subs:" + this.subID + LFCR;
-	
-	 if(this.elementBuilder!=null){
-	 for(int i = 0; i < intArr.length; i++){
-		 rc+= this.elementBuilder.getIntAttrName(i)+"= "+intArr[i]+LFCR;
-	 }
-	 for(int i = 0; i < dblArr.length; i++){
-		 rc+= this.elementBuilder.getDblAttrName(i)+"= "+dblArr[i]+LFCR;		 
-	 }
-	 for(int i = 0; i < bolArr.length; i++){
-		 rc+= this.elementBuilder.getBolAttrName(i)+"= "+bolArr[i]+LFCR;
-	 }
-	 for(int i = 0; i < strArr.length; i++){
-		 rc+= this.elementBuilder.getStrAttrName(i)+"= "+strArr[i]+LFCR;
-	 }
-	 for(int i = 0; i < vtlArr.length; i++){
-		 rc+= this.elementBuilder.getVtlAttrName(i)+"= "+vtlArr[i]+LFCR;
-	 }
-	 for(int i = 0; i < objArr.length; i++){
-		 rc+= this.elementBuilder.getObjAttrName(i)+"= "+objArr[i]+LFCR;
-	 }
+//	
+//	 if(this.elementBuilder!=null){
+//	 for(int i = 0; i < intArr.length; i++){
+//		 rc+= this.elementBuilder.getIntAttrName(i)+"= "+intArr[i]+LFCR;
+//	 }
+//	 for(int i = 0; i < dblArr.length; i++){
+//		 rc+= this.elementBuilder.getDblAttrName(i)+"= "+dblArr[i]+LFCR;		 
+//	 }
+//	 for(int i = 0; i < bolArr.length; i++){
+//		 rc+= this.elementBuilder.getBolAttrName(i)+"= "+bolArr[i]+LFCR;
+//	 }
+//	 for(int i = 0; i < strArr.length; i++){
+//		 rc+= this.elementBuilder.getStrAttrName(i)+"= "+strArr[i]+LFCR;
+//	 }
+//	 for(int i = 0; i < vtlArr.length; i++){
+//		 rc+= this.elementBuilder.getVtlAttrName(i)+"= "+vtlArr[i]+LFCR;
+//	 }
+//	 for(int i = 0; i < objArr.length; i++){
+//		 rc+= this.elementBuilder.getObjAttrName(i)+"= "+objArr[i]+LFCR;
+//	 }
 //	 for (String key : this.e.keySet()) {
 //	 rc += key + ": " + this.e.get(key);
 //	 }
-	 }
+//	 }
 	 return rc;
 	 }
 	// ---- Selbstverwaltung --------------------------------------------------
@@ -218,9 +219,23 @@ public class Element {
 	public Element(Element p, _ElementBuilder eb) {
 		this.parent = p;
 		this.elementBuilder = eb;
+
+		logger.trace(eb.atypeRegister.toString());
 		
-	
-		this.vtlArr = eb.initVtlAttributes();
+		eb.insertElementInADR(this);
+		
+	// Muss zuerst kommen, da nachher bei Pass2 aus den Anweisungen Werte geworden sind.
+		 VP_Tokenlist[] v = null;
+		try {
+			v = eb.initVtlAttributes();
+			
+		} catch (ArrayIndexInnerBoundsException e) {
+			
+			e.printStackTrace();
+			System.exit(0);
+		}
+		this.vtlArr = v; 
+		logger.trace(eb.atypeRegister.toString());
 		
 		this.intArr = eb.initIntAttributes();
 		this.dblArr = eb.initDblAttributes();
@@ -229,6 +244,11 @@ public class Element {
 	
 		this.objArr = eb.initObjAttributes();
 	
+	}
+
+	public Object getAttributValue(String attribut) {
+		System.err.println(this.elementBuilder.atypeRegister.get(attribut));
+		return 12;
 	}
 
 }

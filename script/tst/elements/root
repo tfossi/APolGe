@@ -7,11 +7,13 @@ CHILDS = {
 	}
 }
 
-a1 = 1
-a2 = max(1,3)
-a3 = 6+nextInt(10)
-a4 = a3
-//a5 = @nation.1.name
+a1 = 1				// TESTFALL value
+a2 = max(1,3)		// TESTFALL PASS1-FUNKTION
+a3 = 6+nextInt(10)  // TESTFALL PASS2-FUNKTION
+// a4 = 5 * a3		// ADR2 zuordnung
+a5 = a2 * 2			// TESTFALL Directzuordnung PASS1-Funktion
+a6 = 2 * a2			// TESTFALL Directzuordnung PASS1-Funktion gedreht
+// a6 = 8			// TESTFALL gleiche Adresse
 
 // Offizielle Daten
 //	a[] = {

@@ -16,7 +16,6 @@ import org.apache.log4j.Logger;
 
 import tfossi.apolge.common.scripting.LoadScript;
 import tfossi.apolge.common.scripting.LoadScriptException;
-import tfossi.apolge.common.scripting.ScriptException;
 import tfossi.apolge.common.scripting.p.ParseException;
 import tfossi.apolge.common.scripting.t.Table;
 import tfossi.apolge.io.Screen;
@@ -65,10 +64,6 @@ public class ConstValueExtension extends ConstValue {
 			System.err.println("Abbruch: " + e.getMessage());
 			System.exit(-2);
 		} catch (NullPointerException e) {
-			e.printStackTrace();
-			System.err.println("Abbruch: " + e.getMessage());
-			System.exit(-2);
-		} catch (ScriptException e) {
 			e.printStackTrace();
 			System.err.println("Abbruch: " + e.getMessage());
 			System.exit(-2);

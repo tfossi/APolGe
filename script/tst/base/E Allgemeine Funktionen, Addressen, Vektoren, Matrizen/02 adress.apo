@@ -2,7 +2,7 @@
 Addresse
 */
 
-a = 4+@EBName.EName.SubEName.Attribute*17;
+a = 4+@Super.Element.Eigenschaft*17;
 b = a
 c = b
 

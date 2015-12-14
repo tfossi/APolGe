@@ -20,11 +20,12 @@ import tfossi.apolge.common.constants.ConstValueExtension;
 import tfossi.apolge.common.scripting.p.ParseException;
 import tfossi.apolge.common.scripting.t.TableException;
 import tfossi.apolge.common.scripting.vp.ValueParser;
+import tfossi.apolge.data.core.Element;
 import tfossi.apolge.data.core._ElementBuilder;
 import tfossi.apolge.data.core._ElementBuilderDirector;
 
 /**
- * Testet die Funktionalität der Scriptverarbeitung und des Eintrags in den ElementBuilder.<br>
+ * Testet die Funktionalität der Scriptverarbeitung.<br>
  * 
  * ACHTUNG: Zum Scripttesten mit Loadscript ist eine fixe VERSIONS-Nummer zu
  * verwenden! Einzustellen in {@link ConstValueExtension#VERSION}
@@ -50,11 +51,11 @@ final ValueParser vp = new ValueParser();
 	String[][] simpleTestdaten = new String[][] {
 //			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
 //			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
-			{ "Test Integer", "A Simple" + FS + "03 Simple Integer",
-				"{g=[false], plus=[3], klg=[true], minus=[-1], ug=[true], grg=[false], durch=[2], gr=[false], mal=[30], kl=[true], h=[64]}" },
+//			{ "Test Integer", "A Simple" + FS + "03 Simple Integer",
+//				"{g=[false], plus=[3], klg=[true], minus=[-1], ug=[true], grg=[false], durch=[2], gr=[false], mal=[30], kl=[true], h=[64]}" },
 //			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
 //			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
-			{ "Test Double", "A Simple" + FS + "06 Double Integer","" }, 
+//			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
 			{ "Test String", "A Simple" + FS + "07 Simple String",
 				"Elementname: Test String"+LFCR+
 				"g: g/false/Boolean"+LFCR+
@@ -72,7 +73,7 @@ final ValueParser vp = new ValueParser();
 			},
 //			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
 //			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
-			{ "Test Double", "A Simple" + FS + "06 Double Integer","" } ,
+//			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
 			{ "Test Condition", "B Simple" + FS + "08 Condition",
 				"Elementname: Test Condition"+LFCR+
 				"b: b/1/Integer"+LFCR+
@@ -84,8 +85,8 @@ final ValueParser vp = new ValueParser();
 	String[][] pass2Functions = new String[][] {
 //			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
 //			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
-			{ "Test Pass2", "C Pass2" + FS + "01 Math",
-				"{a=[f:=rint( 100.0 ) mit Pass2-Parameter!]}" },
+//			{ "Test Pass2", "C Pass2" + FS + "01 Math",
+//				"{a=[f:=rint( 100.0 ) mit Pass2-Parameter!]}" },
 			{ "Test Pass2indirect", "C Pass2" + FS + "02 IndirectMath",
 				"{a=[f:=rint( 100.0 ) mit Pass2-Parameter!]}" },
 //			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
@@ -120,8 +121,10 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testASimple() {
+
+		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
 		
 		for (int row = 0; row < this.simpleTestdaten.length; row++) {
 			System.out.println("Post2String: "
@@ -176,6 +179,7 @@ final ValueParser vp = new ValueParser();
 	 */
 //	@Test
 	public final void testBFunction() {
+		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
 		for (int row = 0; row < this.simpleFunctions.length; row++) {
 			System.out.println("Post2String: "
 					+ this.simpleFunctions[row][0] + LFCR
@@ -229,7 +233,7 @@ final ValueParser vp = new ValueParser();
 	 */
 	@Test
 	public final void testCPass2() {
-
+		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
 		for (int row = 0; row < this.pass2Functions.length; row++) {
 			System.out.println("Post2String: "
 					+ this.pass2Functions[row][0] + LFCR
@@ -286,7 +290,7 @@ final ValueParser vp = new ValueParser();
 	 */
 	@Test
 	public final void testDPass3() {
-
+		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
 		for (int row = 0; row < this.pass3Functions.length; row++) {
 			System.out.println("Post2String: "
 					+ this.pass3Functions[row][0] + LFCR

@@ -71,19 +71,6 @@ public interface VP_Tokenlist <T> extends List<T> {
 	 * @modified - 
 	 */
 	public boolean isThreePass();
-
-// FIXME  Wo und wie auf Init und Flow reagieren?
-//	public void setInit();
-
-//	public void clrInit();
-
-//	public boolean isInit();
-
-//	public void setFlow();
-
-//	public void clrFlow();
-
-//	public boolean isFlow();
 		
 	/**
 	 * @return <i>true</i> Eintrag ist Table
@@ -98,9 +85,9 @@ public interface VP_Tokenlist <T> extends List<T> {
 	public Table getTable();
 
 	/**
-	 * TODO Comment
-	 * @return ????
-	 * @modified 8.12.2014 / BuildGuideline 
+	 *  
+	 * @return Liefert den Wert in der Liste (techn. an Position 0. Keine weiteren Werte sollten vorhanden sein. TODO Vektoren )
+	 * @modified 8.12.2014
 	 */
 	public Object getValue();
 }

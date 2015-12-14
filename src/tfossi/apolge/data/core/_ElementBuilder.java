@@ -7,7 +7,6 @@
  */
 package tfossi.apolge.data.core;
 
-import static org.junit.Assert.fail;
 import static tfossi.apolge.common.constants.ConstValue.*;
 import static tfossi.apolge.common.constants.ConstValueExtension.VERSION;
 
@@ -22,13 +21,13 @@ import org.apache.log4j.Logger;
 import tfossi.apolge.common.scripting.ArrayIndexInnerBoundsException;
 import tfossi.apolge.common.scripting.LoadScript;
 import tfossi.apolge.common.scripting.LoadScriptException;
-import tfossi.apolge.common.scripting.ScriptException;
 import tfossi.apolge.common.scripting.p.ParseException;
 import tfossi.apolge.common.scripting.t.Table;
 import tfossi.apolge.common.scripting.t.TableMap;
 import tfossi.apolge.common.scripting.vp.VP_ArrayTokenlist;
 import tfossi.apolge.common.scripting.vp.VP_Tokenlist;
 import tfossi.apolge.common.scripting.vp.VP_Transfer;
+import tfossi.apolge.common.scripting.vp.pm.FuncPType;
 import tfossi.apolge.data.core.attribute.B_AType;
 import tfossi.apolge.data.core.attribute.N_AType;
 import tfossi.apolge.data.core.attribute.O_AType;
@@ -74,6 +73,53 @@ public class _ElementBuilder {
 	/** Zentraler Datencontainer */
 	final private List<Element> elements = new ArrayList<Element>();
 
+	public void insertElementInADR(Element element) {
+
+		for(_AType<?> at: this.atypeRegister.values()){
+			if (at.value.getClass().equals(TableMap.class)) {
+
+				// Daten in Array einstellen
+
+				Table attable = (Table) at.value;
+				logger.trace(at.name+": "+attable.toString());
+				
+				VP_Tokenlist<Object> atvtl = LoadScript.getVP_List(attable, at.name);
+				
+				for(int i = 0; i < atvtl.size(); i++){
+					
+					if(atvtl.get(i).toString().contains("f:=ADR2")){
+						FuncPType fpt = (FuncPType) atvtl.get(i);
+						fpt.values[0] = element;
+						
+						System.err.println(fpt.values[0]);	
+						
+					}
+					System.err.println(atvtl.get(i).toString());
+						
+					
+				}
+				
+//				
+//				// Prüfe, ob Eintrag noch aufgelöst werden muss
+//				if (!atvtl.isThreePass()) {
+//					new VP_Transfer().transfer(null, attable, atvtl,
+//							(List<String>) null, (byte) 1);
+//
+//					atvtl.clrTwoPass();
+//					this.addTypeZuordnung(key, atvtl.getValue());
+//					
+////					this.atypeRegister.remove(key);						
+//					change=true;
+//					break;
+//				}else{
+//					// Ist Pass3 und soll nicht aufgel�st werden!
+//					arr[at.ordinal] = (VP_Tokenlist<?>) at.value;
+//				}
+			}
+		}
+		assert false;
+	}
+	
 	/**
 	 * Erzeugt alle initialen Element-Objecte
 	 * 
@@ -141,37 +187,45 @@ public class _ElementBuilder {
 
 	/**
 	 * Ein konkrete Object bauen
-	 * @param e Der Datenspeicher
+	 * 
+	 * @param e
+	 *            Der Datenspeicher
 	 * @param objectID
-	 * @modified - 
+	 * @modified -
 	 */
-	private void createObject(Element e){
-		
-		int objectID = -1;
-		
-		for(_AType<?> at: this.atypeRegister.values()){
+	private void createObject(Element e) {
 
-//			if( at.value.getClass().equals(Integer.class))
-//				objectID = e.createAttribute(this.elementBuilderID, at.ordinal, (Integer)at.value);
-//			else if( at.value.getClass().equals(Double.class))
-//				objectID = e.createAttribute(this.elementBuilderID, at.ordinal, (Double)at.value);
-//			else if( at.value.getClass().equals(String.class))
-//				objectID = e.createAttribute(this.elementBuilderID, at.ordinal, (String)at.value);
-//			else
-//				objectID = e.createAttribute(this.elementBuilderID, at.ordinal, at.value);
-			
-			logger.trace("Gebaut: "+this.elementBuilderID+"/"+at.ordinal+"/"+at.name+"/"+objectID+"/"+at.value);
-			
+		int objectID = -1;
+
+		for (_AType<?> at : this.atypeRegister.values()) {
+
+			// if( at.value.getClass().equals(Integer.class))
+			// objectID = e.createAttribute(this.elementBuilderID, at.ordinal,
+			// (Integer)at.value);
+			// else if( at.value.getClass().equals(Double.class))
+			// objectID = e.createAttribute(this.elementBuilderID, at.ordinal,
+			// (Double)at.value);
+			// else if( at.value.getClass().equals(String.class))
+			// objectID = e.createAttribute(this.elementBuilderID, at.ordinal,
+			// (String)at.value);
+			// else
+			// objectID = e.createAttribute(this.elementBuilderID, at.ordinal,
+			// at.value);
+
+			logger.trace("Gebaut: " + this.elementBuilderID + "/" + at.ordinal
+					+ "/" + at.name + "/" + objectID + "/" + at.value);
+
 		}
-		
+
 	}
-	
-	public String elementToString(){
-String rc = new String();
-		for(Element e : elements)
-			rc += e.toString()+LFCR;
+
+	public String elementToString() {
+		String rc = new String();
+		for (Element e : elements)
+			rc += e.toString() + LFCR;
 		return rc;
 	}
+
 	/**
 	 * Ein konkrete Object bauen Nummer Element/AType/ObjectID Vorlage???
 	 * 
@@ -182,205 +236,256 @@ String rc = new String();
 	 */
 	final int[] initIntAttributes() {
 		int maxOrdinal = 0;
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Integer.class)){
-				_AType<?> at  =this.atypeRegister.get(key);				
-				maxOrdinal = Math.max(maxOrdinal, at.ordinal); 
-						logger.trace(key+"/"+this.atypeRegister.get(key).value+"/"+at.ordinal);
+		
+		logger.trace(this.atypeRegister.toString());
+		
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Integer.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				maxOrdinal = Math.max(maxOrdinal, at.ordinal);
+				logger.trace(key + "/" + this.atypeRegister.get(key).value
+						+ "/" + at.ordinal);
 			}
 		}
-		
-		int [] arr = new int[maxOrdinal+1];
-		
 
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Integer.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
-				arr[at.ordinal] = ((Integer)at.value).intValue();
+		int[] arr = new int[maxOrdinal + 1];
+
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Integer.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				arr[at.ordinal] = ((Integer) at.value).intValue();
 			}
 		}
 		return arr;
 	}
+
 	final double[] initDblAttributes() {
 		int maxOrdinal = 0;
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Double.class)){
-				_AType<?> at  =this.atypeRegister.get(key);				
-				maxOrdinal = Math.max(maxOrdinal, at.ordinal); 
-						logger.trace(key+"/"+this.atypeRegister.get(key).value+"/"+at.ordinal);
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Double.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				maxOrdinal = Math.max(maxOrdinal, at.ordinal);
+				logger.trace(key + "/" + this.atypeRegister.get(key).value
+						+ "/" + at.ordinal);
 			}
 		}
-		
-		double [] arr = new double[maxOrdinal+1];
-		
 
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Double.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
-				arr[at.ordinal] = ((Double)at.value).doubleValue();
+		double[] arr = new double[maxOrdinal + 1];
+
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Double.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				arr[at.ordinal] = ((Double) at.value).doubleValue();
 			}
 		}
 		return arr;
 	}
+
 	final boolean[] initBolAttributes() {
 		int maxOrdinal = 0;
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Boolean.class)){
-				_AType<?> at  =this.atypeRegister.get(key);				
-				maxOrdinal = Math.max(maxOrdinal, at.ordinal); 
-						logger.trace(key+"/"+this.atypeRegister.get(key).value+"/"+at.ordinal);
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Boolean.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				maxOrdinal = Math.max(maxOrdinal, at.ordinal);
+				logger.trace(key + "/" + this.atypeRegister.get(key).value
+						+ "/" + at.ordinal);
 			}
 		}
-		
-		boolean [] arr = new boolean[maxOrdinal+1];
-		
 
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Boolean.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
-				arr[at.ordinal] = ((Boolean)at.value).booleanValue();
+		boolean[] arr = new boolean[maxOrdinal + 1];
+
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Boolean.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				arr[at.ordinal] = ((Boolean) at.value).booleanValue();
 			}
 		}
 		return arr;
 	}
+
 	final String[] initStrAttributes() {
 		int maxOrdinal = 0;
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(String.class)){
-				_AType<?> at  =this.atypeRegister.get(key);				
-				maxOrdinal = Math.max(maxOrdinal, at.ordinal); 
-						logger.trace(key+"/"+this.atypeRegister.get(key).value+"/"+at.ordinal);
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					String.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				maxOrdinal = Math.max(maxOrdinal, at.ordinal);
+				logger.trace(key + "/" + this.atypeRegister.get(key).value
+						+ "/" + at.ordinal);
 			}
 		}
-		
-		String [] arr = new String[maxOrdinal+1];
-		
 
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(String.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
-				arr[at.ordinal] = (String)at.value;
+		String[] arr = new String[maxOrdinal + 1];
+
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					String.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				arr[at.ordinal] = (String) at.value;
 			}
 		}
 		return arr;
 	}
-	final VP_Tokenlist[] initVtlAttributes() {
-		
-		int maxOrdinal = 0;
-		for(String key :this.atypeRegister.keySet()){
-			logger.trace("CCCC: "+key);
 
-			_AType<?> at  =this.atypeRegister.get(key);
-			
-			logger.trace("CCCC: "+(at.value.getClass().equals(VP_Tokenlist.class)));
-			if(this.atypeRegister.get(key).value.getClass().equals(VP_ArrayTokenlist.class)){
-				
+	final VP_Tokenlist<?>[] initVtlAttributes() throws ArrayIndexInnerBoundsException {
 
-				logger.trace("CCCC: "+at.value);
-				maxOrdinal = Math.max(maxOrdinal, at.ordinal); 
-						logger.trace(key+"/"+this.atypeRegister.get(key).value+"/"+at.ordinal);
-			}
-		}
+		boolean change = false;
+		// Array reservieren
+		VP_Tokenlist<?>[] arr = null;
 		
-		VP_Tokenlist [] arr = new VP_ArrayTokenlist[maxOrdinal+1];
-		
-
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(VP_ArrayTokenlist.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
-				VP_Tokenlist<Object> atvtl = (VP_Tokenlist<Object>) at.value;
-				// Prüfe, ob Eintrag noch aufgelöst werden muss
-				if (atvtl.isTwoPass()) {
-					new VP_Transfer().transfer(null, null, atvtl,
-							(List<String>) null, (byte) 1);
-					atvtl.clrTwoPass();
-					logger.trace("2-Pass-Result:"
-							+ LoadScript.getIntValue(this.cntrlData, key));
+		do {
+			change = false;
+			// Bedarf Arraygr��e feststellen
+			int maxOrdinal = 0;
+			for (String key : this.atypeRegister.keySet()) {
+				_AType<?> at = this.atypeRegister.get(key);
+				if (at.value.getClass().equals(TableMap.class)) { // VP_ArrayTokenlist.class)){
+					if (LOGGER)
+						logger.trace("[" + key
+								+ "] ist unaufgel�stes VP_Tokenline #"
+								+ at.ordinal);
+					maxOrdinal = Math.max(maxOrdinal, at.ordinal);
+					logger.trace(key + "/" + this.atypeRegister.get(key).value
+							+ "/" + at.ordinal);
 				}
-				arr[at.ordinal] = (VP_Tokenlist)at.value;
 			}
-		}
-		assert false;
+
+			// Array reservieren XXX ungeschickt....
+			arr = new VP_ArrayTokenlist[maxOrdinal + 1];
+
+			for (String key : this.atypeRegister.keySet()) {
+				_AType<?> at = this.atypeRegister.get(key);
+				if (at.value.getClass().equals(TableMap.class)) { // VP_ArrayTokenlist.class)){
+
+					// Daten in Array einstellen
+
+					Table attable = (Table) at.value;
+					VP_Tokenlist<Object> atvtl = LoadScript.getVP_List(attable,
+							key);
+					
+					// Prüfe, ob Eintrag noch aufgelöst werden muss
+					if (!atvtl.isThreePass()) {
+						new VP_Transfer().transfer(null, attable, atvtl,
+								(List<String>) null, (byte) 1);
+
+						atvtl.clrTwoPass();
+						this.addTypeZuordnung(key, atvtl.getValue());
+						
+//						this.atypeRegister.remove(key);						
+						change=true;
+						break;
+					}else{
+						// Ist Pass3 und soll nicht aufgel�st werden!
+						arr[at.ordinal] = (VP_Tokenlist<?>) at.value;
+					}
+				}
+			}
+		} while (change);
 		return arr;
 	}
+
 	final Object[] initObjAttributes() {
 		int maxOrdinal = 0;
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Object.class)){
-				_AType<?> at  =this.atypeRegister.get(key);				
-				maxOrdinal = Math.max(maxOrdinal, at.ordinal); 
-						logger.trace(key+"/"+this.atypeRegister.get(key).value+"/"+at.ordinal);
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Object.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				maxOrdinal = Math.max(maxOrdinal, at.ordinal);
+				logger.trace(key + "/" + this.atypeRegister.get(key).value
+						+ "/" + at.ordinal);
 			}
 		}
-		
-		Object [] arr = new Object[maxOrdinal+1];
-		
 
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Object.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
+		Object[] arr = new Object[maxOrdinal + 1];
+
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Object.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
 				arr[at.ordinal] = at.value;
 			}
 		}
 		return arr;
 	}
-	
-	
-	
-	final String getIntAttrName(int ordinal){
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Integer.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
-				if(at.ordinal==ordinal)return at.name; 
+
+	final String getIntAttrName(int ordinal) {
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Integer.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				if (at.ordinal == ordinal)
+					return at.name;
 			}
 		}
 		return null;
 	}
-	final String getDblAttrName(int ordinal){
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Double.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
-				if(at.ordinal==ordinal)return at.name; 
+
+	final String getDblAttrName(int ordinal) {
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Double.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				if (at.ordinal == ordinal)
+					return at.name;
 			}
 		}
 		return null;
 	}
-	final String getBolAttrName(int ordinal){
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Boolean.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
-				if(at.ordinal==ordinal)return at.name; 
+
+	final String getBolAttrName(int ordinal) {
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Boolean.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				if (at.ordinal == ordinal)
+					return at.name;
 			}
 		}
 		return null;
 	}
-	final String getStrAttrName(int ordinal){
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(String.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
-				if(at.ordinal==ordinal)return at.name; 
+
+	final String getStrAttrName(int ordinal) {
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					String.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				if (at.ordinal == ordinal)
+					return at.name;
 			}
 		}
 		return null;
 	}
-	final String getVtlAttrName(int ordinal){
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(VP_ArrayTokenlist.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
-				if(at.ordinal==ordinal)return at.name; 
+
+	final String getVtlAttrName(int ordinal) {
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					VP_ArrayTokenlist.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				if (at.ordinal == ordinal)
+					return at.name;
 			}
 		}
 		return null;
 	}
-	final String getObjAttrName(int ordinal){
-		for(String key :this.atypeRegister.keySet()){
-			if(this.atypeRegister.get(key).value.getClass().equals(Object.class)){
-				_AType<?> at  =this.atypeRegister.get(key);
-				if(at.ordinal==ordinal)return at.name; 
+
+	final String getObjAttrName(int ordinal) {
+		for (String key : this.atypeRegister.keySet()) {
+			if (this.atypeRegister.get(key).value.getClass().equals(
+					Object.class)) {
+				_AType<?> at = this.atypeRegister.get(key);
+				if (at.ordinal == ordinal)
+					return at.name;
 			}
 		}
 		return null;
 	}
+
 	// ---- Elemenbuilder erstellen -------------------------------------------
 
 	/** Enthält die child-ElementBuilder */
@@ -408,21 +513,20 @@ String rc = new String();
 	 * 
 	 * @param name
 	 *            Name des Element
-	 * @param cntrlData 
-	 *            Steuerdaten, wie CHILDS usw. für das Element
+	 * @param attributes
+	 *            TODO
 	 * @param root
 	 *            oberstes Element
 	 * @param block
 	 *            APO-TabelleneintrÃ€ge des aktuellen Elements
 	 * @param path
 	 *            Pfad zu den APO-Scripten (fÃŒr die untergeordneten Elemente)
-	 * @throws ParseException Fehler beim Parsen
 	 * @modified -
 	 */
 	public _ElementBuilder(final String name, final TableMap cntrlData,
-			final _ElementBuilder root, final Table block, final String path) throws ParseException {
+			final _ElementBuilder root, final Table block, final String path) {
 
-		// Name des ElementBuilders 
+		// Name des ElementBuilders
 		this.name = name;
 
 		// Pfad zum APO-Script
@@ -452,13 +556,8 @@ String rc = new String();
 	/** Register für alle Attribute dieses Elements */
 	public final Map<String, _AType<?>> atypeRegister = new HashMap<String, _AType<?>>();
 
-	/**
-	 * Trägt die Attribute eines Elements ein
-	 * @param block Table mit den Attributen
-	 * @throws ParseException Fehler beim Parsen
-	 * @modified - 
-	 */
-	private void createAttributes(final Table block) throws ParseException {
+	
+	private void createAttributes(final Table block) {
 
 		// Alle Attribute des Elements anlegen!
 		for (String attrName : block.keySet()) {
@@ -472,21 +571,24 @@ String rc = new String();
 
 			// Lade Object aus Table
 			Object o = null;
-			VP_Tokenlist<?> vtl = null;
+			// VP_Tokenlist<?> vtl = null;
+			Table vtl = null;
 			try {
 				o = LoadScript.getObjectValue(block, attrName);
 
-				// Füge Object in Typenregister ein
-				if (o.getClass().equals(Integer.class))
-					addType(attrName, (Integer) o);
-				else if (o.getClass().equals(Double.class))
-					addType(attrName, (Double) o);
-				else if (o.getClass().equals(String.class))
-					addType(attrName, (String) o);
-				else if (o.getClass().equals(VP_ArrayTokenlist.class))
-					addType(attrName, (VP_Tokenlist<?>) o);
-				else
-					addType(attrName, o);
+				this.addTypeZuordnung(attrName, o);
+
+				// // Füge Object in Typenregister ein
+				// if (o.getClass().equals(Integer.class))
+				// addType(attrName, (Integer) o);
+				// else if (o.getClass().equals(Double.class))
+				// addType(attrName, (Double) o);
+				// else if (o.getClass().equals(String.class))
+				// addType(attrName, (String) o);
+				// else if (o.getClass().equals(VP_ArrayTokenlist.class))
+				// addType(attrName, (VP_Tokenlist<?>) o);
+				// else
+				// addType(attrName, o);
 
 			} catch (ArrayIndexOutOfBoundsException e) {
 				e.printStackTrace();
@@ -498,47 +600,65 @@ String rc = new String();
 				e.printStackTrace();
 				assert false;
 			} catch (ArrayIndexInnerBoundsException e) {
-				vtl = LoadScript.getVP_List(block, attrName);
+				o = null;
+				vtl = block; // LoadScript.getVP_List(block, attrName);
 			}
 
-			logger.trace(attrName+": "+o+NTAB+vtl+"/"+(vtl!=null?vtl.getClass():"")+NTAB+o+"/"+(o!=null?o.getClass():""));
+			logger.trace(attrName + ": " + o + NTAB + vtl + "/"
+					+ (vtl != null ? vtl.getClass() : "") + NTAB + o + "/"
+					+ (o != null ? o.getClass() : ""));
 			// Füge Object in Typenregister ein
-			if(o!=null)
-				addType(attrName, o);				
-			else if (vtl!=null)
-				addType(attrName, vtl);
-			else 
-				throw new ParseException("");
+			if (o != null) {
+				addType(attrName, o);
+			} else if (vtl != null) {
+				try {
+					addTypeZuordnung(attrName, vtl);
+				} catch (ArrayIndexInnerBoundsException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					System.exit(0);
+				}
+			} else
+				assert false;
 		}
 		logger.trace("Die Typenbeschreibung in " + this.name
 				+ " sind angelegt!");
 	}
 
-	/**
-	 * Füge ein Integer-Attribut in das Typenregister ein
-	 * @param attrName Name des Attributs
-	 * @param value Wert
-	 * @modified - 
-	 */
+	private final void addTypeZuordnung(final String attrName, final Object o) throws ArrayIndexInnerBoundsException {
+		
+		logger.trace(attrName+": "+o+" / "+o.getClass());
+		
+		// Füge Object in Typenregister ein
+		if (o.getClass().equals(Integer.class))
+			addType(attrName, (Integer) o);
+		else if (o.getClass().equals(Double.class))
+			addType(attrName, (Double) o);
+		else if (o.getClass().equals(String.class))
+			addType(attrName, (String) o);
+		else if (o.getClass().equals(VP_ArrayTokenlist.class))
+			addType(attrName, (VP_Tokenlist<?>) o);
+		else if (o.getClass().equals(FuncPType.class))
+			throw new ArrayIndexInnerBoundsException("Ist Funktion");
+		else
+			addType(attrName, o);
+	}
+
 	private void addType(String attrName, Integer value) {
-		assert false;
 		int typeID = 0;
 		for (_AType<?> at : this.atypeRegister.values()) {
+			logger.trace(this.atypeRegister.toString()+NTAB+
+					at.name+": "+at.value.getClass()+" <-> "+value.getClass());
+			
 			if (at.value.getClass().equals(value.getClass()))
 				++typeID;
 		}
 		this.atypeRegister.put(attrName, new N_AType<Integer>(attrName, value,
 				typeID));
 
-		logger.trace("check: " + this.atypeRegister.get(attrName).ordinal);
+		logger.trace(attrName+" Integer ordinal-check: " + this.atypeRegister.get(attrName).ordinal+NTAB+this.atypeRegister.toString());
 	}
 
-	/**
-	 * Füge ein Double-Attribut in das Typenregister ein
-	 * @param attrName Name des Attributs
-	 * @param value Wert
-	 * @modified - 
-	 */
 	private void addType(String attrName, Double value) {
 		int typeID = 0;
 		for (_AType<?> at : this.atypeRegister.values()) {
@@ -550,15 +670,7 @@ String rc = new String();
 		logger.trace("check: " + this.atypeRegister.get(attrName).ordinal);
 	}
 
-	/**
-	 * Füge ein Boolean-Attribut in das Typenregister ein
-	 * @param attrName Name des Attributs
-	 * @param value Wert
-	 * @modified - 
-	 */
-	@SuppressWarnings("unused")
 	private void addType(String attrName, Boolean value) {
-		assert false;
 		int typeID = 0;
 		for (_AType<?> at : this.atypeRegister.values()) {
 			if (at.value.getClass().equals(value.getClass()))
@@ -569,12 +681,6 @@ String rc = new String();
 		logger.trace("check: " + this.atypeRegister.get(attrName).ordinal);
 	}
 
-	/**
-	 * Füge ein String-Attribut in das Typenregister ein
-	 * @param attrName Name des Attributs
-	 * @param value Wert
-	 * @modified - 
-	 */
 	private void addType(String attrName, String value) {
 		int typeID = 0;
 		for (_AType<?> at : this.atypeRegister.values()) {
@@ -586,29 +692,21 @@ String rc = new String();
 		logger.trace("check: " + this.atypeRegister.get(attrName).ordinal);
 	}
 
-	/**
-	 * Füge ein VP_Tokenlist-Attribut in das Typenregister ein
-	 * @param attrName Name des Attributs
-	 * @param value Unaufgelöste Berechnung.
-	 * @modified - 
-	 */
-	private void addType(String attrName, VP_Tokenlist<?> value) {
+	// private void addType(String attrName, VP_Tokenlist<Object> value) {
+	private void addType(String attrName, Table value) {
 		int typeID = 0;
 		for (_AType<?> at : this.atypeRegister.values()) {
 			if (at.value.getClass().equals(value.getClass()))
 				++typeID;
 		}
-		this.atypeRegister.put(attrName, new O_AType<VP_Tokenlist<?>>(attrName,
-				value, typeID));
+		// this.atypeRegister.put(attrName, new
+		// O_AType<VP_Tokenlist<Object>>(attrName,
+		// value, typeID));
+		this.atypeRegister.put(attrName, new O_AType<Table>(attrName, value,
+				typeID));
 		logger.trace("check: " + this.atypeRegister.get(attrName).ordinal);
 	}
 
-	/**
-	 * Füge ein Object-Attribut in das Typenregister ein
-	 * @param attrName Name des Attributs
-	 * @param value Wert
-	 * @modified - 
-	 */
 	private void addType(String attrName, Object value) {
 		int typeID = 0;
 		for (_AType<?> at : this.atypeRegister.values()) {
@@ -623,10 +721,10 @@ String rc = new String();
 	// ---- Child-ElementBuilder erstellen ------------------------------------
 
 	/**
-	 * Erzeuge untergeordnete ElementBuilder
+	 * TODO Comment
 	 * 
-	 * @param block Table mit den childdaten
-	 * @param root Oberster ElementBuilder
+	 * @param block
+	 * @param root
 	 * @modified -
 	 */
 	private void createChilds(final Table block, final _ElementBuilder root) {
@@ -667,9 +765,6 @@ String rc = new String();
 					ex.printStackTrace();
 					assert false;
 				} catch (ArrayIndexInnerBoundsException e) {
-					e.printStackTrace();
-					assert false;
-				} catch (ScriptException e) {
 					e.printStackTrace();
 					assert false;
 				}
@@ -735,5 +830,7 @@ String rc = new String();
 	/** logger */
 	private final static Logger logger = Logger.getLogger(_ElementBuilder.class
 			.getPackage().getName() + "._ElementBuilder");
+
+
 
 }

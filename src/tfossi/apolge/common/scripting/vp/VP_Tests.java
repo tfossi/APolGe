@@ -310,7 +310,7 @@ final class VP_Tests {
 	 *            -
 	 * @param ndx
 	 *            -
-	 * @param token
+	 * @param tk
 	 *            -
 	 * @param tkpre
 	 *            -
@@ -318,9 +318,8 @@ final class VP_Tests {
 	 * @modified -
 	 */
 	static final boolean testFunktional(ValueParser vp,
-			VP_Tokenlist<Object> tokenliste, int ndx, Object token, Object tkpre) {
+			VP_Tokenlist<Object> tokenliste, int ndx, Object tk, Object tkpre) {
 
-		Object tk = token;
 		if (!(tk instanceof CharSequence))
 			return false;
 		// Sonderregel Adresse
@@ -329,7 +328,7 @@ final class VP_Tests {
 					tokenliste.remove(ndx);
 					tokenliste.remove(ndx);
 					tokenliste.addAll(ndx,Arrays.asList(new Object[]{
-					"ADR2","(",new Element(),"," }
+					"ADR3","(",new Element(),"," }
 							));
 					tk = tokenliste.get(ndx);
 				}
@@ -555,7 +554,6 @@ final class VP_Tests {
 
 	// ---- Selbstverwaltung --------------------------------------------------
 	/** serialVersionUID */
-	@SuppressWarnings("unused")
 	private final static long serialVersionUID = VERSION;
 
 	/** logger */

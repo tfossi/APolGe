@@ -19,7 +19,6 @@ import org.junit.Test;
 import tfossi.apolge.common.constants.ConstValueExtension;
 import tfossi.apolge.common.scripting.LoadScript;
 import tfossi.apolge.common.scripting.LoadScriptException;
-import tfossi.apolge.common.scripting.ScriptException;
 import tfossi.apolge.common.scripting.p.ParseException;
 import tfossi.apolge.common.scripting.t.TableMap;
 import tfossi.apolge.common.scripting.vp.ValueParser;
@@ -159,9 +158,6 @@ final ValueParser vp = new ValueParser();
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
-			} catch (ScriptException e) {
-				e.printStackTrace();
-				assert false;
 			} 
 		}
 	}

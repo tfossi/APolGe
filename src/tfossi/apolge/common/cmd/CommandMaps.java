@@ -122,7 +122,7 @@ public class CommandMaps {
 	 * @.post Die Map mit den Befehlen ist angelegt
 	 * @see ACmd
 	 */
-	@SuppressWarnings({ "null", "unused" })
+	@SuppressWarnings("null")
 	public CommandMaps() {
 
 		if (cmds.size() == 0) { // Immutable: Einmal anlegen

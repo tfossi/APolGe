@@ -17,26 +17,11 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import tfossi.apolge.common.scripting.ScriptException;
-
 /**
  * 
- * In der Wertezuweisung ist [ ] eine Matrix/Vektor.<br>
- * § Adressen fangen mit @ an <br>
- * §§ Adressen auf Attribute desselben Elements @ Attribut <br>
- * §§ Adressen auf Attribute eines übergeordneten Elements @ Name des
- * Datentemplates.Attribut <br>
- * §§ Adressen auf Attribute im untergeordnetem Element @ Name des
- * Datentemplates.Name des Elements.Attribut <br>
- * §§ Adressen auf Attribute im parallelem Element @ Name des gemeinsamen
- * Parent-Datentemplates.Name des Elements.Attribut <br>
- * § Vektoren sind in eckigen Klammern [ ] <br>
- * §§ mit Komma oder Leerzeichen [ a b c ] [ a,b,c ] <br>
- * §§ Transponierte enden mit T [ ... ]T § Matrizen sind in doppelten Klammer [[
- * ]] zu schreiben <br>
- * §§ Zwischen den äußeren Klammer Vektorenschreibweise [[ ... ] ... [ ... ]] <br>
- * §§ mit Komma, Leerzeichen oder ohne [[ ... ],[ ... ]] [[ ... ][ ... ]] <br>
- * §§ Transponierte enden mit T [[ ]]T
+ * In der Wertezuweisung ist [ ] eine Matrix/Vektor Aus [ a b ...] wird ein
+ * double ArrayParameter double[] darr( a,b, ...) Aus [ A ][ B ]... wird ein
+ * double[] ArrayParameter
  * 
  * @author tfossi
  * @version 01.08.2014
@@ -46,17 +31,31 @@ import tfossi.apolge.common.scripting.ScriptException;
 public class DoMAT {
 
 	/**
-	 * Adressen, Vektoren und Matrizen umformen zu Methodenaufrufe
+	 * In der Wertezuweisung ist [ ] eine Matrix/Vektor Aus [ a b ...] wird ein
+	 * double ArrayParameter double[] darr( a,b, ...) Aus [ A ][ B ]... wird ein
+	 * double[] ArrayParameter
 	 * 
 	 * @param resultbuffer
 	 *            der Eingabebuffer
-	 * @throws ScriptException
-	 *             Fehler im Script
 	 */
-	public DoMAT(StringBuffer resultbuffer) throws ScriptException {
+	@SuppressWarnings("unused")
+	public DoMAT(StringBuffer resultbuffer) {
 
 		if (LOGGER)
 			logger.debug("Input: " + NTAB + resultbuffer);
+
+		// Die Analyse startet nach der Zuweisung '='
+		int start = 0;
+
+		// Aktueller Pointer
+		int sbstart = start;
+
+		// Stelle sbstart auf die Position der Zuweisung ein
+		Matcher mequal = equal.matcher(resultbuffer);
+		if (mequal.find())
+			sbstart = mequal.start();
+		else
+			assert true : "Kein == gefunden.";
 
 		while (doAdr(resultbuffer))
 			if (LOGGER)
@@ -87,13 +86,10 @@ public class DoMAT {
 	 * @param resultbuffer
 	 *            der Eingabebuffer
 	 * @return <i>true</i>, wenn noch ein austausch stattgefunden hat
-	 * @throws ScriptException
-	 *             Fehler im Script
 	 * @modified -
 	 */
 	@SuppressWarnings("static-method")
-	private final boolean doVektor(StringBuffer resultbuffer)
-			throws ScriptException {
+	private final boolean doVektor(StringBuffer resultbuffer) {
 
 		if (LOGGER)
 			logger.trace("Suche [ Eintrag:" + NTAB + resultbuffer);
@@ -107,7 +103,7 @@ public class DoMAT {
 						+ resultbuffer.substring(mdopen.start()) + NTAB
 						+ mdopen.group());
 			start = mdopen.start();
-
+			
 			// Suche ] Eintrag
 			Matcher mdTclose = dTclose.matcher(resultbuffer.substring(mdopen
 					.start()));
@@ -148,8 +144,8 @@ public class DoMAT {
 				resultbuffer.replace(mdopen.start(), mdopen.start() + 1,
 						"VEKTOR(");
 			} else {
-				throw new ScriptException("Syntax-Error: Kein ]" + NTAB
-						+ mdclose.matches() + NTAB + mdTclose.matches());
+				assert false : "Syntax-Error: Kein ]-B1" + NTAB
+						+ mdclose.matches() + NTAB + mdTclose.matches();
 			}
 			return true;
 		}
@@ -162,49 +158,47 @@ public class DoMAT {
 	 * @param resultbuffer
 	 *            der Eingabebuffer
 	 * @return <i>true</i>, wenn noch ein austausch stattgefunden hat
-	 * @throws ScriptException
-	 *             Fehler im Script
 	 * @modified -
 	 */
 	@SuppressWarnings("static-method")
-	private final boolean doMatrix(StringBuffer resultbuffer)
-			throws ScriptException {
+	private final boolean doMatrix(StringBuffer resultbuffer) {
 
 		// Suche [[ Eintrag
 		Matcher mdopen = dMopen.matcher(resultbuffer);
 		if (mdopen.find()) {
-			// Suche ]] Eintrag
+			//Suche ]] Eintrag
 			Matcher mdclose = dMclose.matcher(resultbuffer);
 			if (mdclose.find()) {
 				int Bx = mdclose.start();
 				// Suche n?chsten [[ Eintrag
-				Matcher mdopenA2 = dMopen.matcher(resultbuffer.substring(mdopen
-						.end()));
+				Matcher mdopenA2 = dMopen.matcher(resultbuffer.substring(mdopen.end()));
 
+				
 				if (mdopenA2.find() && mdopenA2.start() < Bx) {
-					throw new ScriptException("Noch einbauen");
-				}
-				// Ist letztes Zeichen ein T?
-				Matcher mdT = dT.matcher(resultbuffer.substring(mdclose.end()));
-				if (mdT.find()) {
-
-					// ]]T --> ])
-					resultbuffer.replace(mdclose.start(),
-							mdclose.end() + mdT.end(), "])");
-					// [[ --> MATRIX([
-					resultbuffer.replace(mdopen.start(), mdopen.end(),
-							"MATRIXT([");
-
+					assert false : "Noch einbauen";
 				} else {
-					// ]] --> ])
-					resultbuffer.replace(mdclose.start(), mdclose.end(), "])");
-					// [[ --> MATRIX([
-					resultbuffer.replace(mdopen.start(), mdopen.end(),
-							"MATRIX([");
-				}
+					// Ist letztes Zeichen ein T?
+					Matcher mdT = dT.matcher(resultbuffer.substring(mdclose.end()));
+					if (mdT.find()) {
 
+						// ]]T --> ])
+						resultbuffer.replace(mdclose.start(),
+								mdclose.end() + mdT.end(), "])");
+						// [[ --> MATRIX([
+						resultbuffer.replace(mdopen.start(),
+								mdopen.end(), "MATRIXT([");
+
+					} else {
+						// ]] --> ])
+						resultbuffer.replace(mdclose.start(),
+								mdclose.end(), "])");
+						// [[ --> MATRIX([
+						resultbuffer.replace(mdopen.start(),
+								mdopen.end(), "MATRIX([");
+					}
+				}
 			} else {
-				throw new ScriptException("Syntax-Error: Kein ]]");
+				assert false : "Syntax-Error: Kein ]]";
 			}
 			return true;
 		}
@@ -213,15 +207,14 @@ public class DoMAT {
 
 	/**
 	 * Suche Addresseinträge und tausche gegen Addressmethode
-	 * 
 	 * @param resultbuffer
 	 *            der Eingabebuffer
 	 * @return <i>true</i>, wenn noch ein austausch stattgefunden hat
-	 * @modified -
+	 * @modified - 
 	 */
 	@SuppressWarnings("static-method")
 	private final boolean doAdr(StringBuffer resultbuffer) {
-
+		
 		if (LOGGER)
 			logger.trace("Adresse" + NTAB + resultbuffer + NTAB + resultbuffer);
 
@@ -232,8 +225,7 @@ public class DoMAT {
 				logger.trace("Adresse Start " + mdopen.start() + NTAB
 						+ resultbuffer.substring(mdopen.start()));
 
-			Matcher mdclose = dAclose.matcher(resultbuffer.substring(mdopen
-					.start()));
+			Matcher mdclose = dAclose.matcher(resultbuffer.substring(mdopen.start()));
 			if (mdclose.find()) {
 				if (LOGGER)
 					logger.trace("Adresse End " + mdclose.start() + NTAB
@@ -242,14 +234,14 @@ public class DoMAT {
 					logger.trace("Adresse End "
 							+ mdclose.end()
 							+ NTAB
-							+ resultbuffer.substring(mdopen.start(),
-									mdopen.start() + mdclose.end()));
+							+ resultbuffer.substring(mdopen.start(), mdopen.start() + mdclose.end()));
 
 				String rp = resultbuffer.substring(mdopen.start(),
-						mdopen.start() + mdclose.end()).replaceAll("\\.", ",");
+						mdopen.start() + mdclose.end()).replaceAll(
+						"\\.", ",");
 				rp = rp.replaceAll("@", "ADR(") + ")";
-				resultbuffer.replace(mdopen.start(),
-						mdopen.start() + mdclose.end(), rp);
+				resultbuffer.replace(mdopen.start(), mdopen.start()
+						+ mdclose.end(), rp);
 				if (LOGGER)
 					logger.trace("XChange" + NTAB + resultbuffer);
 			}
@@ -257,6 +249,9 @@ public class DoMAT {
 		}
 		return false;
 	}
+
+	/** Zuweisung '=' */
+	private final static Pattern equal = Pattern.compile("\\="); // {1}?");
 
 	/** dopen [ kein a-zA-Z0-9]= */
 	private final static Pattern dopen = Pattern
@@ -274,8 +269,8 @@ public class DoMAT {
 	/** dAopen */
 	private final static Pattern dAopen = Pattern.compile("\\@");
 	/** dAclose */
-	private final static Pattern dAclose = Pattern
-			.compile("(\\p{Alpha}|\\.)*(?=[" + operator + ";,])");
+	private final static Pattern dAclose =
+	Pattern.compile("(\\p{Alpha}|\\.)*(?=[" + operator + ";,])");
 	// ---- Selbstverwaltung --------------------------------------------------
 
 	/**
