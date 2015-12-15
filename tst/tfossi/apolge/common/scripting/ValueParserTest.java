@@ -40,7 +40,7 @@ import tfossi.apolge.data.core._ElementBuilderDirector;
  */
 public class ValueParserTest {
 	/** TESTPATH incl. abschl. FS */
-	private final static String TESTPATH = SCRIPT_PATH + "tst" + FS + "valueparser"
+	private final static String TESTPATH = SCRIPT_PATH + "tst" + FS + "02 valueparser"
 			+ FS;
 	
 
@@ -51,11 +51,22 @@ final ValueParser vp = new ValueParser();
 	String[][] simpleTestdaten = new String[][] {
 //			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
 //			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
-//			{ "Test Integer", "A Simple" + FS + "03 Simple Integer",
-//				"{g=[false], plus=[3], klg=[true], minus=[-1], ug=[true], grg=[false], durch=[2], gr=[false], mal=[30], kl=[true], h=[64]}" },
-//			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
-//			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
-//			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
+			{ "Test Integer", "A Simple" + FS + "03 Simple Integer",
+				"Name: g	 #5	Value: false	Type: Boolean"+LFCR+
+				"Name: plus	 #1	Value: 3	Type: Integer"+LFCR+
+				"Name: klg	 #4	Value: true	Type: Boolean"+LFCR+
+				"Name: minus	 #2	Value: -1	Type: Integer"+LFCR+
+				"Name: ug	 #6	Value: true	Type: Boolean"+LFCR+
+				"Name: grg	 #3	Value: false	Type: Boolean"+LFCR+
+				"Name: durch	 #4	Value: 2	Type: Integer"+LFCR+
+				"Name: gr	 #1	Value: false	Type: Boolean"+LFCR+
+				"Name: mal	 #3	Value: 30	Type: Integer"+LFCR+
+				"Name: kl	 #2	Value: true	Type: Boolean"+LFCR+
+				"Name: h	 #5	Value: 64	Type: Integer"+LFCR
+ },
+			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
+			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
+			{ "Test Double", "A Simple" + FS + "06 Double Integer" }, 
 			{ "Test String", "A Simple" + FS + "07 Simple String",
 				"Elementname: Test String"+LFCR+
 				"g: g/false/Boolean"+LFCR+
@@ -121,7 +132,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-//	@Test
+	@Test
 	public final void testASimple() {
 
 		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
@@ -138,20 +149,12 @@ final ValueParser vp = new ValueParser();
 				this.vp.valueParser(ls.getTable(), ls.getQuotes(), (byte)0);
 
 				_ElementBuilder eb = new _ElementBuilder(this.simpleTestdaten[row][0], null,null,  ls.getTable(), TESTPATH);
-				assertEquals(this.simpleTestdaten[row][0], this.simpleTestdaten[row][2], eb.toString());
+				assertEquals(this.simpleTestdaten[row][0], this.simpleTestdaten[row][2], eb.type2String());
 
 		
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
-					e.printStackTrace();
 					fail(e.getMessage());
-				}
 			} catch (ParseException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
@@ -177,7 +180,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-//	@Test
+	@Test
 	public final void testBFunction() {
 		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
 		for (int row = 0; row < this.simpleFunctions.length; row++) {
@@ -197,15 +200,7 @@ final ValueParser vp = new ValueParser();
 		
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
-					e.printStackTrace();
 					fail(e.getMessage());
-				}
 			} catch (ParseException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
@@ -254,15 +249,7 @@ final ValueParser vp = new ValueParser();
 //				System.err.print(VERSION);
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
-					e.printStackTrace();
 					fail(e.getMessage());
-				}
 			} catch (ParseException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
@@ -308,15 +295,7 @@ final ValueParser vp = new ValueParser();
 		
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
-					e.printStackTrace();
 					fail(e.getMessage());
-				}
 			} catch (ParseException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
@@ -345,7 +324,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-//	@Test
+	@Test
 	public final void testConfig() {
 		for (int row = 0; row < this.configFunctions.length; row++) {
 			System.out.println("Post2String: "
@@ -361,15 +340,7 @@ final ValueParser vp = new ValueParser();
 					
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
-					e.printStackTrace();
 					fail(e.getMessage());
-				}
 			} catch (ParseException e) {
 				e.printStackTrace();
 				fail(e.getMessage());

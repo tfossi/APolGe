@@ -1,0 +1,5 @@
+CHILDS = {
+ 	thirdChild = {
+ 		count = 4+nextInt(4)
+ 	}
+}

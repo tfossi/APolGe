@@ -112,7 +112,7 @@ public class _ElementBuilder {
 //					change=true;
 //					break;
 //				}else{
-//					// Ist Pass3 und soll nicht aufgelöst werden!
+//					// Ist Pass3 und soll nicht aufgelï¿½st werden!
 //					arr[at.ordinal] = (VP_Tokenlist<?>) at.value;
 //				}
 			}
@@ -341,14 +341,14 @@ public class _ElementBuilder {
 		
 		do {
 			change = false;
-			// Bedarf Arraygröße feststellen
+			// Bedarf Arraygrï¿½ï¿½e feststellen
 			int maxOrdinal = 0;
 			for (String key : this.atypeRegister.keySet()) {
 				_AType<?> at = this.atypeRegister.get(key);
 				if (at.value.getClass().equals(TableMap.class)) { // VP_ArrayTokenlist.class)){
 					if (LOGGER)
 						logger.trace("[" + key
-								+ "] ist unaufgelöstes VP_Tokenline #"
+								+ "] ist unaufgelï¿½stes VP_Tokenline #"
 								+ at.ordinal);
 					maxOrdinal = Math.max(maxOrdinal, at.ordinal);
 					logger.trace(key + "/" + this.atypeRegister.get(key).value
@@ -381,7 +381,7 @@ public class _ElementBuilder {
 						change=true;
 						break;
 					}else{
-						// Ist Pass3 und soll nicht aufgelöst werden!
+						// Ist Pass3 und soll nicht aufgelï¿½st werden!
 						arr[at.ordinal] = (VP_Tokenlist<?>) at.value;
 					}
 				}
@@ -807,6 +807,7 @@ public class _ElementBuilder {
 	 */
 	@Override
 	public String toString() {
+		assert false;
 		String rc = new String("ElementBuildername: " + this.name + "("
 				+ this.elementBuilderID + ")" + LFCR);
 
@@ -818,6 +819,16 @@ public class _ElementBuilder {
 
 		for (_ElementBuilder eb : this._ElementBuilderMap.values()) {
 			rc += LFCR + eb.toString();
+		}
+		return rc;
+	}
+	public String type2String() {
+		
+		String rc = new String();
+
+		for (String key : this.atypeRegister.keySet()) {
+			_AType<?> t = this.atypeRegister.get(key);
+			rc += "Name: "+ t.name + TAB+" #" + t.ordinal + TAB+"Value: " + t.value +TAB+"Type: "+ t.value.getClass().getSimpleName() + LFCR;
 		}
 		return rc;
 	}

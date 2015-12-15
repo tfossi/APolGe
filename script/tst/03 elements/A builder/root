@@ -1,0 +1,8 @@
+CHILDS = {
+	firstChild = {
+		count = 2
+	}
+	secondChild = {
+		count = 2+nextInt(2)
+	}
+}

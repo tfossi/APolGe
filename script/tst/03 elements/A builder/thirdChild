@@ -1,6 +1,5 @@
 CHILDS = {	
-	person = {
+	fourthChild = {
 		count = 1
 	}
 }
-name="MC"

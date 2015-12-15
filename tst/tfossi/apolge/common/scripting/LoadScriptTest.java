@@ -36,7 +36,7 @@ import tfossi.apolge.common.scripting.t.TableException;
  */
 public class LoadScriptTest {
 	/** TESTPATH incl. abschl. FS */
-	private final static String TESTPATH = SCRIPT_PATH + "tst" + FS + "base"
+	private final static String TESTPATH = SCRIPT_PATH + "tst" + FS + "01 loadscript"
 			+ FS;
 
 	/** Dateien für testFilesystem gibt es nicht */
@@ -55,7 +55,7 @@ public class LoadScriptTest {
 			{ "Test Blockkommentar", "B Basis" + FS + "02 blockkommentar.apo",
 					";", "[;]", "{_={}}" },
 			{ "Test Quoten/String", "B Basis" + FS + "03 quoten.apo",
-					";?0=$0$;", "[;, ?0, =, $0$, ;]", "{_={?0=[$0$]}}" },
+					";?0=$0$;", "[;, ?0, =, $0$, ;]", "{_={?0=[Dies ist ein String]}}" },
 			{ "Test Whiteblancs", "B Basis" + FS + "04 whiteblancs.apo", ";",
 					"[;]", "{_={}}" },
 			{ "Test WrapLines", "B Basis" + FS + "05 wrap.apo",
@@ -125,9 +125,9 @@ public class LoadScriptTest {
 					"Test Adresse",
 					"E Allgemeine Funktionen, Addressen, Vektoren, Matrizen"
 							+ FS + "02 adress.apo",
-					";a=4+ADR(Super,Element,Eigenschaft)*17;",
-					"[;, a, =, 4, +, ADR, (, Super, ,, Element, ,, Eigenschaft, ), *, 17, ;]",
-					"{_={a=[4, +, ADR, (, Super, ,, Element, ,, Eigenschaft, ), *, 17]}}" },
+					";a=4+ADR(Super,Element,Eigenschaft)*17;b=a;c=b;",
+					"[;, a, =, 4, +, ADR, (, Super, ,, Element, ,, Eigenschaft, ), *, 17, ;, b, =, a, ;, c, =, b, ;]",
+					"{_={a=[4, +, ADR, (, Super, ,, Element, ,, Eigenschaft, ), *, 17], b=[a], c=[b]}}" },
 			{
 					"Test Vektor",
 					"E Allgemeine Funktionen, Addressen, Vektoren, Matrizen"
@@ -278,7 +278,7 @@ public class LoadScriptTest {
 	 * 
 	 * @modified -
 	 */
-//	@Test
+	@Test
 	public final void testBBasis() {
 
 		for (int row = 0; row < this.basisTestdaten.length; row++) {
@@ -303,15 +303,8 @@ public class LoadScriptTest {
 				System.out.println(this.basisTestdaten[row][0] + " BLOCK OK");
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
-					e.printStackTrace();
 					fail(e.getMessage());
-				}
+
 			} catch (ParseException e) {
 				fail(e.getMessage());
 
@@ -364,15 +357,7 @@ public class LoadScriptTest {
 						+ " BLOCK OK");
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
-					e.printStackTrace();
 					fail(e.getMessage());
-				}
 			} catch (ParseException e) {
 				fail(e.getMessage());
 
@@ -394,7 +379,7 @@ public class LoadScriptTest {
 	 * 
 	 * @modified -
 	 */
-//	@Test
+	@Test
 	public final void testDBlockIndexListe() {
 
 		for (int row = 0; row < this.blockIndexListeTestdaten.length; row++) {
@@ -426,15 +411,8 @@ public class LoadScriptTest {
 						+ " BLOCK OK");
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
-					e.printStackTrace();
 					fail(e.getMessage());
-				}
+				
 			} catch (ParseException e) {
 				fail(e.getMessage());
 
@@ -456,7 +434,7 @@ public class LoadScriptTest {
 	 * 
 	 * @modified -
 	 */
-//	@Test
+	@Test
 	public final void testEFunktionengruppe() {
 
 		for (int row = 0; row < this.funktionengruppeTestdaten.length; row++) {
@@ -488,15 +466,7 @@ public class LoadScriptTest {
 						+ " BLOCK OK");
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
-					e.printStackTrace();
 					fail(e.getMessage());
-				}
 			} catch (ParseException e) {
 				fail(e.getMessage());
 
@@ -518,7 +488,7 @@ public class LoadScriptTest {
 	 * 
 	 * @modified -
 	 */
-//	@Test
+	@Test
 	public final void testFBasisrechnungen() {
 
 		for (int row = 0; row < this.basisrechnungenTestdaten.length; row++) {
@@ -550,15 +520,7 @@ public class LoadScriptTest {
 						+ " BLOCK OK");
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
-					e.printStackTrace();
 					fail(e.getMessage());
-				}
 			} catch (ParseException e) {
 				fail(e.getMessage());
 
@@ -612,15 +574,7 @@ public class LoadScriptTest {
 						+ " BLOCK OK");
 			} catch (LoadScriptException e) {
 				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
-					e.printStackTrace();
 					fail(e.getMessage());
-				}
 			} catch (ParseException e) {
 				fail(e.getMessage());
 
