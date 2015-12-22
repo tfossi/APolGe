@@ -1,0 +1,11 @@
+plus = true && false
+minus = true || false
+mal = true !& false
+mal2 = true !& true
+durch = true !| false
+durch2 = true !| true
+durch3 = false !| false
+durch4 = false !| true 
+g = true == false
+ug = true <> false
+// h = !true TEST NICHT BESTANDEN!

@@ -331,6 +331,10 @@ final class VP_Tests {
 					"ADR3","(",new Element(),"," }
 							));
 					tk = tokenliste.get(ndx);
+				}else if(((CharSequence) tk).equals("LIST")){
+					tokenliste.addAll(ndx+2,Arrays.asList(new Object[]{
+							new Element(),","
+					}));
 				}
 		Matcher m = PatternMaps.finalFunctionPattern.matcher((CharSequence) tk);
 		
@@ -387,7 +391,7 @@ final class VP_Tests {
 		// Methode der Operation eintragen
 		// Sonderfall: Vorzeichen sind keine Operation, sondern Funktion
 		Matcher mo = PatternMaps.finalOperationPattern.matcher((CharSequence) tk);
-
+		
 		if (!mo.matches()) {
 			// Ist das Zeichen kein Operator, dann braucht nicht weiter
 			// getestet werden.
@@ -410,9 +414,19 @@ final class VP_Tests {
 				
 			return true;
 		} else if (tkpre instanceof Boolean) {
-			// // Ist das vorheriges Zeichen eine Boolsche Zahl, ist das Operabel
-
-			assert false;
+			// Ist das vorheriges Zeichen eine Boolsche Zahl, ist das Operabel
+			String fOP = "\\";
+			if( tk.toString().length()==2){
+				fOP+= tk.toString().charAt(0)+"\\"+tk.toString().charAt(1);
+			}else
+				fOP+= tk;
+			
+			tokenliste.remove(ndx);
+			tokenliste.add(ndx, PatternMaps.finalOperations.get(fOP)); //"\\" + tk));
+			
+				if (LOGGER)
+					logger.trace("Tausche ["+tk+"] gegen OPERATION "+fOP);
+//			assert false;
 			return false;
 		} else if (tkpre instanceof String) {
 			// Ist das vorheriges Zeichen ein String, ist das Operabel
@@ -434,6 +448,7 @@ final class VP_Tests {
 		} else if (tkpre instanceof Operation) {
 			// Ist das vorherige Zeichen eine Operation, dann ist es
 			// nicht Operabel, sondern Funktion
+			assert false;
 			return false;
 
 		} else if (tkpre.equals(OPEN)) {

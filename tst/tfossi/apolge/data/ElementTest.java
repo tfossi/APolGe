@@ -42,7 +42,7 @@ import tfossi.apolge.data.core._ElementBuilderDirector;
  */
 public class ElementTest {
 	/** TESTPATH incl. abschl. FS */
-	private final static String TESTPATH = SCRIPT_PATH + "tst" +FS + "elements"
+	private final static String TESTPATH = SCRIPT_PATH + "tst" +FS + "03 elements"
 			+ FS;
 	
 
@@ -104,6 +104,16 @@ final ValueParser vp = new ValueParser();
 //			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
 			};
 
+	/** Adressen und Listen */
+	String[][] createListen = new String[][] {
+//			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
+//			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
+			{ "Test list", "C Address and Listen"+FS+"root",
+				"Elementname: root"+LFCR+"b: b/1.0/Double"+LFCR+"c: c/$0$/String"+LFCR+"a: a/1/Integer"+LFCR },
+//			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
+//			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
+//			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
+			};
 //	/** id */
 //	public int id = 0; 
 	/**
@@ -139,16 +149,8 @@ final ValueParser vp = new ValueParser();
 
 		
 			} catch (LoadScriptException e) {
-				System.out.println(e.getLocalizedMessage());
-				if (e.getLocalizedMessage().contains("Ordner ["))
-					System.out.println("OK");
-				else if (e.getLocalizedMessage().contains("Datei [")
-						&& e.getLocalizedMessage().contains("Gibt es nicht"))
-					System.out.println("OK");
-				else {
 					e.printStackTrace();
 					fail(e.getMessage());
-				}
 			} catch (ParseException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
@@ -162,7 +164,45 @@ final ValueParser vp = new ValueParser();
 		}
 	}
 
+	@Test
+	public final void testCAddressListen() {
+		
+		for (int row = 0; row < this.createListen.length; row++) {
+			System.out.println(LFCR+LFCR+"-------------------------------------------------------------------------"+
+		LFCR+LFCR+LFCR+"Post2String: "
+					+ this.createListen[row][0] + LFCR
+					+ this.createListen[row][1]+LFCR);
+			try {
+				String name = "root";
+				_ElementBuilder parent = null;
+				LoadScript ls = new LoadScript(TESTPATH 
+						+ this.createListen[row][1], null,true);
+				
+				_ElementBuilder eb = new _ElementBuilder(name, (TableMap)null, parent, ls.getTable(), TESTPATH+ "C Address and Listen"+FS);
+				
+				System.out.println(eb.toString());
+				
+				eb.createElement(null);
 
+				System.out.println(eb.elementToString());
+				assertEquals(this.createListen[row][0], this.createListen[row][2], eb.toString());
+
+		
+			} catch (LoadScriptException e) {
+					e.printStackTrace();
+					fail(e.getMessage());
+			} catch (ParseException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (ArrayIndexOutOfBoundsException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} 
+		}
+	}
 	// ---- Selbstverwaltung --------------------------------------------------
 
 	/**

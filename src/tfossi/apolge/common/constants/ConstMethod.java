@@ -43,6 +43,7 @@ import tfossi.apolge.common.scripting.LoadScript;
 import tfossi.apolge.common.scripting.LoadScriptException;
 import tfossi.apolge.common.scripting.ScriptException;
 import tfossi.apolge.common.scripting.p.ParseException;
+import tfossi.apolge.common.scripting.t.Filter;
 import tfossi.apolge.common.scripting.vp.pm.PatternMaps;
 import tfossi.apolge.data.core.Element;
 import tfossi.apolge.io.Screen;
@@ -158,6 +159,13 @@ public class ConstMethod extends ConstValue {
 		return new Long(5);
 	}
 
+	public static List<Element> LIST(Element e, String eBuilder){
+		return e.getAllChild(eBuilder);		
+	}
+	
+	public static Filter FILTER(Element e, String attribute, String op, Object compareObject){
+		return new Filter(new Element(), attribute, op, compareObject);
+	}
 //	public static Object ADR2(Element e, String SameEbene, String attribute ) {
 ////		for (String s : str)
 ////			System.err.println("CM:ADR=" + s);

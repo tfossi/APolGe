@@ -1,0 +1,11 @@
+plus = 1L + 2L
+minus = 3L - 4L
+mal = 5L * 6L
+durch = 10L / 5L 
+gr = 8L > 9L
+kl = 8L < 9L
+grg = 8L >= 9L
+klg = 8L <= 9L
+g = 8L == 9L
+ug = 8L <> 9L
+h = 8L^2L

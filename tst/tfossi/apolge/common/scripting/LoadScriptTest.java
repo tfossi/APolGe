@@ -430,7 +430,7 @@ public class LoadScriptTest {
 	}
 
 	/**
-	 * Testen der Allgemeinen Funktionen, Addressen, Vektoren und Matrizen
+	 * Testen der Allgemeinen Funktionen, Adressen, Elementlisten, Vektoren und Matrizen
 	 * 
 	 * @modified -
 	 */

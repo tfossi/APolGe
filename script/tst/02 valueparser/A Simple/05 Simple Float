@@ -1,0 +1,11 @@
+plus = 1f + 2f
+minus = 3f - 4f
+mal = 5f * 6f
+durch = 10f / 5f 
+gr = 8f > 9f
+kl = 8f < 9f
+grg = 8f >= 9f
+klg = 8f <= 9f
+g = 8f == 9f
+ug = 8f <> 9f
+h = 8f^2f

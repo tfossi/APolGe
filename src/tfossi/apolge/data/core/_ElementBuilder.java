@@ -489,13 +489,13 @@ public class _ElementBuilder {
 	// ---- Elemenbuilder erstellen -------------------------------------------
 
 	/** Enthält die child-ElementBuilder */
-	private final Map<String, _ElementBuilder> _ElementBuilderMap = new HashMap<String, _ElementBuilder>();
+	final Map<String, _ElementBuilder> _ElementBuilderMap = new HashMap<String, _ElementBuilder>();
 
 	/** Enthält die ID-Nummer des ElementBuilders */
 	private final int elementBuilderID;
 
 	/** Enthält den Namen des ElementBuilders */
-	private final String name;
+	public final String name;
 
 	/** Pfad zur APO-Script des ElementBuilders */
 	private final String path;
@@ -575,7 +575,7 @@ public class _ElementBuilder {
 			Table vtl = null;
 			try {
 				o = LoadScript.getObjectValue(block, attrName);
-
+System.err.println(o+"\n"+attrName+"\n");
 				this.addTypeZuordnung(attrName, o);
 
 				// // Füge Object in Typenregister ein

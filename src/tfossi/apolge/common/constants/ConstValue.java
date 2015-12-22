@@ -137,10 +137,10 @@ public class ConstValue {
 
 	/** Methoden, die zur Elementerstellung ausgeführt werden */
 	public static final String[] twoPass = new String[] { "random", "rint","nextInt",
-			"ident", "ADR", "ADR2" };
+			"ident", "ADR", "ADR2","LIST" };
 
 	/** Methoden, die zur Laufzeit der Elemente ausgeführt werden werden */
-	public static final String[] threePass = new String[] { "ADR" };
+	public static final String[] threePass = new String[] { "ADR","LIST" };
 
 	/** Methoden, die nicht registriert werden sollen */
 	public static final List<String> noRegister = Arrays.asList(new String[] {

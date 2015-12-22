@@ -1,11 +1,60 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 <head>
-<Titel>APolGe: <u>Ãœbersetzen und Berechnen der Zuweisungen</u></Titel></head>
+<Titel>APolGe: <u>Scriptverarbeitung</u></Titel></head>
 <hr>
 <body bgcolor="white">
 </head>
 <br>
+<h2>introduction and definitions</h2>
+Scripte sind Anweisungen zum Ablauf, die zur Laufzeit eingelesen und ausgeführt werden. Die Endung (Extension) lautet <i>.apo</i>.<p>
+Für jede <i>APO</i>-Datei werden diese Anweisungen in einem <i>Builder</i> zusammengefasst zu einer allgemeinen <i>Element</i>-beschreibung.
+Die Zuweisungen in den Beschreibungen sind die <i>Attribute</i> des 
+<i>Elements</i>. Es wid unterschieden zwischen nummerischen <i>Attributen</i>, logischen <i>Attributen</i>, textualen <i>Attributen</i>,  
+beliebigen Objekt-<i>Attributen</i> und Adress <i>Attributen</i>. Die Zuweisungen können aus einfachen Werten, Berechnungen und Funktionen 
+des jeweiligen Wertebereichs bestehen. Die Berechnungen erfolgen entweder sofort (<i>Pass0</i>) und steht in allen <i>Elementen</i>, 
+bei der initialen <i>Element</i>-erstellung
+(<i>Pass1</i>) steht ein individueller Wert in jedem Element oder während der Laufzeit (<i>Pass2</i>) können sich die Attribute entsprechend 
+aktualisieren.<p>
+Die <i>Builder</i>-beschreibungen stehen in einer beliebigen <i>hierarchischen</i> Anordnungen zueinander mit Ausnahme des ersten (<i>Root</i>)
+-Builder. Der <i>Root</i>-Builder ecxistiert genau einmal und bildet den Ausgangspunk der <i>Hierarchie</i>. Die <i>Elemente</i> selber
+ordnen sich entsprechend dieser <i>Hierarchie</i> in ihrem jeweiligen Kontext an. 
+<h3>list of elements</h3>
+<h4>details</h4>
+<i>Elementlisten</i> sind Zusammenstellungen der untergeordneten Elemente. Eine Liste ist die  
+Gesamtliste <i>allElements</i>, die alle Unterelemente beinhaltet.<br>
+Die weitere Liste enthält vordefinierte Teillisten der Gesamtliste.<br>
+Die individualisierten Listen ergeben sich aus den <i>APO</i>-Scripten und haben die Form 
+<code>@builder.filter.filter...filter</code>. Filter ist eine spezielle Methode, die Vergleichsoperationen anwendet,
+um gezielt bestimmte Wertelisten zu generieren: <code>filter(attribut,vergleich,vergleichswert)</code>. Sind mehr als ein 
+Filter definiert, werden diese hintereinander ausgeführt.    
+<h3>addresses</h3>
+<h4>details</h4>
+<i>Adressen</i> sind für Datenzugriffe andere <i>Attribute</i> notwendig. Die Standardnotation lautet: <code>@builder.element.attribut</code>.
+Die einfachste Form ist der Zugriff auf die eigenen <i>Attribute</i> des <i>Elements</i> und erfordert im Script keine spezielle <i>Adressen</i>-
+Notation:<br>
+<code><pre>
+a = ...
+b = ... a ...
+</pre></code>
+Dabei wird unterschieden, in welchem <i>Pass</i> die Zuweisung <code>a</code> berechnet wird. Im einfachsten Fall wird <code>a</code> direkt bei der 
+Scriptübersetzungen in <code>b</code> aufgelöst. Wenn das nicht geht, wird die <i>Adressen</i>-Notation automatisch eingefügt.<p>
+Basis für die Umsetzung der <i>Adressen</i>-notation bilden die verfügbaren Adressmethoden. Dabei bildet der Ausgangspunkt für die 
+Adressenberechnung das aufrufende <i>Element</i>, daß allerdings erst zu einem späteren nach der Zeitpunkt der <i>Builder</i>-Erstellung 
+bekannt ist. Daher wird zu dem Zeitpunkt mit einem Dummy-<i>Element</i> gearbeitet, dass bei der konkreten <i>Element</i>-Erstellung
+ mit diesem <i>Element</i> ausgetauscht wird. In den <i>APO</i>-Scripten wird dieser <i>Element-</i>Eintrag implizit vorausgesetzt und bei der 
+ Scriptumsetzung ergänzt. Er wird im Script also nicht angegeben.<ol>
+<li>Direct: Auf der gleichen Ebene werden die Attribute/-typen bearbeitet.</li>
+<li>Kummuliert: Von der untergeordneten Ebene werden die Attribute aller untergeordetem Elemente.</li>
+<li>Ausgewählt: Von der übergeordneten Ebene werden die Attribute/-typen bearbeitet oder die kumulierten Attribute/-typen.</li></ol>
+<h4>notations</h4>
+Direktes Umfeld des Elements: selbiges, übergeordnetes, untergeordnetes, nebengelegendes Element.<code><ul> 
+<li>@Attribut -> ADR1(Element, Attribut): Attribut im selben Element.</li>
+<li>@SUPER.Attribut -> ADR1(Element, Element.Builder, Attribut): Attribut im übergeordnetem Element</li> 
+<li>@Builder.Element.Attribut -> ADR1(Element, Builder, Element, Attribut): Attribut im parallelem Element unter dem selben übergeordnetem Element.</li>
+<li>@Builder.Attribut -> ADR1(Element, Builder, Attribut): Menge von Attributen im Element des untergeordnetem Builder.</li>
+</ul></code>
+Achtung: Formal möglicherweise eine Unterscheidung der Fälle nur im Kontext möglich.<br>
 <h2>technical documentation</h2>
 <h4>result</h4>
 <p>

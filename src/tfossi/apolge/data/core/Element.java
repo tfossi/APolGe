@@ -17,7 +17,9 @@ import tfossi.apolge.common.scripting.vp.VP_Tokenlist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Zu einem Element mit Attributen zusammengefasster spezieller Datensatz
@@ -35,7 +37,7 @@ public class Element {
 	private Element parent;
 
 	/** Untergeordnete child-Element(e) */
-	private final List<Element> childs = new ArrayList<Element>();
+	private final Map<String,List<Element>> childs = new HashMap<String, List<Element>>();
 
 	public final Element getParent() {
 		return this.parent;
@@ -43,11 +45,11 @@ public class Element {
 
 	public final void addParent(Element newParent) {
 		parent = newParent;
-		parent.addChild(this);
+		parent.addChild(this.elementBuilder.name, this);
 	}
 
 	public final void delParent() {
-		parent.delChild(this);
+		parent.delChild(this.elementBuilder.name, this);
 		parent = null;
 	}
 
@@ -56,12 +58,20 @@ public class Element {
 		this.addParent(newParent);
 	}
 
-	public final void addChild(Element child) {
-		this.childs.add(child);
+	private final void setChildBuilder(String builderName){
+		this.childs.put(builderName, new ArrayList<Element>());
+	}
+	
+	public final List<Element> getAllChild(String builderName){
+		return this.childs.get(builderName);
+	}
+	
+	public final void addChild(String builderName, Element child) {
+		this.childs.get(builderName).add(child);
 	}
 
-	public final void delChild(Element child) {
-		this.childs.remove(child);
+	public final void delChild(String builderName, Element child) {
+		this.childs.get(builderName).remove(child);
 	}
 
 	private final _ElementBuilder elementBuilder;
@@ -220,6 +230,11 @@ public class Element {
 		this.parent = p;
 		this.elementBuilder = eb;
 
+		for (_ElementBuilder childEB: eb._ElementBuilderMap.values()){
+			this.setChildBuilder(childEB.name);
+		}
+		
+		
 		logger.trace(eb.atypeRegister.toString());
 		
 		eb.insertElementInADR(this);

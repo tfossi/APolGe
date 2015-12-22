@@ -64,14 +64,62 @@ final ValueParser vp = new ValueParser();
 				"Name: kl	 #2	Value: true	Type: Boolean"+LFCR+
 				"Name: h	 #5	Value: 64	Type: Integer"+LFCR
  },
-			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
-			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
-			{ "Test Double", "A Simple" + FS + "06 Double Integer" }, 
-			{ "Test String", "A Simple" + FS + "07 Simple String",
-				"Elementname: Test String"+LFCR+
-				"g: g/false/Boolean"+LFCR+
-				"plus: plus/AB/String"+LFCR+
-				"ug: ug/true/Boolean"+LFCR } 
+			{ "Test Long", "A Simple" + FS + "04 Simple Long", 
+	 			"Name: g	 #5	Value: false	Type: Boolean"+LFCR+
+				"Name: plus	 #1	Value: 3	Type: Long"+LFCR+
+				"Name: klg	 #4	Value: true	Type: Boolean"+LFCR+
+				"Name: minus	 #2	Value: -1	Type: Long"+LFCR+
+				"Name: ug	 #6	Value: true	Type: Boolean"+LFCR+
+				"Name: grg	 #3	Value: false	Type: Boolean"+LFCR+
+	 			"Name: durch	 #4	Value: 2	Type: Long"+LFCR+
+	 			"Name: gr	 #1	Value: false	Type: Boolean"+LFCR+
+	 			"Name: mal	 #3	Value: 30	Type: Long"+LFCR+
+	 			"Name: kl	 #2	Value: true	Type: Boolean"+LFCR+
+	 			"Name: h	 #5	Value: 64	Type: Long"+LFCR
+				},
+			{ "Test Float", "A Simple" + FS + "05 Simple Float", 
+					"Name: g	 #5	Value: false	Type: Boolean"+LFCR+
+					"Name: plus	 #1	Value: 3.0	Type: Float"+LFCR+
+					"Name: klg	 #4	Value: true	Type: Boolean"+LFCR+
+					"Name: minus	 #2	Value: -1.0	Type: Float"+LFCR+
+					"Name: ug	 #6	Value: true	Type: Boolean"+LFCR+
+					"Name: grg	 #3	Value: false	Type: Boolean"+LFCR+
+					"Name: durch	 #4	Value: 2.0	Type: Float"+LFCR+
+					"Name: gr	 #1	Value: false	Type: Boolean"+LFCR+
+					"Name: mal	 #3	Value: 30.0	Type: Float"+LFCR+
+					"Name: kl	 #2	Value: true	Type: Boolean"+LFCR+
+					"Name: h	 #5	Value: 64.0	Type: Float"+LFCR
+					 },
+			{ "Test Double", "A Simple" + FS + "06 Simple Double" , 
+					"Name: g	 #5	Value: false	Type: Boolean"+LFCR+
+					"Name: plus	 #1	Value: 3.0	Type: Double"+LFCR+
+					"Name: klg	 #4	Value: true	Type: Boolean"+LFCR+
+					"Name: minus	 #2	Value: -1.0	Type: Double"+LFCR+
+					"Name: ug	 #6	Value: true	Type: Boolean"+LFCR+
+					"Name: grg	 #3	Value: false	Type: Boolean"+LFCR+
+					"Name: durch	 #4	Value: 2.0	Type: Double"+LFCR+
+					"Name: gr	 #1	Value: false	Type: Boolean"+LFCR+
+					"Name: mal	 #3	Value: 30.0	Type: Double"+LFCR+
+					"Name: kl	 #2	Value: true	Type: Boolean"+LFCR+
+					"Name: h	 #5	Value: 64.0	Type: Double"+LFCR
+					}, 
+			{ "Test Boolean", "A Simple" + FS + "07 Simple Boolean" , 
+					"Name: g	 #9	Value: false	Type: Boolean"+LFCR+
+					"Name: plus	 #1	Value: false	Type: Boolean"+LFCR+
+					"Name: minus	 #2	Value: true	Type: Boolean"+LFCR+
+					"Name: durch4	 #8	Value: true	Type: Boolean"+LFCR+
+					"Name: ug	 #10	Value: false	Type: Boolean"+LFCR+
+					"Name: durch3	 #7	Value: false	Type: Boolean"+LFCR+
+					"Name: durch2	 #6	Value: false	Type: Boolean"+LFCR+
+					"Name: durch	 #5	Value: true	Type: Boolean"+LFCR+
+					"Name: mal2	 #4	Value: true	Type: Boolean"+LFCR+
+					"Name: mal	 #3	Value: false	Type: Boolean"+LFCR
+			},
+			 
+			{ "Test String", "A Simple" + FS + "08 Simple String",
+				"Name: g	 #1	Value: false	Type: Boolean"+LFCR+
+				"Name: plus	 #1	Value: AB	Type: String"+LFCR+
+				"Name: ug	 #2	Value: true	Type: Boolean"+LFCR } 
 			};
 
 	/** Einfache Funktionen */
@@ -79,52 +127,36 @@ final ValueParser vp = new ValueParser();
 //			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
 //			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
 			{ "Test Pass0 Integer", "B Simple" + FS + "01 Simple Math",
-				"Elementname: Test Pass0 Integer"+LFCR+
-				"a: a/2/Integer"+LFCR 
+				"Name: a	 #1	Value: 2	Type: Integer"+LFCR
 			},
 //			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
 //			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
 //			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
 			{ "Test Condition", "B Simple" + FS + "08 Condition",
-				"Elementname: Test Condition"+LFCR+
-				"b: b/1/Integer"+LFCR+
-				"a: a/8/Integer"+LFCR 
+				"Name: b	 #2	Value: 1	Type: Integer"+LFCR+
+				"Name: a	 #1	Value: 8	Type: Integer"+LFCR 
 			} 
 			};
 
 	/** Pass2 Funktionen */
 	String[][] pass2Functions = new String[][] {
-//			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
-//			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
 //			{ "Test Pass2", "C Pass2" + FS + "01 Math",
 //				"{a=[f:=rint( 100.0 ) mit Pass2-Parameter!]}" },
+				
 			{ "Test Pass2indirect", "C Pass2" + FS + "02 IndirectMath",
 				"{a=[f:=rint( 100.0 ) mit Pass2-Parameter!]}" },
-//			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
-//			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
-//			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
 			};
 
 	/** Pass3 Funktionen */
 	String[][] pass3Functions = new String[][] {
-//			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
-//			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
-			{ "Test Pass2", "D Pass3" + FS + "01 Adress",
+			{ "Test Pass3", "D Pass3" + FS + "01 Adress",
 				"{a=[f:=ADR( [A, B, INIT] ) mit Pass3-Parameter!]}" },
-//			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
-//			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
-//			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
 			};
 	
 	/** Config Funktionen */
 	String[][] configFunctions = new String[][] {
-//			{ "Test Byte",	"A Simple" + FS + "01 Simple Byte" },
-//			{ "Test Short",	"A Simple" + FS + "02 Simple Short" },
 			{ "Test config", "configs" + FS + "config",
 				"{VERSION=[25], BREITE=[25], MAXBREITE=[100]}" },
-//			{ "Test Long", "A Simple" + FS + "04 Long Integer" },
-//			{ "Test Float", "A Simple" + FS + "05 Float Integer" },
-//			{ "Test Double", "A Simple" + FS + "06 Double Integer" } 
 			};
 
 	/**
@@ -134,9 +166,7 @@ final ValueParser vp = new ValueParser();
 	 */
 	@Test
 	public final void testASimple() {
-
-		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
-		
+	
 		for (int row = 0; row < this.simpleTestdaten.length; row++) {
 			System.out.println("Post2String: "
 					+ this.simpleTestdaten[row][0] + LFCR
@@ -182,7 +212,6 @@ final ValueParser vp = new ValueParser();
 	 */
 	@Test
 	public final void testBFunction() {
-		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
 		for (int row = 0; row < this.simpleFunctions.length; row++) {
 			System.out.println("Post2String: "
 					+ this.simpleFunctions[row][0] + LFCR
@@ -195,7 +224,7 @@ final ValueParser vp = new ValueParser();
 				this.vp.valueParser( ls.getTable(), ls.getQuotes(), (byte)0);
 
 				_ElementBuilder eb = new _ElementBuilder(this.simpleFunctions[row][0], null, null, ls.getTable(), TESTPATH);
-				assertEquals(this.simpleFunctions[row][0], this.simpleFunctions[row][2], eb.toString());
+				assertEquals(this.simpleFunctions[row][0], this.simpleFunctions[row][2], eb.type2String());
 
 		
 			} catch (LoadScriptException e) {
@@ -228,7 +257,6 @@ final ValueParser vp = new ValueParser();
 	 */
 	@Test
 	public final void testCPass2() {
-		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
 		for (int row = 0; row < this.pass2Functions.length; row++) {
 			System.out.println("Post2String: "
 					+ this.pass2Functions[row][0] + LFCR
@@ -241,7 +269,7 @@ final ValueParser vp = new ValueParser();
 				logger.trace("Table: "+LFCR+ls.getTable());
 				this.vp.valueParser(ls.getTable(), ls.getQuotes(), (byte)0);
 				logger.trace("Table: "+LFCR+ls.getTable());
-				assertEquals(this.pass2Functions[row][0], this.pass2Functions[row][2], ls.getTable());
+				assertEquals(this.pass2Functions[row][0], this.pass2Functions[row][2], ls.getTable().toString());
 				
 //				_ElementBuilder eb = new _ElementBuilder(this.pass2Functions[row][0], null, null, ls.getTable(), TESTPATH);
 //				assertEquals(this.pass2Functions[row][0], this.pass2Functions[row][2], eb.toString());
@@ -275,7 +303,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testDPass3() {
 		_ElementBuilderDirector ebd = new _ElementBuilderDirector();
 		for (int row = 0; row < this.pass3Functions.length; row++) {
@@ -324,7 +352,7 @@ final ValueParser vp = new ValueParser();
 	 * 
 	 * @modified -
 	 */
-	@Test
+//	@Test
 	public final void testConfig() {
 		for (int row = 0; row < this.configFunctions.length; row++) {
 			System.out.println("Post2String: "

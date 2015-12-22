@@ -1,0 +1,6 @@
+CHILDS = {
+	sub = {
+		count=5
+	}
+}
+a = LIST("sub")
